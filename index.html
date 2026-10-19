@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FNAF Remake - Main Menu</title>
+    <style>
+        /* Base Styling & Fullscreen Blackout */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* Container for the background character/menu image */
+        #menu-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            /* Replace with your background asset path or URL */
+            background: url('https://unsplash.com') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 5%;
+            box-sizing: border-box;
+        }
+
+        /* Glitchy Static Overlay Effect */
+        #static-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://wikimedia.org');
+            opacity: 0.08; /* Subtle static overlay */
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* Title Styling with Animation */
+        h1 {
+            color: #fff;
+            font-size: 3.5rem;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            animation: flicker 4s infinite alternate;
+            z-index: 2;
+        }
+
+        /* Menu Options Container */
+        .menu-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 2;
+        }
+
+        /* Interactive Menu Buttons */
+        .menu-btn {
+            background: none;
+            border: none;
+            color: #888;
+            font-family: inherit;
+            font-size: 1.8rem;
+            text-align: left;
+            cursor: pointer;
+            padding: 5px 0;
+            width: fit-content;
+            transition: color 0.1s ease;
+            position: relative;
+        }
+
+        /* Hover selection effect - adds the iconic choice arrow */
+        .menu-btn:hover {
+            color: #fff;
+        }
+
+        .menu-btn:hover::before {
+            content: ">> ";
+            position: absolute;
+            left: -40px;
+            color: #fff;
+        }
+
+        /* Subtle environment/vibe ambient text */
+        .version-tag {
+            position: absolute;
+            bottom: 15px;
+            left: 5%;
+            color: #444;
+            font-size: 0.9rem;
+        }
+
+        /* Keyframes for the glitchy screen/text effect */
+        @keyframes flicker {
+            0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+                opacity: 1;
+                filter: hue-rotate(0deg) saturate(1);
+            }
+            20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+                opacity: 0.4;
+                filter: hue-rotate(90deg) saturate(1.5);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="static-overlay"></div>
+
+    <div id="menu-container">
+        <h1 id="game-title">FIVE NIGHTS<br>AT FREDDY'S</h1>
+        
+        <div class="menu-options">
+            <button class="menu-btn" onclick="startGame()">New Game</button>
+            <button class="menu-btn" onclick="continueGame()">Continue</button>
+            <button class="menu-btn" onclick="openOptions()">Options</button>
+        </div>
+
+        <div class="version-tag">v1.0.0</div>
+    </div>
+
+    <script>
+        // Trigger background image jumps/glitches randomly
+        const container = document.getElementById('menu-container');
+        
+        function causeGlitch() {
+            // Momentarily shift background alignment to simulate a glitch
+            container.style.backgroundPosition = `${Math.random() * 10}px ${Math.random() * 10}px`;
+            
+            setTimeout(() => {
+                container.style.backgroundPosition = 'center center';
+            }, 100);
+
+            // Set next random glitch interval
+            setTimeout(causeGlitch, Math.random() * 3000 + 500);
+        }
+        causeGlitch();
+
+        // Menu Actions
+        function startGame() {
+            alert("Starting Night 1...");
+            // window.location.href = "office.html"; // Route to your next game state here
+        }
+
+        function continueGame() {
+            alert("Loading saved game data...");
+        }
+
+        function openOptions() {
+            alert("Settings menu coming soon!");
+        }
+    </script>
+</body>
+</html>
