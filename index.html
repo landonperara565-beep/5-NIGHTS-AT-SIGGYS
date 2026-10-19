@@ -29,7 +29,7 @@
             height: 100vh;
             display: none;
             opacity: 0;
-            transition: opacity 0.5s ease-in-out;
+            transition: opacity 0.4s ease-in-out;
         }
 
         .screen.active {
@@ -235,61 +235,46 @@
             box-shadow: 0 0 10px rgba(211, 47, 47, 0.8);
         }
 
-        /* --- SCREEN 3: FUNCTIONAL SECURITY OFFICE --- */
+        /* --- SCREEN 3: PANORAMIC PHYSICAL OFFICE --- */
         #office-screen {
-            background: #080808 url('siggy.png') center/cover no-repeat;
             position: relative;
-            flex-direction: column;
-            justify-content: space-between;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
         }
 
-        /* Office HUD overlay */
-        .hud-overlay {
+        /* Wide Office Container for Left/Right Mouse Panning */
+        .office-panoramic {
             position: absolute;
-            top: 20px;
-            left: 30px;
-            right: 30px;
+            top: 0; left: 0;
+            width: 160vw; /* 160% screen width to allow side-to-side scrolling */
+            height: 100vh;
+            /* Replace with your panoramic office image if available */
+            background: #0a0a0a url('siggy.png') center/cover no-repeat; 
+            transition: transform 0.1s ease-out;
             display: flex;
             justify-content: space-between;
-            z-index: 20;
-            pointer-events: none;
+            align-items: center;
+            padding: 0 5vw;
         }
 
-        .hud-box {
-            background: rgba(0,0,0,0.75);
-            padding: 12px 20px;
-            border: 1px solid #444;
-            border-radius: 4px;
-        }
-
-        .hud-title {
-            font-size: 1.4rem;
-            color: #d32f2f;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .hud-text {
-            font-size: 1.1rem;
-            color: #fff;
-        }
-
-        /* Interactive Door & Light Controls */
-        .door-controls {
-            position: absolute;
-            left: 5%;
-            top: 40%;
-            z-index: 25;
+        /* Left and Right Door Control Stations */
+        .door-station {
             display: flex;
             flex-direction: column;
             gap: 15px;
+            background: rgba(0,0,0,0.8);
+            padding: 20px;
+            border: 2px solid #444;
+            border-radius: 6px;
+            z-index: 25;
         }
 
         .ctrl-btn {
             background: #222;
             color: #fff;
             border: 2px solid #555;
-            padding: 14px 20px;
+            padding: 14px 22px;
             font-weight: bold;
             font-family: inherit;
             cursor: pointer;
@@ -307,14 +292,45 @@
             border-color: #ffff00;
         }
 
+        /* Fixed HUD overlay over viewport */
+        .hud-overlay {
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            right: 30px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 40;
+            pointer-events: none;
+        }
+
+        .hud-box {
+            background: rgba(0,0,0,0.75);
+            padding: 12px 20px;
+            border: 1px solid #444;
+            border-radius: 4px;
+        }
+
+        .hud-title {
+            font-size: 1.2rem;
+            color: #d32f2f;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .hud-text {
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
         /* Camera Monitor Toggle Bar at Bottom */
         .camera-toggle-bar {
             position: absolute;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 30;
-            background: rgba(0,0,0,0.8);
+            z-index: 40;
+            background: rgba(0,0,0,0.85);
             border: 2px solid #666;
             padding: 12px 60px;
             cursor: pointer;
@@ -335,7 +351,7 @@
             position: absolute;
             top: 0; left: 0; width: 100vw; height: 100vh;
             background: #050505;
-            z-index: 50;
+            z-index: 60;
             display: none;
             flex-direction: row;
         }
@@ -344,16 +360,24 @@
             display: flex;
         }
 
-        /* Viewfeed container */
         .camera-feed {
             flex: 3;
             height: 100%;
             position: relative;
-            background: #111;
+            background: #000;
             display: flex;
             justify-content: center;
             align-items: center;
             border-right: 2px solid #333;
+            overflow: hidden;
+        }
+
+        /* Camera Photo Display Tag */
+        #cam-feed-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: contrast(120%) brightness(80%);
         }
 
         .camera-label {
@@ -364,18 +388,11 @@
             font-weight: bold;
             color: #fff;
             text-shadow: 2px 2px 0px #000;
-            z-index: 60;
+            z-index: 70;
+            background: rgba(0,0,0,0.6);
+            padding: 5px 15px;
         }
 
-        .threat-display {
-            font-size: 2rem;
-            color: #d32f2f;
-            font-weight: bold;
-            text-align: center;
-            animation: textGlitch 1s infinite;
-        }
-
-        /* Map selection panel */
         .camera-map {
             flex: 1;
             height: 100%;
@@ -405,13 +422,38 @@
             border-color: #4caf50;
         }
 
-        /* GAME OVER / JUMPSCARE & WIN SCREENS */
+        /* --- SCREEN 5: JUMPSCARE & WIN SCREENS --- */
         #gameover-screen, #win-screen {
             background: #000;
             justify-content: center;
             align-items: center;
             flex-direction: column;
             z-index: 200;
+        }
+
+        #jumpscare-container {
+            position: absolute;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+            z-index: 210;
+        }
+
+        #jumpscare-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            animation: scareShake 0.1s infinite;
+        }
+
+        @keyframes scareShake {
+            0% { transform: scale(1) translate(0, 0); }
+            25% { transform: scale(1.05) translate(-8px, 8px); }
+            50% { transform: scale(1.02) translate(8px, -8px); }
+            75% { transform: scale(1.06) translate(-5px, -5px); }
+            100% { transform: scale(1) translate(0, 0); }
         }
 
         /* --- CRT OVERLAYS --- */
@@ -447,7 +489,10 @@
 </head>
 <body>
 
-    <!-- Static Noise & Scanlines Overlay -->
+    <!-- Main Menu Background Soundtrack (Replace menu_music.mp3 with your audio file) -->
+    <audio id="homescreen-audio" loop src="menu_music.mp3"></audio>
+
+    <!-- CRT Static & Scanline Overlays -->
     <div class="scanlines"></div>
     <canvas id="static-canvas"></canvas>
 
@@ -497,7 +542,7 @@
                 <div class="newspaper-date">
                     <span>Vol. LXIV No. 12</span>
                     <span>OCTOBER 19, 1987</span>
-                    <span>PRICE $0.25</span>
+                    <span>PRICE \$0.25</span>
                 </div>
             </div>
 
@@ -506,7 +551,7 @@
                     <h2>HELP WANTED: NIGHT SECURITY GUARD</h2>
                     <p>Local facility seeking a dependable night security guard to oversee the premises during the midnight shift (12:00 AM to 6:00 AM).</p>
                     <p>Duties include monitoring security cameras, ensuring equipment safety, and remaining vigilant. Must be comfortable working alone in darkness.</p>
-                    <p><strong>Pay:</strong> $120.00 / week. To apply, contact Sigrist Entertainment.</p>
+                    <p><strong>Pay:</strong> \$120.00 / week. To apply, contact Sigrist Entertainment.</p>
                 </div>
 
                 <div class="side-article">
@@ -519,9 +564,9 @@
         <button class="continue-btn" onclick="enterOffice()">[ CLICK TO ENTER OFFICE ]</button>
     </div>
 
-    <!-- 3. FUNCTIONAL GAMEPLAY OFFICE SCREEN -->
+    <!-- 3. PANORAMIC PHYSICAL OFFICE SCREEN -->
     <div id="office-screen" class="screen">
-        <!-- HUD Stats -->
+        <!-- Viewport HUD Overlay -->
         <div class="hud-overlay">
             <div class="hud-box">
                 <div class="hud-title">YOUR SHIFT HAS NOW STARTED. GOOD LUCK.</div>
@@ -533,9 +578,26 @@
             </div>
         </div>
 
-        <!-- Security Door Control Button -->
-        <div class="door-controls">
-            <button class="ctrl-btn" id="door-btn" onclick="toggleDoor()">DOOR: OPEN</button>
+        <!-- Mouse-panning Panoramic Office Body -->
+        <div class="office-panoramic" id="office-panoramic">
+            <!-- Left Door Controls -->
+            <div class="door-station">
+                <div style="font-weight:bold; color:#aaa;">LEFT DOOR</div>
+                <button class="ctrl-btn" id="left-door-btn" onclick="toggleLeftDoor()">DOOR: OPEN</button>
+                <button class="ctrl-btn" id="left-light-btn" onclick="toggleLeftLight()">LIGHT: OFF</button>
+            </div>
+
+            <!-- Center Desk Marker -->
+            <div style="text-align:center; opacity:0.3; font-weight:bold;">
+                [ SECURITY DESK ]
+            </div>
+
+            <!-- Right Door Controls -->
+            <div class="door-station">
+                <div style="font-weight:bold; color:#aaa;">RIGHT DOOR</div>
+                <button class="ctrl-btn" id="right-door-btn" onclick="toggleRightDoor()">DOOR: OPEN</button>
+                <button class="ctrl-btn" id="right-light-btn" onclick="toggleRightLight()">LIGHT: OFF</button>
+            </div>
         </div>
 
         <!-- Camera Monitor Toggle Bar -->
@@ -544,26 +606,29 @@
         </div>
     </div>
 
-    <!-- 4. CAMERA MONITOR SYSTEM OVERLAY -->
+    <!-- 4. CAMERA MONITOR WITH IMAGE PHOTO SWAPPING -->
     <div id="camera-monitor">
         <div class="camera-feed">
             <div class="camera-label" id="cam-label">CAM 1A</div>
-            <div class="threat-display" id="cam-threat-text">STAGE: EMPTY</div>
+            <!-- Dynamic Camera Photo Element -->
+            <img id="cam-feed-img" src="cam1a_empty.png" alt="Camera Feed">
         </div>
 
         <div class="camera-map">
             <button class="cam-btn selected" id="btn-cam1a" onclick="switchCamera('1A')">CAM 1A (Stage)</button>
             <button class="cam-btn" id="btn-cam1b" onclick="switchCamera('1B')">CAM 1B (Hallway)</button>
-            <button class="cam-btn" id="btn-cam2a" onclick="switchCamera('2A')">CAM 2A (Blindspot)</button>
+            <button class="cam-btn" id="btn-cam2a" onclick="switchCamera('2A')">CAM 2A (Left Door)</button>
+            <button class="cam-btn" id="btn-cam2b" onclick="switchCamera('2B')">CAM 2B (Right Door)</button>
             <button class="cam-btn" style="margin-top:20px; background:#8b0000; color:#fff;" onclick="toggleCameraMonitor()">CLOSE MONITOR</button>
         </div>
     </div>
 
-    <!-- 5. GAME OVER / WIN SCREENS -->
+    <!-- 5. JUMPSCARE GAME OVER & WIN SCREENS -->
     <div id="gameover-screen" class="screen">
-        <h1 style="font-size: 4rem; color: #d32f2f; margin-bottom: 20px;">GAME OVER</h1>
-        <p style="font-size: 1.5rem; color: #aaa; margin-bottom: 30px;">Sigrist caught you in the dark...</p>
-        <button class="continue-btn" onclick="location.reload()">TRY AGAIN</button>
+        <div id="jumpscare-container">
+            <!-- Your custom jumpscare image file (e.g. jumpscare.png) -->
+            <img id="jumpscare-img" src="jumpscare.png" alt="JUMPSCARE">
+        </div>
     </div>
 
     <div id="win-screen" class="screen">
@@ -572,17 +637,29 @@
         <button class="continue-btn" onclick="location.reload()">MAIN MENU</button>
     </div>
 
-    <!-- GAME LOGIC SCRIPT -->
+    <!-- JAVASCRIPT GAME LOGIC -->
     <script>
         // State Variables
         let power = 100;
-        let hour = 0; // 0 = 12 AM, 1 = 1 AM, ..., 6 = 6 AM
-        let doorClosed = false;
+        let hour = 0;
+        let leftDoorClosed = false;
+        let rightDoorClosed = false;
+        let leftLightOn = false;
+        let rightLightOn = false;
         let monitorOpen = false;
         let currentCam = '1A';
-        let sigristPosition = '1A'; // '1A' -> '1B' -> '2A' -> 'OFFICE'
+        let sigristPosition = '1A'; // Possible positions: '1A', '1B', '2A' (Left), '2B' (Right), 'OFFICE'
         let gameInterval = null;
 
+        // Auto-Play Menu Soundtrack on First Click
+        const menuAudio = document.getElementById('homescreen-audio');
+        document.body.addEventListener('click', () => {
+            if (menuAudio.paused && document.getElementById('menu-screen').classList.contains('active')) {
+                menuAudio.play().catch(e => console.log("Audio waiting for interaction"));
+            }
+        }, { once: true });
+
+        // Screen Switcher
         function showScreen(screenId) {
             const screens = document.querySelectorAll('.screen');
             screens.forEach(s => s.classList.remove('active'));
@@ -597,17 +674,33 @@
         }
 
         function enterOffice() {
+            menuAudio.pause(); // Stop menu soundtrack during gameplay
             showScreen('office-screen');
             startShift();
         }
 
+        // PHYSICAL OFFICE PANNING (Mouse movements translate office horizontally)
+        const officePan = document.getElementById('office-panoramic');
+        document.addEventListener('mousemove', (e) => {
+            if (!document.getElementById('office-screen').classList.contains('active')) return;
+            // Calculate mouse position relative to window width (0.0 to 1.0)
+            const mousePercent = e.clientX / window.innerWidth;
+            // Translate office x-offset from 0% to -35%
+            const maxPan = 35; 
+            const panOffset = -1 * (mousePercent * maxPan);
+            officePan.style.transform = `translateX(${panOffset}vw)`;
+        });
+
         // START GAME LOOP
         function startShift() {
             gameInterval = setInterval(() => {
-                // 1. Drain Power
-                let drainRate = 0.4;
-                if (doorClosed) drainRate += 0.8;
-                if (monitorOpen) drainRate += 0.5;
+                // Drain Power
+                let drainRate = 0.3;
+                if (leftDoorClosed) drainRate += 0.5;
+                if (rightDoorClosed) drainRate += 0.5;
+                if (leftLightOn) drainRate += 0.3;
+                if (rightLightOn) drainRate += 0.3;
+                if (monitorOpen) drainRate += 0.4;
 
                 power -= drainRate;
                 if (power <= 0) {
@@ -616,7 +709,7 @@
                 }
                 document.getElementById('power-display').innerText = Math.floor(power);
 
-                // 2. Advance Time (Every 15 Seconds = 1 Hour)
+                // Time advancement (15 seconds = 1 hour)
                 hour += 0.05;
                 if (hour >= 6) {
                     triggerWin();
@@ -625,31 +718,49 @@
                     document.getElementById('clock-display').innerText = displayHour + " AM";
                 }
 
-                // 3. Sigrist AI Movement Logic
+                // AI Threat Movement
                 if (Math.random() < 0.25) {
                     moveSigrist();
                 }
             }, 1000);
         }
 
-        function toggleDoor() {
-            doorClosed = !doorClosed;
-            const btn = document.getElementById('door-btn');
-            if (doorClosed) {
-                btn.innerText = "DOOR: CLOSED";
-                btn.classList.add('active-door');
-            } else {
-                btn.innerText = "DOOR: OPEN";
-                btn.classList.remove('active-door');
-            }
+        // DOOR & LIGHT CONTROLS
+        function toggleLeftDoor() {
+            leftDoorClosed = !leftDoorClosed;
+            const btn = document.getElementById('left-door-btn');
+            btn.innerText = leftDoorClosed ? "DOOR: CLOSED" : "DOOR: OPEN";
+            btn.classList.toggle('active-door', leftDoorClosed);
         }
 
+        function toggleRightDoor() {
+            rightDoorClosed = !rightDoorClosed;
+            const btn = document.getElementById('right-door-btn');
+            btn.innerText = rightDoorClosed ? "DOOR: CLOSED" : "DOOR: OPEN";
+            btn.classList.toggle('active-door', rightDoorClosed);
+        }
+
+        function toggleLeftLight() {
+            leftLightOn = !leftLightOn;
+            const btn = document.getElementById('left-light-btn');
+            btn.innerText = leftLightOn ? "LIGHT: ON" : "LIGHT: OFF";
+            btn.classList.toggle('active-light', leftLightOn);
+        }
+
+        function toggleRightLight() {
+            rightLightOn = !rightLightOn;
+            const btn = document.getElementById('right-light-btn');
+            btn.innerText = rightLightOn ? "LIGHT: ON" : "LIGHT: OFF";
+            btn.classList.toggle('active-light', rightLightOn);
+        }
+
+        // CAMERA MONITOR SYSTEM
         function toggleCameraMonitor() {
             monitorOpen = !monitorOpen;
             const monitor = document.getElementById('camera-monitor');
             if (monitorOpen) {
                 monitor.classList.add('active-cam');
-                renderCameraFeed();
+                updateCameraPhoto();
             } else {
                 monitor.classList.remove('active-cam');
             }
@@ -660,37 +771,46 @@
             document.querySelectorAll('.cam-btn').forEach(b => b.classList.remove('selected'));
             document.getElementById('btn-cam' + cam.toLowerCase()).classList.add('selected');
             document.getElementById('cam-label').innerText = 'CAM ' + cam;
-            renderCameraFeed();
+            updateCameraPhoto();
         }
 
-        function renderCameraFeed() {
-            const threatText = document.getElementById('cam-threat-text');
+        // SWAP CAMERA IMAGE FILE BASED ON SIGRIST'S POSITION
+        function updateCameraPhoto() {
+            const imgTag = document.getElementById('cam-feed-img');
+            const camKey = currentCam.toLowerCase(); // e.g. "1a", "1b", "2a", "2b"
+
             if (sigristPosition === currentCam) {
-                threatText.innerText = "WARNING: SIGRIST IS HERE!";
-                threatText.style.color = "#d32f2f";
+                // Photo when Sigrist IS present at this camera
+                imgTag.src = `cam${camKey}_sigrist.png`; 
             } else {
-                threatText.innerText = "AREA CLEAR";
-                threatText.style.color = "#4caf50";
+                // Photo when Sigrist IS NOT present
+                imgTag.src = `cam${camKey}_empty.png`;
             }
         }
 
+        // AI MOVEMENT PATHING
         function moveSigrist() {
             if (sigristPosition === '1A') {
                 sigristPosition = '1B';
             } else if (sigristPosition === '1B') {
-                sigristPosition = '2A';
+                sigristPosition = Math.random() < 0.5 ? '2A' : '2B'; // Left or Right hall
             } else if (sigristPosition === '2A') {
-                sigristPosition = 'OFFICE';
-            } else if (sigristPosition === 'OFFICE') {
-                if (doorClosed) {
-                    // Repelled by door!
-                    sigristPosition = '1A';
+                if (leftDoorClosed) {
+                    sigristPosition = '1A'; // Blocked by left door
                 } else {
-                    // Attacks player!
+                    sigristPosition = 'OFFICE';
+                    triggerGameOver();
+                }
+            } else if (sigristPosition === '2B') {
+                if (rightDoorClosed) {
+                    sigristPosition = '1A'; // Blocked by right door
+                } else {
+                    sigristPosition = 'OFFICE';
                     triggerGameOver();
                 }
             }
-            if (monitorOpen) renderCameraFeed();
+
+            if (monitorOpen) updateCameraPhoto();
         }
 
         function triggerGameOver() {
