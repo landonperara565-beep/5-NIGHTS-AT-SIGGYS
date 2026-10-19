@@ -243,28 +243,26 @@
             height: 100vh;
         }
 
-        /* Wide Office Container for Left/Right Mouse Panning */
+        /* Expanded 180vw office viewport for full left-to-right panning */
         .office-panoramic {
             position: absolute;
             top: 0; left: 0;
-            width: 160vw; /* 160% screen width to allow side-to-side scrolling */
+            width: 180vw;
             height: 100vh;
-            /* Replace with your panoramic office image if available */
-            background: #0a0a0a url('siggy.png') center/cover no-repeat; 
-            transition: transform 0.1s ease-out;
+            background: #0a0a0a url('siggy.png') center/cover no-repeat;
+            transition: transform 0.05s ease-out;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 5vw;
+            padding: 0 6vw;
         }
 
-        /* Left and Right Door Control Stations */
         .door-station {
             display: flex;
             flex-direction: column;
             gap: 15px;
-            background: rgba(0,0,0,0.8);
-            padding: 20px;
+            background: rgba(0,0,0,0.85);
+            padding: 22px;
             border: 2px solid #444;
             border-radius: 6px;
             z-index: 25;
@@ -292,7 +290,6 @@
             border-color: #ffff00;
         }
 
-        /* Fixed HUD overlay over viewport */
         .hud-overlay {
             position: absolute;
             top: 20px;
@@ -323,7 +320,6 @@
             color: #fff;
         }
 
-        /* Camera Monitor Toggle Bar at Bottom */
         .camera-toggle-bar {
             position: absolute;
             bottom: 20px;
@@ -372,7 +368,6 @@
             overflow: hidden;
         }
 
-        /* Camera Photo Display Tag */
         #cam-feed-img {
             width: 100%;
             height: 100%;
@@ -489,7 +484,7 @@
 </head>
 <body>
 
-    <!-- Main Menu Background Soundtrack (Replace menu_music.mp3 with your audio file) -->
+    <!-- Main Menu Background Audio -->
     <audio id="homescreen-audio" loop src="menu_music.mp3"></audio>
 
     <!-- CRT Static & Scanline Overlays -->
@@ -566,7 +561,6 @@
 
     <!-- 3. PANORAMIC PHYSICAL OFFICE SCREEN -->
     <div id="office-screen" class="screen">
-        <!-- Viewport HUD Overlay -->
         <div class="hud-overlay">
             <div class="hud-box">
                 <div class="hud-title">YOUR SHIFT HAS NOW STARTED. GOOD LUCK.</div>
@@ -600,17 +594,15 @@
             </div>
         </div>
 
-        <!-- Camera Monitor Toggle Bar -->
         <div class="camera-toggle-bar" onclick="toggleCameraMonitor()">
             [ TOGGLE CAMERA MONITOR ]
         </div>
     </div>
 
-    <!-- 4. CAMERA MONITOR WITH IMAGE PHOTO SWAPPING -->
+    <!-- 4. CAMERA MONITOR OVERLAY -->
     <div id="camera-monitor">
         <div class="camera-feed">
             <div class="camera-label" id="cam-label">CAM 1A</div>
-            <!-- Dynamic Camera Photo Element -->
             <img id="cam-feed-img" src="cam1a_empty.png" alt="Camera Feed">
         </div>
 
@@ -623,10 +615,9 @@
         </div>
     </div>
 
-    <!-- 5. JUMPSCARE GAME OVER & WIN SCREENS -->
+    <!-- 5. JUMPSCARE & WIN SCREENS -->
     <div id="gameover-screen" class="screen">
         <div id="jumpscare-container">
-            <!-- Your custom jumpscare image file (e.g. jumpscare.png) -->
             <img id="jumpscare-img" src="jumpscare.png" alt="JUMPSCARE">
         </div>
     </div>
@@ -641,21 +632,24 @@
     <script>
         // State Variables
         let power = 100;
-        let hour = 0;
+        let hour = 0; // 0 = 12 AM, 1 = 1 AM, ..., 6 = 6 AM
         let leftDoorClosed = false;
         let rightDoorClosed = false;
         let leftLightOn = false;
         let rightLightOn = false;
         let monitorOpen = false;
         let currentCam = '1A';
-        let sigristPosition = '1A'; // Possible positions: '1A', '1B', '2A' (Left), '2B' (Right), 'OFFICE'
+        let sigristPosition = '1A'; // '1A', '1B', '2A', '2B', or 'OFFICE'
         let gameInterval = null;
 
-        // Auto-Play Menu Soundtrack on First Click
+        // 8 MINUTES PER NIGHT CALCULATION: 8 mins = 480 seconds / 6 hours = 80 seconds per hour
+        const SECONDS_PER_HOUR = 80;
+
+        // Auto-Play Menu Music
         const menuAudio = document.getElementById('homescreen-audio');
         document.body.addEventListener('click', () => {
             if (menuAudio.paused && document.getElementById('menu-screen').classList.contains('active')) {
-                menuAudio.play().catch(e => console.log("Audio waiting for interaction"));
+                menuAudio.play().catch(e => console.log("Audio awaiting user interaction"));
             }
         }, { once: true });
 
@@ -674,33 +668,35 @@
         }
 
         function enterOffice() {
-            menuAudio.pause(); // Stop menu soundtrack during gameplay
+            menuAudio.pause();
             showScreen('office-screen');
             startShift();
         }
 
-        // PHYSICAL OFFICE PANNING (Mouse movements translate office horizontally)
+        // FULL EDGE-TO-EDGE OFFICE PANNING
         const officePan = document.getElementById('office-panoramic');
         document.addEventListener('mousemove', (e) => {
             if (!document.getElementById('office-screen').classList.contains('active')) return;
-            // Calculate mouse position relative to window width (0.0 to 1.0)
+            
+            // Map mouse position ratio across full screen width (0.0 to 1.0)
             const mousePercent = e.clientX / window.innerWidth;
-            // Translate office x-offset from 0% to -35%
-            const maxPan = 35; 
-            const panOffset = -1 * (mousePercent * maxPan);
+            
+            // Office width is 180vw, meaning the max translation offset is -80vw
+            const maxPanVW = 80; 
+            const panOffset = -1 * (mousePercent * maxPanVW);
             officePan.style.transform = `translateX(${panOffset}vw)`;
         });
 
         // START GAME LOOP
         function startShift() {
             gameInterval = setInterval(() => {
-                // Drain Power
-                let drainRate = 0.3;
-                if (leftDoorClosed) drainRate += 0.5;
-                if (rightDoorClosed) drainRate += 0.5;
-                if (leftLightOn) drainRate += 0.3;
-                if (rightLightOn) drainRate += 0.3;
-                if (monitorOpen) drainRate += 0.4;
+                // Scaled Power Drain Rate for 8-Minute Shift
+                let drainRate = 0.08; 
+                if (leftDoorClosed) drainRate += 0.12;
+                if (rightDoorClosed) drainRate += 0.12;
+                if (leftLightOn) drainRate += 0.08;
+                if (rightLightOn) drainRate += 0.08;
+                if (monitorOpen) drainRate += 0.10;
 
                 power -= drainRate;
                 if (power <= 0) {
@@ -709,8 +705,8 @@
                 }
                 document.getElementById('power-display').innerText = Math.floor(power);
 
-                // Time advancement (15 seconds = 1 hour)
-                hour += 0.05;
+                // Time Advancement (80 seconds per hour)
+                hour += (1 / SECONDS_PER_HOUR);
                 if (hour >= 6) {
                     triggerWin();
                 } else {
@@ -718,9 +714,11 @@
                     document.getElementById('clock-display').innerText = displayHour + " AM";
                 }
 
-                // AI Threat Movement
-                if (Math.random() < 0.25) {
-                    moveSigrist();
+                // AI THREAT LOGIC (1 AM Grace Period + Randomized Movement)
+                if (hour >= 1.0) { // Will not move before 1 AM
+                    if (Math.random() < 0.15) { // Periodic chance check every second
+                        moveSigristRandomly();
+                    }
                 }
             }, 1000);
         }
@@ -754,7 +752,7 @@
             btn.classList.toggle('active-light', rightLightOn);
         }
 
-        // CAMERA MONITOR SYSTEM
+        // CAMERA MONITOR
         function toggleCameraMonitor() {
             monitorOpen = !monitorOpen;
             const monitor = document.getElementById('camera-monitor');
@@ -774,39 +772,56 @@
             updateCameraPhoto();
         }
 
-        // SWAP CAMERA IMAGE FILE BASED ON SIGRIST'S POSITION
         function updateCameraPhoto() {
             const imgTag = document.getElementById('cam-feed-img');
-            const camKey = currentCam.toLowerCase(); // e.g. "1a", "1b", "2a", "2b"
+            const camKey = currentCam.toLowerCase();
 
             if (sigristPosition === currentCam) {
-                // Photo when Sigrist IS present at this camera
                 imgTag.src = `cam${camKey}_sigrist.png`; 
             } else {
-                // Photo when Sigrist IS NOT present
                 imgTag.src = `cam${camKey}_empty.png`;
             }
         }
 
-        // AI MOVEMENT PATHING
-        function moveSigrist() {
+        // RANDOMIZED AI MOVEMENT PATHING
+        function moveSigristRandomly() {
+            const roll = Math.random();
+
             if (sigristPosition === '1A') {
+                // Move from Stage (1A) to Main Hallway (1B)
                 sigristPosition = '1B';
             } else if (sigristPosition === '1B') {
-                sigristPosition = Math.random() < 0.5 ? '2A' : '2B'; // Left or Right hall
-            } else if (sigristPosition === '2A') {
-                if (leftDoorClosed) {
-                    sigristPosition = '1A'; // Blocked by left door
+                // Random choice: Left Hall (2A), Right Hall (2B), or return to Stage (1A)
+                if (roll < 0.42) {
+                    sigristPosition = '2A';
+                } else if (roll < 0.84) {
+                    sigristPosition = '2B';
                 } else {
-                    sigristPosition = 'OFFICE';
-                    triggerGameOver();
+                    sigristPosition = '1A'; // Retreat
+                }
+            } else if (sigristPosition === '2A') {
+                // At Left Door Blindspot
+                if (roll < 0.60) {
+                    if (leftDoorClosed) {
+                        sigristPosition = '1B'; // Blocked by left door!
+                    } else {
+                        sigristPosition = 'OFFICE';
+                        triggerGameOver();
+                    }
+                } else {
+                    sigristPosition = '1B'; // Reposition back to hallway
                 }
             } else if (sigristPosition === '2B') {
-                if (rightDoorClosed) {
-                    sigristPosition = '1A'; // Blocked by right door
+                // At Right Door Blindspot
+                if (roll < 0.60) {
+                    if (rightDoorClosed) {
+                        sigristPosition = '1B'; // Blocked by right door!
+                    } else {
+                        sigristPosition = 'OFFICE';
+                        triggerGameOver();
+                    }
                 } else {
-                    sigristPosition = 'OFFICE';
-                    triggerGameOver();
+                    sigristPosition = '1B'; // Reposition back to hallway
                 }
             }
 
