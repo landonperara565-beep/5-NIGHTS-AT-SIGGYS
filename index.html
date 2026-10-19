@@ -21,61 +21,31 @@
             color: #fff;
         }
 
-        /* CONTAINER USING YOUR GITHUB IMAGE */
-        .viewport {
-            position: relative;
+        /* --- SCREEN MANAGEMENT --- */
+        .screen {
+            position: absolute;
+            top: 0; left: 0;
             width: 100vw;
             height: 100vh;
-            /* Points directly to siggy.png in your repository root */
-            background: #080808 url('siggy.png') center/cover no-repeat;
+            display: none; /* Controlled by JS state */
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .screen.active {
             display: flex;
+            opacity: 1;
+        }
+
+        /* --- SCREEN 1: MAIN MENU --- */
+        #menu-screen {
+            background: #080808 url('siggy.png') center/cover no-repeat;
             flex-direction: column;
             justify-content: space-between;
             padding: 40px 60px;
         }
 
-        /* --- CRT VHS & GLITCH OVERLAYS --- */
-        .scanlines {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(
-                rgba(18, 16, 16, 0) 50%, 
-                rgba(0, 0, 0, 0.4) 50%
-            ), linear-gradient(
-                90deg,
-                rgba(255, 0, 0, 0.03),
-                rgba(0, 255, 0, 0.01),
-                rgba(0, 0, 255, 0.03)
-            );
-            background-size: 100% 4px, 6px 100%;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        .glitch-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.02);
-            pointer-events: none;
-            z-index: 11;
-            animation: vhs-flicker 0.15s infinite;
-        }
-
-        @keyframes vhs-flicker {
-            0% { opacity: 0.96; }
-            50% { opacity: 1; }
-            100% { opacity: 0.93; }
-        }
-
-        #static-canvas {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            opacity: 0.12;
-            pointer-events: none;
-            z-index: 9;
-        }
-
-        /* --- TITLE --- */
+        /* Menu Text & Buttons */
         .title-container {
             z-index: 15;
             position: relative;
@@ -100,7 +70,6 @@
             margin-bottom: 5px;
         }
 
-        /* --- MENU BUTTONS --- */
         .menu-container {
             z-index: 15;
             display: flex;
@@ -120,7 +89,6 @@
             cursor: pointer;
             outline: none;
             transition: color 0.1s ease, transform 0.1s ease;
-            position: relative;
             display: flex;
             align-items: center;
             width: fit-content;
@@ -145,11 +113,6 @@
             animation: blinkSelector 0.6s infinite alternate;
         }
 
-        @keyframes blinkSelector {
-            0% { opacity: 1; }
-            100% { opacity: 0.3; }
-        }
-
         .top-right-info {
             position: absolute;
             top: 40px;
@@ -161,16 +124,153 @@
             text-shadow: 2px 2px 0px #000;
         }
 
-        .top-right-info .sub-info {
-            font-size: 1.1rem;
-            color: #cccccc;
-        }
-
         .copyright {
             z-index: 15;
             font-size: 0.85rem;
             color: #888888;
             margin-top: auto;
+        }
+
+        /* --- SCREEN 2: EERIE NEWSPAPER --- */
+        #newspaper-screen {
+            background-color: #050505;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .newspaper-container {
+            width: 80%;
+            max-width: 750px;
+            background: #d8cbb5; /* Vintage aged paper color */
+            color: #1a1a1a;
+            padding: 35px 45px;
+            border: 2px solid #3a3225;
+            box-shadow: 0 0 30px rgba(0,0,0,0.9), inset 0 0 50px rgba(0,0,0,0.3);
+            font-family: 'Times New Roman', Times, serif;
+            position: relative;
+            transform: rotate(-0.5deg);
+            filter: contrast(110%) sepia(20%);
+        }
+
+        .newspaper-header {
+            text-align: center;
+            border-bottom: 3px double #1a1a1a;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .newspaper-header h1 {
+            font-size: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 900;
+        }
+
+        .newspaper-date {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            border-top: 1px solid #1a1a1a;
+            border-bottom: 1px solid #1a1a1a;
+            padding: 3px 0;
+            margin-top: 5px;
+        }
+
+        .newspaper-body {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .main-article h2 {
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            line-height: 1.1;
+        }
+
+        .main-article p {
+            font-size: 1.05rem;
+            line-height: 1.4;
+            text-align: justify;
+            margin-bottom: 12px;
+        }
+
+        .side-article {
+            border-left: 1px solid #444;
+            padding-left: 15px;
+        }
+
+        .side-article h3 {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            color: #8b0000;
+        }
+
+        .side-article p {
+            font-size: 0.9rem;
+            line-height: 1.3;
+        }
+
+        .continue-btn {
+            margin-top: 25px;
+            background: #111;
+            color: #eee;
+            border: 1px solid #444;
+            padding: 12px 30px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+        }
+
+        .continue-btn:hover {
+            background: #d32f2f;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(211, 47, 47, 0.8);
+        }
+
+        /* --- SCREEN 3: GAME OFFICE START --- */
+        #office-screen {
+            background: #000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .office-placeholder {
+            text-align: center;
+            color: #d32f2f;
+        }
+
+        .office-placeholder h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            letter-spacing: 4px;
+        }
+
+        /* --- OVERLAYS --- */
+        .scanlines {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        #static-canvas {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 99;
         }
 
         @keyframes textGlitch {
@@ -179,23 +279,26 @@
             94% { transform: translate(2px, -1px) skewX(-5deg); }
             95% { transform: translate(-1px, -1px); }
         }
+
+        @keyframes blinkSelector {
+            0% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="viewport">
-        <!-- CRT Scanlines & Glitch Canvas -->
-        <div class="scanlines"></div>
-        <div class="glitch-overlay"></div>
-        <canvas id="static-canvas"></canvas>
+    <!-- Static Noise & Scanlines Overlay -->
+    <div class="scanlines"></div>
+    <canvas id="static-canvas"></canvas>
 
-        <!-- Top Right Clock -->
+    <!-- 1. MAIN MENU SCREEN -->
+    <div id="menu-screen" class="screen active">
         <div class="top-right-info">
             <div>12 AM</div>
-            <div class="sub-info">Night 1</div>
+            <div style="font-size:1.1rem; color:#ccc;">Night 1</div>
         </div>
 
-        <!-- Left Menu Content -->
         <div class="content-left">
             <div class="title-container">
                 <span class="title-sub">Five Nights</span>
@@ -203,34 +306,96 @@
                 <span class="title-main">Sigrist</span>
             </div>
 
-            <!-- Interactive Animated Buttons -->
             <div class="menu-container">
-                <button class="menu-btn" onclick="startGame()">
+                <button class="menu-btn" onclick="clickNewGame()">
                     <span class="selector">&gt;</span>New Game
                 </button>
-                <button class="menu-btn" onclick="continueGame()">
+                <button class="menu-btn">
                     <span class="selector">&gt;</span>Continue
                 </button>
-                <button class="menu-btn" onclick="customNight()">
+                <button class="menu-btn">
                     <span class="selector">&gt;</span>Custom Night
                 </button>
-                <button class="menu-btn" onclick="openSettings()">
+                <button class="menu-btn">
                     <span class="selector">&gt;</span>Settings
                 </button>
-                <button class="menu-btn" onclick="openExtras()">
+                <button class="menu-btn">
                     <span class="selector">&gt;</span>Extras
                 </button>
             </div>
         </div>
 
-        <!-- Bottom Copyright -->
         <div class="copyright">
             © 2026 Sigrist Entertainment<br>All rights reserved. (probably)
         </div>
     </div>
 
-    <!-- VHS Static Noise Script -->
+    <!-- 2. EERIE NEWSPAPER STORY SCREEN -->
+    <div id="newspaper-screen" class="screen">
+        <div class="newspaper-container">
+            <div class="newspaper-header">
+                <h1>THE DAILY GAZETTE</h1>
+                <div class="newspaper-date">
+                    <span>Vol. LXIV No. 12</span>
+                    <span>OCTOBER 19, 1987</span>
+                    <span>PRICE $0.25</span>
+                </div>
+            </div>
+
+            <div class="newspaper-body">
+                <!-- EDIT YOUR MAIN STORY HERE -->
+                <div class="main-article">
+                    <h2>HELP WANTED: NIGHT SECURITY GUARD</h2>
+                    <p>Local facility seeking a dependable night security guard to oversee the premises during the midnight shift (12:00 AM to 6:00 AM).</p>
+                    <p>Duties include monitoring security cameras, ensuring equipment safety, and remaining vigilant. Must be comfortable working alone in darkness.</p>
+                    <p><strong>Pay:</strong> $120.00 / week. To apply, contact Sigrist Entertainment.</p>
+                </div>
+
+                <!-- EDIT YOUR SIDE HORROR/EERIE STORY HERE -->
+                <div class="side-article">
+                    <h3>LOCAL INVESTIGATION CONTINUES</h3>
+                    <p>Unexplainable sightings have been seen security personal have been hired and investigations will continue.</p>
+                </div>
+            </div>
+        </div>
+
+        <button class="continue-btn" onclick="enterOffice()">[ CLICK TO ENTER OFFICE ]</button>
+    </div>
+
+    <!-- 3. GAMEPLAY OFFICE SCREEN -->
+    <div id="office-screen" class="screen">
+        <div class="office-placeholder">
+            <h1>12:00 AM - NIGHT 1</h1>
+            <p style="color:#aaa; font-size: 1.2rem;">You are now in the office. Game loop starts here...</p>
+        </div>
+    </div>
+
+    <!-- JavaScript State Transitions -->
     <script>
+        // Screen Switcher Function
+        function showScreen(screenId) {
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(s => {
+                s.classList.remove('active');
+            });
+
+            setTimeout(() => {
+                const target = document.getElementById(screenId);
+                if (target) target.classList.add('active');
+            }, 300); // Quick cut transition delay
+        }
+
+        // Triggered when "New Game" is clicked
+        function clickNewGame() {
+            showScreen('newspaper-screen');
+        }
+
+        // Triggered when "Click to Enter Office" is clicked
+        function enterOffice() {
+            showScreen('office-screen');
+        }
+
+        // CRT Static Generator
         const canvas = document.getElementById('static-canvas');
         const ctx = canvas.getContext('2d');
 
@@ -253,13 +418,6 @@
             requestAnimationFrame(drawStatic);
         }
         drawStatic();
-
-        // Button Click Handler Functions
-        function startGame() { alert("Starting New Game..."); }
-        function continueGame() { alert("Loading Game..."); }
-        function customNight() { alert("Opening Custom Night..."); }
-        function openSettings() { alert("Opening Settings..."); }
-        function openExtras() { alert("Opening Extras..."); }
     </script>
 </body>
 </html>
