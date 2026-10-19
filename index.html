@@ -3,162 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FNAF Remake - Main Menu</title>
+    <title>Five Nights at Sigrist</title>
     <style>
-        /* Base Styling & Fullscreen Blackout */
-        body, html {
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            user-select: none;
+        }
+
+        body, html {
             width: 100%;
             height: 100%;
             background-color: #000;
             font-family: 'Courier New', Courier, monospace;
             overflow: hidden;
-            user-select: none;
+            color: #fff;
         }
 
-        /* Container for the background character/menu image */
-        #menu-container {
+        /* CONTAINER USING YOUR GITHUB IMAGE */
+        .viewport {
             position: relative;
-            width: 100%;
-            height: 100%;
-            /* Replace with your background asset path or URL */
-            background: url('https://unsplash.com') no-repeat center center;
-            background-size: cover;
+            width: 100vw;
+            height: 100vh;
+            /* Points directly to siggy.png in your repository root */
+            background: #080808 url('siggy.png') center/cover no-repeat;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            padding-left: 5%;
-            box-sizing: border-box;
+            justify-content: space-between;
+            padding: 40px 60px;
         }
 
-        /* Glitchy Static Overlay Effect */
-        #static-overlay {
+        /* --- CRT VHS & GLITCH OVERLAYS --- */
+        .scanlines {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('https://wikimedia.org');
-            opacity: 0.08; /* Subtle static overlay */
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.4) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.03),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.03)
+            );
+            background-size: 100% 4px, 6px 100%;
             pointer-events: none;
             z-index: 10;
         }
 
-        /* Title Styling with Animation */
-        h1 {
-            color: #fff;
-            font-size: 3.5rem;
-            margin: 0 0 10px 0;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            animation: flicker 4s infinite alternate;
-            z-index: 2;
+        .glitch-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.02);
+            pointer-events: none;
+            z-index: 11;
+            animation: vhs-flicker 0.15s infinite;
         }
 
-        /* Menu Options Container */
-        .menu-options {
+        @keyframes vhs-flicker {
+            0% { opacity: 0.96; }
+            50% { opacity: 1; }
+            100% { opacity: 0.93; }
+        }
+
+        #static-canvas {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 9;
+        }
+
+        /* --- TITLE --- */
+        .title-container {
+            z-index: 15;
+            position: relative;
+            max-width: 450px;
+            animation: textGlitch 4s infinite;
+        }
+
+        .title-main {
+            font-size: 3.8rem;
+            font-weight: bold;
+            color: #d32f2f;
+            text-shadow: 3px 3px 0px #000, -2px -2px 0px #880000;
+            line-height: 1.1;
+            letter-spacing: 2px;
+        }
+
+        .title-sub {
+            font-size: 2.8rem;
+            color: #eeeeee;
+            text-shadow: 2px 2px 0px #000;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* --- MENU BUTTONS --- */
+        .menu-container {
+            z-index: 15;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            z-index: 2;
+            gap: 14px;
+            margin-top: 20px;
         }
 
-        /* Interactive Menu Buttons */
         .menu-btn {
             background: none;
             border: none;
-            color: #888;
+            color: #aaaaaa;
             font-family: inherit;
             font-size: 1.8rem;
+            font-weight: bold;
             text-align: left;
             cursor: pointer;
-            padding: 5px 0;
-            width: fit-content;
-            transition: color 0.1s ease;
+            outline: none;
+            transition: color 0.1s ease, transform 0.1s ease;
             position: relative;
+            display: flex;
+            align-items: center;
+            width: fit-content;
         }
 
-        /* Hover selection effect - adds the iconic choice arrow */
+        .menu-btn .selector {
+            opacity: 0;
+            margin-right: 12px;
+            color: #ffffff;
+            font-size: 1.8rem;
+            transition: opacity 0.1s ease;
+        }
+
         .menu-btn:hover {
-            color: #fff;
+            color: #ffffff;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 2px 2px 0px #d32f2f;
+            transform: translateX(6px);
         }
 
-        .menu-btn:hover::before {
-            content: ">> ";
+        .menu-btn:hover .selector {
+            opacity: 1;
+            animation: blinkSelector 0.6s infinite alternate;
+        }
+
+        @keyframes blinkSelector {
+            0% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+
+        .top-right-info {
             position: absolute;
-            left: -40px;
-            color: #fff;
+            top: 40px;
+            right: 60px;
+            text-align: right;
+            z-index: 15;
+            font-size: 1.6rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 0px #000;
         }
 
-        /* Subtle environment/vibe ambient text */
-        .version-tag {
-            position: absolute;
-            bottom: 15px;
-            left: 5%;
-            color: #444;
-            font-size: 0.9rem;
+        .top-right-info .sub-info {
+            font-size: 1.1rem;
+            color: #cccccc;
         }
 
-        /* Keyframes for the glitchy screen/text effect */
-        @keyframes flicker {
-            0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
-                opacity: 1;
-                filter: hue-rotate(0deg) saturate(1);
-            }
-            20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
-                opacity: 0.4;
-                filter: hue-rotate(90deg) saturate(1.5);
-            }
+        .copyright {
+            z-index: 15;
+            font-size: 0.85rem;
+            color: #888888;
+            margin-top: auto;
+        }
+
+        @keyframes textGlitch {
+            0%, 92%, 100% { transform: translate(0, 0); }
+            93% { transform: translate(-2px, 1px) skewX(5deg); }
+            94% { transform: translate(2px, -1px) skewX(-5deg); }
+            95% { transform: translate(-1px, -1px); }
         }
     </style>
 </head>
 <body>
 
-    <div id="static-overlay"></div>
+    <div class="viewport">
+        <!-- CRT Scanlines & Glitch Canvas -->
+        <div class="scanlines"></div>
+        <div class="glitch-overlay"></div>
+        <canvas id="static-canvas"></canvas>
 
-    <div id="menu-container">
-        <h1 id="game-title">FIVE NIGHTS<br>AT SIGRIST</h1>
-        
-        <div class="menu-options">
-            <button class="menu-btn" onclick="startGame()">New Game</button>
-            <button class="menu-btn" onclick="continueGame()">Continue</button>
-            <button class="menu-btn" onclick="openOptions()">Options</button>
+        <!-- Top Right Clock -->
+        <div class="top-right-info">
+            <div>12 AM</div>
+            <div class="sub-info">Night 1</div>
         </div>
 
-        <div class="version-tag">v1.0.0</div>
+        <!-- Left Menu Content -->
+        <div class="content-left">
+            <div class="title-container">
+                <span class="title-sub">Five Nights</span>
+                <span class="title-sub" style="font-size:1.8rem;">at</span>
+                <span class="title-main">Sigrist</span>
+            </div>
+
+            <!-- Interactive Animated Buttons -->
+            <div class="menu-container">
+                <button class="menu-btn" onclick="startGame()">
+                    <span class="selector">&gt;</span>New Game
+                </button>
+                <button class="menu-btn" onclick="continueGame()">
+                    <span class="selector">&gt;</span>Continue
+                </button>
+                <button class="menu-btn" onclick="customNight()">
+                    <span class="selector">&gt;</span>Custom Night
+                </button>
+                <button class="menu-btn" onclick="openSettings()">
+                    <span class="selector">&gt;</span>Settings
+                </button>
+                <button class="menu-btn" onclick="openExtras()">
+                    <span class="selector">&gt;</span>Extras
+                </button>
+            </div>
+        </div>
+
+        <!-- Bottom Copyright -->
+        <div class="copyright">
+            © 2026 Sigrist Entertainment<br>All rights reserved. (probably)
+        </div>
     </div>
 
+    <!-- VHS Static Noise Script -->
     <script>
-        // Trigger background image jumps/glitches randomly
-        const container = document.getElementById('menu-container');
-        
-        function causeGlitch() {
-            // Momentarily shift background alignment to simulate a glitch
-            container.style.backgroundPosition = `${Math.random() * 10}px ${Math.random() * 10}px`;
-            
-            setTimeout(() => {
-                container.style.backgroundPosition = 'center center';
-            }, 100);
+        const canvas = document.getElementById('static-canvas');
+        const ctx = canvas.getContext('2d');
 
-            // Set next random glitch interval
-            setTimeout(causeGlitch, Math.random() * 3000 + 500);
+        function resizeCanvas() {
+            canvas.width = window.innerWidth / 2;
+            canvas.height = window.innerHeight / 2;
         }
-        causeGlitch();
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
-        // Menu Actions
-        function startGame() {
-            alert("Starting Night 1...");
-            // window.location.href = "office.html"; // Route to your next game state here
+        function drawStatic() {
+            const imageData = ctx.createImageData(canvas.width, canvas.height);
+            const buffer = new Uint32Array(imageData.data.buffer);
+            for (let i = 0; i < buffer.length; i++) {
+                if (Math.random() < 0.1) {
+                    buffer[i] = 0xffffffff;
+                }
+            }
+            ctx.putImageData(imageData, 0, 0);
+            requestAnimationFrame(drawStatic);
         }
+        drawStatic();
 
-        function continueGame() {
-            alert("Loading saved game data...");
-        }
-
-        function openOptions() {
-            alert("Settings menu coming soon!");
-        }
+        // Button Click Handler Functions
+        function startGame() { alert("Starting New Game..."); }
+        function continueGame() { alert("Loading Game..."); }
+        function customNight() { alert("Opening Custom Night..."); }
+        function openSettings() { alert("Opening Settings..."); }
+        function openExtras() { alert("Opening Extras..."); }
     </script>
 </body>
 </html>
