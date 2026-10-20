@@ -44,6 +44,49 @@
             flex-direction: column;
             justify-content: space-between;
             padding: 40px 60px;
+            <!-- MUSIC PLAYER WIDGET -->
+        <div class="music-player-card">
+            <!-- Left Album Cover Art -->
+            <div class="player-album-art">
+                <div class="album-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 14.41c-.2.32-.62.42-.94.23-2.58-1.58-5.83-1.94-9.66-1.07-.36.08-.72-.14-.8-.5-.08-.36.14-.72.5-.8 4.19-.96 7.79-.54 10.67 1.22.32.18.42.61.23.92zm1.23-2.74c-.25.41-.78.54-1.19.29-2.95-1.81-7.46-2.34-10.96-1.28-.46.14-.94-.12-1.08-.58-.14-.46.12-.94.58-1.08 4.01-1.21 8.98-.62 12.36 1.46.41.25.54.78.29 1.19zm.11-2.86c-3.54-2.1-9.38-2.29-12.78-1.26-.54.16-1.11-.14-1.27-.68-.16-.54.14-1.11.68-1.27 3.91-1.19 10.36-.96 14.43 1.45.49.29.65.93.36 1.42-.29.48-.93.65-1.42.34z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Track Info, Timestamps & Controls -->
+            <div class="player-details">
+                <div class="player-header">
+                    <div class="track-meta">
+                        <span class="track-title" id="player-track-title">Sigrist Main Theme</span>
+                        <span class="track-artist" id="player-track-artist">Custom Track 1</span>
+                    </div>
+                    <button class="btn-icon-action" title="Add Song">+</button>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress-container">
+                    <div class="progress-bar-bg" onclick="seekTrack(event)">
+                        <div class="progress-bar-fill" id="player-progress"></div>
+                    </div>
+                    <div class="timestamps">
+                        <span id="player-time-current">0:00</span>
+                        <span id="player-time-total">-2:06</span>
+                    </div>
+                </div>
+
+                <!-- Bottom Control Buttons -->
+                <div class="player-controls-row">
+                    <button class="btn-ctrl" id="btn-shuffle" onclick="toggleShuffle()" title="Shuffle">🔀</button>
+                    <button class="btn-ctrl" onclick="prevTrack()" title="Previous">⏮</button>
+                    <button class="btn-ctrl btn-play-circle" id="btn-play-pause" onclick="togglePlayPause()" title="Play/Pause">▶</button>
+                    <button class="btn-ctrl" onclick="nextTrack()" title="Next">⏭</button>
+                    <button class="btn-ctrl" title="Timer">⏱</button>
+                </div>
+            </div>
+        </div>
+
         }
 
         .title-container {
@@ -371,7 +414,7 @@
     width: 0%;
     height: 100%;
     background-color: #ffffff;
-    transition: width 0.2s linear;
+    transition: width 0.1s linear;
 }
 
 .timestamps {
@@ -1134,7 +1177,7 @@
             if (monitorOpen) updateCameraPhoto();
         }
           // ==========================================
-        // CLEANED PLAYLIST (YOUR MP3 TRACK ONLY)
+        // MUSIC PLAYLIST CONFIGURATION
         // ==========================================
         const soundtrackPlaylist = [
             { 
@@ -1143,65 +1186,67 @@
                 file: "Sigrist main theme.mp3", 
                 duration: 126 
             }
+            /* 
+            // FUTURE SONG PLACEHOLDER (UNCOMMENT AND EDIT TO SHOW IN-GAME LATER):
+            , { 
+                title: "Second Track Title", 
+                artist: "Artist Name", 
+                file: "second_track.mp3", 
+                duration: 180 
+            }
+            */
         ];
 
         let currentTrackIndex = 0;
         let isPlaying = false;
         let isShuffle = false;
-        let trackProgressSeconds = 0;
-        let playerTimerInterval = null;
 
-        // HTML5 Audio Player for actual MP3 playback
+        // Dedicated HTML5 Audio Player Instance
         const audioPlayer = new Audio();
+        audioPlayer.src = soundtrackPlaylist.file;
 
-        // PLAYER CONTROLS & UPDATES
+        // Auto-sync progress bar and times directly from browser playback
+        audioPlayer.addEventListener('timeupdate', () => {
+            if (!audioPlayer.duration) return;
+            const current = audioPlayer.currentTime;
+            const total = audioPlayer.duration;
+            const pct = (current / total) * 100;
+
+            const progressBar = document.getElementById('player-progress');
+            if (progressBar) progressBar.style.width = pct + '%';
+
+            const timeCurrent = document.getElementById('player-time-current');
+            if (timeCurrent) timeCurrent.innerText = formatTime(current);
+
+            const timeTotal = document.getElementById('player-time-total');
+            if (timeTotal) {
+                const remaining = Math.max(0, total - current);
+                timeTotal.innerText = '-' + formatTime(remaining);
+            }
+        });
+
+        // Automatically move to next track when song finishes
+        audioPlayer.addEventListener('ended', () => {
+            nextTrack();
+        });
+
+        // TOGGLE PLAY / PAUSE
         function togglePlayPause() {
-            isPlaying = !isPlaying;
             const playBtn = document.getElementById('btn-play-pause');
-            const currentTrack = soundtrackPlaylist[currentTrackIndex];
 
-            if (isPlaying) {
-                playBtn.innerText = '⏸';
-                
-                // Set audio source file if not already set
-                if (!audioPlayer.src.includes(encodeURIComponent(currentTrack.file)) && !audioPlayer.src.includes(currentTrack.file)) {
-                    audioPlayer.src = currentTrack.file;
-                }
+            if (!isPlaying) {
+                isPlaying = true;
+                if (playBtn) playBtn.innerText = '⏸';
 
-                audioPlayer.play().catch(e => {
-                    console.log("Audio waiting for user interaction:", e);
+                // Play actual MP3 file
+                audioPlayer.play().catch(err => {
+                    console.log("Audio playback waiting for user click interaction:", err);
                 });
-                playerTimerInterval = setInterval(updatePlayerProgress, 1000);
             } else {
-                playBtn.innerText = '▶';
+                isPlaying = false;
+                if (playBtn) playBtn.innerText = '▶';
                 audioPlayer.pause();
-                clearInterval(playerTimerInterval);
             }
-        }
-
-        function updatePlayerProgress() {
-            const currentTrack = soundtrackPlaylist[currentTrackIndex];
-            
-            // Sync progress bar with real audio time
-            if (audioPlayer.currentTime) {
-                trackProgressSeconds = Math.floor(audioPlayer.currentTime);
-            } else {
-                trackProgressSeconds++;
-            }
-
-            if (trackProgressSeconds >= currentTrack.duration || audioPlayer.ended) {
-                nextTrack();
-                return;
-            }
-
-            // Update Progress Bar
-            const pct = (trackProgressSeconds / currentTrack.duration) * 100;
-            document.getElementById('player-progress').style.width = pct + '%';
-
-            // Update Timestamps
-            document.getElementById('player-time-current').innerText = formatTime(trackProgressSeconds);
-            const remaining = Math.max(0, currentTrack.duration - trackProgressSeconds);
-            document.getElementById('player-time-total').innerText = '-' + formatTime(remaining);
         }
 
         function formatTime(sec) {
@@ -1211,19 +1256,23 @@
         }
 
         function loadTrack(index) {
-            audioPlayer.pause();
             currentTrackIndex = index;
-            trackProgressSeconds = 0;
-
             const track = soundtrackPlaylist[currentTrackIndex];
+
             audioPlayer.src = track.file;
             audioPlayer.currentTime = 0;
 
-            document.getElementById('player-track-title').innerText = track.title;
-            document.getElementById('player-track-artist').innerText = track.artist;
-            document.getElementById('player-progress').style.width = '0%';
-            document.getElementById('player-time-current').innerText = '0:00';
-            document.getElementById('player-time-total').innerText = '-' + formatTime(track.duration);
+            const titleEl = document.getElementById('player-track-title');
+            const artistEl = document.getElementById('player-track-artist');
+            const progressEl = document.getElementById('player-progress');
+            const currentEl = document.getElementById('player-time-current');
+            const totalEl = document.getElementById('player-time-total');
+
+            if (titleEl) titleEl.innerText = track.title;
+            if (artistEl) artistEl.innerText = track.artist;
+            if (progressEl) progressEl.style.width = '0%';
+            if (currentEl) currentEl.innerText = '0:00';
+            if (totalEl) totalEl.innerText = '-' + formatTime(track.duration);
 
             if (isPlaying) {
                 audioPlayer.play().catch(e => console.log("Audio waiting for user click"));
@@ -1231,107 +1280,8 @@
         }
 
         function nextTrack() {
-            // Loop the single track
-            loadTrack(0);
-        }
-
-        function prevTrack() {
-            loadTrack(0);
-        }
-
-        function toggleShuffle() {
-            isShuffle = !isShuffle;
-            document.getElementById('btn-shuffle').classList.toggle('active', isShuffle);
-        }
-
-        function seekTrack(event) {
-            const bar = event.currentTarget;
-            const clickX = event.offsetX;
-            const totalWidth = bar.clientWidth;
-            const pct = clickX / totalWidth;
-
-            const currentTrack = soundtrackPlaylist[currentTrackIndex];
-            trackProgressSeconds = Math.floor(pct * currentTrack.duration);
-            audioPlayer.currentTime = trackProgressSeconds;
-
-            document.getElementById('player-progress').style.width = (pct * 100) + '%';
-            document.getElementById('player-time-current').innerText = formatTime(trackProgressSeconds);
-            document.getElementById('player-time-total').innerText = '-' + formatTime(currentTrack.duration - trackProgressSeconds);
-        }
-
-        // PLAYER CONTROLS & UPDATES
-        function togglePlayPause() {
-            isPlaying = !isPlaying;
-            const playBtn = document.getElementById('btn-play-pause');
-
-            if (isPlaying) {
-                playBtn.innerText = '⏸';
-                
-                // Play code sound if first track, or fallback
-                if (soundtrackPlaylist[currentTrackIndex].file === 'procedural') {
-                    initProceduralAudio();
-                }
-
-                playerTimerInterval = setInterval(updatePlayerProgress, 1000);
-            } else {
-                playBtn.innerText = '▶';
-                stopProceduralAudio();
-                clearInterval(playerTimerInterval);
-            }
-        }
-
-        function updatePlayerProgress() {
-            const currentTrack = soundtrackPlaylist[currentTrackIndex];
-            trackProgressSeconds++;
-
-            if (trackProgressSeconds >= currentTrack.duration) {
-                nextTrack();
-                return;
-            }
-
-            // Update Progress Bar %
-            const pct = (trackProgressSeconds / currentTrack.duration) * 100;
-            document.getElementById('player-progress').style.width = pct + '%';
-
-            // Update Timestamps
-            document.getElementById('player-time-current').innerText = formatTime(trackProgressSeconds);
-            const remaining = currentTrack.duration - trackProgressSeconds;
-            document.getElementById('player-time-total').innerText = '-' + formatTime(remaining);
-        }
-
-        function formatTime(sec) {
-            const m = Math.floor(sec / 60);
-            const s = Math.floor(sec % 60);
-            return `${m}:${s < 10 ? '0' : ''}${s}`;
-        }
-
-        function loadTrack(index) {
-            stopProceduralAudio();
-            currentTrackIndex = index;
-            trackProgressSeconds = 0;
-
-            const track = soundtrackPlaylist[currentTrackIndex];
-            document.getElementById('player-track-title').innerText = track.title;
-            document.getElementById('player-track-artist').innerText = track.artist;
-            document.getElementById('player-progress').style.width = '0%';
-            document.getElementById('player-time-current').innerText = '0:00';
-            document.getElementById('player-time-total').innerText = '-' + formatTime(track.duration);
-
-            if (isPlaying) {
-                if (track.file === 'procedural') {
-                    initProceduralAudio();
-                }
-            }
-        }
-
-        function nextTrack() {
-            if (isShuffle) {
-                let randomIndex = Math.floor(Math.random() * soundtrackPlaylist.length);
-                loadTrack(randomIndex);
-            } else {
-                let nextIdx = (currentTrackIndex + 1) % soundtrackPlaylist.length;
-                loadTrack(nextIdx);
-            }
+            let nextIdx = (currentTrackIndex + 1) % soundtrackPlaylist.length;
+            loadTrack(nextIdx);
         }
 
         function prevTrack() {
@@ -1341,7 +1291,8 @@
 
         function toggleShuffle() {
             isShuffle = !isShuffle;
-            document.getElementById('btn-shuffle').classList.toggle('active', isShuffle);
+            const shuffleBtn = document.getElementById('btn-shuffle');
+            if (shuffleBtn) shuffleBtn.classList.toggle('active', isShuffle);
         }
 
         function seekTrack(event) {
@@ -1350,12 +1301,9 @@
             const totalWidth = bar.clientWidth;
             const pct = clickX / totalWidth;
 
-            const currentTrack = soundtrackPlaylist[currentTrackIndex];
-            trackProgressSeconds = Math.floor(pct * currentTrack.duration);
-
-            document.getElementById('player-progress').style.width = (pct * 100) + '%';
-            document.getElementById('player-time-current').innerText = formatTime(trackProgressSeconds);
-            document.getElementById('player-time-total').innerText = '-' + formatTime(currentTrack.duration - trackProgressSeconds);
+            if (audioPlayer.duration) {
+                audioPlayer.currentTime = pct * audioPlayer.duration;
+            }
         }
 
 
