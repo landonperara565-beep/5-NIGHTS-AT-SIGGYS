@@ -607,17 +607,22 @@
             <button class="cam-btn" style="margin-top:20px; background:#8b0000; color:#fff;" onclick="toggleCameraMonitor()">CLOSE MONITOR</button>
         </div>
 
-    <!-- 5. JUMPSCARE & WIN SCREENS -->
+    <!-- 5. JUMPSCARE & GAME OVER SCREENS -->
     <div id="gameover-screen" class="screen">
         <div id="jumpscare-container">
-            <img id="jumpscare-img" src="jumpscare.png" alt="JUMPSCARE">
+            <!-- Jumpscare photo plays full screen -->
+            <img id="jumpscare-img" src="jumpscare.png" alt="SIGRIST CAUGHT YOU" onerror="this.style.display='none'; document.getElementById('jumpscare-fallback').style.display='block';">
+            <div id="jumpscare-fallback" style="display:none; font-size:3rem; color:#d32f2f; text-align:center; font-weight:bold;">
+                SIGRIST ATTACKED!
+            </div>
         </div>
-    </div>
 
-    <div id="win-screen" class="screen">
-        <h1 style="font-size: 4rem; color: #4caf50; margin-bottom: 20px;">6:00 AM</h1>
-        <p style="font-size: 1.5rem; color: #fff; margin-bottom: 30px;">You survived Night 1!</p>
-        <button class="continue-btn" onclick="location.reload()">MAIN MENU</button>
+        <!-- Fades in after the jumpscare screen shake -->
+        <div id="gameover-ui" style="display: none; flex-direction: column; align-items: center; z-index: 220;">
+            <h1 style="font-size: 4rem; color: #d32f2f; margin-bottom: 20px; text-shadow: 0 0 15px #ff0000;">GAME OVER</h1>
+            <p style="font-size: 1.5rem; color: #ccc; margin-bottom: 30px;">Sigrist caught you in the dark...</p>
+            <button class="continue-btn" onclick="location.reload()">TRY AGAIN</button>
+        </div>
     </div>
     <!-- JAVASCRIPT GAME LOGIC -->
     <script>
@@ -677,7 +682,7 @@
             }
         });
 
-        // START GAME LOOP
+        // START GAME LOOP WITH SLOWER AI MOVEMENT RATE
         function startShift() {
             gameInterval = setInterval(() => {
                 // Scaled Power Drain Rate
@@ -696,7 +701,7 @@
                 const powerDisplay = document.getElementById('power-display');
                 if (powerDisplay) powerDisplay.innerText = Math.floor(power);
 
-                // Clock Advancement
+                // Time Advancement (80s = 1 Hour)
                 hour += (1 / SECONDS_PER_HOUR);
                 const clockDisplay = document.getElementById('clock-display');
                 if (hour >= 6) {
@@ -706,15 +711,72 @@
                     clockDisplay.innerText = displayHour + " AM";
                 }
 
-                // AI Threat Movement (1 AM Grace Period)
+                // AI THREAT LOGIC: Lowered chance to 0.05 so he moves much slower
                 if (hour >= 1.0) {
-                    if (Math.random() < 0.15) {
+                    if (Math.random() < 0.05) { 
                         moveSigristRandomly();
                     }
                 }
             }, 1000);
         }
 
+        // RANDOMIZED AI PATHING (Linger & Multi-Directional Wandering)
+        function moveSigristRandomly() {
+            const roll = Math.random();
+
+            if (sigristPosition === '1A') {
+                // Classroom -> Hallway (1B)
+                sigristPosition = '1B';
+            } else if (sigristPosition === '1B') {
+                // Hallway -> Main Office (3A) or retreat to Classroom (1A)
+                if (roll < 0.70) {
+                    sigristPosition = '3A';
+                } else {
+                    sigristPosition = '1A';
+                }
+            } else if (sigristPosition === '3A') {
+                // Main Office -> Randomly pick Left Door (2A), Right Door (2B), Hallway (1B), or Classroom (1A)
+                if (roll < 0.30) {
+                    sigristPosition = '2A'; // Left Door
+                } else if (roll < 0.60) {
+                    sigristPosition = '2B'; // Right Door
+                } else if (roll < 0.80) {
+                    sigristPosition = '1B'; // Hallway
+                } else {
+                    sigristPosition = '1A'; // Retreat to Classroom
+                }
+            } else if (sigristPosition === '2A') {
+                // At Left Door
+                if (roll < 0.50) {
+                    if (leftDoorClosed) {
+                        // Blocked! Randomly retreat to Main Office, Hallway, or Classroom
+                        sigristPosition = roll < 0.25 ? '3A' : (roll < 0.40 ? '1B' : '1A');
+                    } else {
+                        sigristPosition = 'OFFICE';
+                        triggerGameOver();
+                    }
+                } else {
+                    // Linger or move to Main Office
+                    sigristPosition = '3A';
+                }
+            } else if (sigristPosition === '2B') {
+                // At Right Door
+                if (roll < 0.50) {
+                    if (rightDoorClosed) {
+                        // Blocked! Randomly retreat to Main Office, Hallway, or Classroom
+                        sigristPosition = roll < 0.25 ? '3A' : (roll < 0.40 ? '1B' : '1A');
+                    } else {
+                        sigristPosition = 'OFFICE';
+                        triggerGameOver();
+                    }
+                } else {
+                    // Linger or move to Main Office
+                    sigristPosition = '3A';
+                }
+            }
+
+            if (monitorOpen) updateCameraPhoto();
+        }
         // SLIDING METAL BLAST DOOR CONTROLS
         function toggleLeftDoor() {
             leftDoorClosed = !leftDoorClosed;
@@ -859,9 +921,24 @@
 
         function triggerGameOver() {
             clearInterval(gameInterval);
+            
+            // Close camera monitor if open
             const monitor = document.getElementById('camera-monitor');
             if (monitor) monitor.classList.remove('active-cam');
+
+            // Show Jumpscare Screen
             showScreen('gameover-screen');
+            const jumpscareBox = document.getElementById('jumpscare-container');
+            const gameoverUI = document.getElementById('gameover-ui');
+            
+            if (jumpscareBox) jumpscareBox.style.display = 'flex';
+            if (gameoverUI) gameoverUI.style.display = 'none';
+
+            // Hold jumpscare effect for 2.5 seconds, then transition to Game Over UI
+            setTimeout(() => {
+                if (jumpscareBox) jumpscareBox.style.display = 'none';
+                if (gameoverUI) gameoverUI.style.display = 'flex';
+            }, 2500);
         }
 
         function triggerWin() {
