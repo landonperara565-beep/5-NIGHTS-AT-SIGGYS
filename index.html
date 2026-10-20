@@ -21,7 +21,7 @@
             color: #fff;
         }
 
-        /* --- SCREEN MANAGEMENT --- */
+        /* --- SCREEN FADE TRANSITIONS --- */
         .screen {
             position: absolute;
             top: 0; left: 0;
@@ -29,7 +29,8 @@
             height: 100vh;
             display: none;
             opacity: 0;
-            transition: opacity 0.4s ease-in-out;
+            transition: opacity 0.8s ease-in-out;
+            z-index: 10;
         }
 
         .screen.active {
@@ -87,7 +88,7 @@
             text-align: left;
             cursor: pointer;
             outline: none;
-            transition: color 0.1s ease, transform 0.1s ease;
+            transition: color 0.15s ease, transform 0.15s ease;
             display: flex;
             align-items: center;
             width: fit-content;
@@ -98,7 +99,7 @@
             margin-right: 12px;
             color: #ffffff;
             font-size: 1.8rem;
-            transition: opacity 0.1s ease;
+            transition: opacity 0.15s ease;
         }
 
         .menu-btn:hover {
@@ -114,8 +115,7 @@
 
         .top-right-info {
             position: absolute;
-            top: 40px;
-            right: 60px;
+            top: 40px; right: 60px;
             text-align: right;
             z-index: 15;
             font-size: 1.6rem;
@@ -146,7 +146,7 @@
             color: #1a1a1a;
             padding: 35px 45px;
             border: 2px solid #3a3225;
-            box-shadow: 0 0 30px rgba(0,0,0,0.9), inset 0 0 50px rgba(0,0,0,0.3);
+            box-shadow: 0 0 40px rgba(0,0,0,0.9), inset 0 0 60px rgba(0,0,0,0.4);
             font-family: 'Times New Roman', Times, serif;
             position: relative;
             transform: rotate(-0.5deg);
@@ -232,216 +232,224 @@
         .continue-btn:hover {
             background: #d32f2f;
             color: #fff;
-            box-shadow: 0 0 10px rgba(211, 47, 47, 0.8);
+            box-shadow: 0 0 12px rgba(211, 47, 47, 0.8);
         }
 
-        /* --- SCREEN 3: PANORAMIC PHYSICAL OFFICE --- */
+        /* --- SCREEN 3: PURE CSS PROCEDURAL FNAF OFFICE --- */
         #office-screen {
             position: relative;
             overflow: hidden;
             width: 100vw;
             height: 100vh;
+            background: #000;
         }
 
-        /* Expanded 180vw office viewport for full left-to-right panning */
+        /* 180vw Panoramic Room Container */
         .office-panoramic {
             position: absolute;
             top: 0; left: 0;
             width: 180vw;
             height: 100vh;
-            background: #0a0a0a url('siggy.png') center/cover no-repeat;
-            transition: transform 0.05s ease-out;
+            background: radial-gradient(circle at 50% 30%, #1a1715 0%, #080706 70%, #000 100%);
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 0 6vw;
+            align-items: flex-end;
+            transition: transform 0.05s ease-out;
         }
 
-        .door-station {
+        /* Office Checkerboard Floor */
+        .office-floor {
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 100%;
+            height: 35vh;
+            background: repeating-linear-gradient(45deg, #111 0px, #111 40px, #222 40px, #222 80px);
+            border-top: 4px solid #050505;
+            box-shadow: inset 0 20px 40px #000;
+        }
+
+        /* Wall Grid and Poster Decoration */
+        .office-backwall {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 65vh;
+            background: linear-gradient(180deg, #100f0e 0%, #1c1815 100%);
+            border-bottom: 8px solid #0d0c0b;
+        }
+
+        .poster {
+            position: absolute;
+            background: #2a241e;
+            border: 2px solid #111;
+            padding: 8px;
+            box-shadow: 3px 3px 10px #000;
+            font-size: 0.8rem;
+            text-align: center;
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        .poster-work { top: 15%; left: 38%; transform: rotate(-2deg); }
+        .poster-watches { top: 18%; right: 38%; transform: rotate(3deg); color: #ccc; }
+
+        /* LEFT & RIGHT HALLWAY DOOR FRAMES */
+        .doorway {
+            position: relative;
+            width: 22vw;
+            height: 65vh;
+            background: #020202;
+            border: 12px solid #1c1a18;
+            border-bottom: none;
+            box-shadow: inset 0 0 50px #000;
+            overflow: hidden;
+            z-index: 15;
+            margin-bottom: 12vh;
+        }
+        .doorway-left { margin-left: 6vw; }
+        .doorway-right { margin-right: 6vw; }
+
+        /* ANIMATED METAL SLIDING DOOR PANELS */
+        .metal-blast-door {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 0%; /* Closed down via JS */
+            background: linear-gradient(90deg, #2c2c2c 0%, #444 30%, #222 70%, #1a1a1a 100%);
+            border-bottom: 10px solid #8b0000;
+            box-shadow: 0 10px 25px #000;
+            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            background: rgba(0,0,0,0.85);
-            padding: 22px;
-            border: 2px solid #444;
+            justify-content: space-around;
+        }
+        .metal-blast-door.closed {
+            height: 100%;
+        }
+        .door-stripe {
+            width: 100%;
+            height: 8px;
+            background: #111;
+        }
+
+        /* DOOR CONTROL PANELS */
+        .door-station {
+            position: absolute;
+            bottom: 20vh;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #151312;
+            padding: 15px;
+            border: 3px solid #333;
             border-radius: 6px;
             z-index: 25;
+            box-shadow: 0 0 15px #000;
         }
+        .station-left { left: 29vw; }
+        .station-right { right: 29vw; }
 
         .ctrl-btn {
             background: #222;
             color: #fff;
             border: 2px solid #555;
-            padding: 14px 22px;
+            padding: 12px 18px;
             font-weight: bold;
             font-family: inherit;
             cursor: pointer;
-            font-size: 1.1rem;
-            box-shadow: 0 0 10px #000;
-        }
-
-        .ctrl-btn.active-door {
-            background: #8b0000;
-            border-color: #ff0000;
-        }
-
-        .ctrl-btn.active-light {
-            background: #b8860b;
-            border-color: #ffff00;
-        }
-
-        .hud-overlay {
-            position: absolute;
-            top: 20px;
-            left: 30px;
-            right: 30px;
-            display: flex;
-            justify-content: space-between;
-            z-index: 40;
-            pointer-events: none;
-        }
-
-        .hud-box {
-            background: rgba(0,0,0,0.75);
-            padding: 12px 20px;
-            border: 1px solid #444;
-            border-radius: 4px;
-        }
-
-        .hud-title {
-            font-size: 1.2rem;
-            color: #d32f2f;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .hud-text {
-            font-size: 1.1rem;
-            color: #fff;
-        }
-
-        .camera-toggle-bar {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 40;
-            background: rgba(0,0,0,0.85);
-            border: 2px solid #666;
-            padding: 12px 60px;
-            cursor: pointer;
-            font-size: 1.3rem;
-            font-weight: bold;
-            letter-spacing: 2px;
+            font-size: 1rem;
+            box-shadow: 0 0 8px #000;
             transition: all 0.2s;
         }
+        .ctrl-btn.active-door { background: #8b0000; border-color: #ff0000; box-shadow: 0 0 12px #ff0000; }
+        .ctrl-btn.active-light { background: #b8860b; border-color: #ffff00; box-shadow: 0 0 12px #ffff00; }
 
-        .camera-toggle-bar:hover {
-            background: #222;
-            border-color: #fff;
-            box-shadow: 0 0 15px rgba(255,255,255,0.4);
-        }
-
-        /* --- SCREEN 4: CAMERA MONITOR OVERLAY --- */
-        #camera-monitor {
+        /* CENTER SECURITY DESK */
+        .security-desk {
             position: absolute;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #050505;
-            z-index: 60;
-            display: none;
-            flex-direction: row;
+            bottom: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 60vw;
+            height: 28vh;
+            background: linear-gradient(180deg, #2d251e 0%, #15100c 100%);
+            border-top: 10px solid #42362c;
+            box-shadow: 0 -10px 30px #000;
+            z-index: 20;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            padding-top: 10px;
         }
 
-        #camera-monitor.active-cam {
-            display: flex;
+        /* DESK PROP: ANIMATED FAN */
+        .desk-fan {
+            width: 70px;
+            height: 90px;
+            position: relative;
         }
+        .fan-base {
+            position: absolute; bottom: 0; left: 15px; width: 40px; height: 12px; background: #111; border-radius: 4px;
+        }
+        .fan-cage {
+            width: 60px; height: 60px; border: 3px solid #444; border-radius: 50%; position: absolute; top: 10px; left: 5px;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .fan-blades {
+            width: 46px; height: 46px; background: #888; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            animation: spinFan 0.15s linear infinite;
+        }
+        @keyframes spinFan { 100% { transform: rotate(360deg); } }
+
+        /* DESK PROP: COFFEE MUG */
+        .desk-mug {
+            width: 35px; height: 42px; background: #b85d19; border-radius: 3px; position: relative;
+            border: 2px solid #803a08; font-size: 0.5rem; text-align: center; color: #fff; padding-top: 10px; font-weight: bold;
+        }
+
+        /* DESK PROP: CRT MONITOR */
+        .desk-monitor {
+            width: 100px; height: 80px; background: #111; border: 4px solid #333; border-radius: 6px;
+            display: flex; justify-content: center; align-items: center; position: relative;
+        }
+        .monitor-screen {
+            width: 85px; height: 65px; background: #0a1f0a; border: 2px solid #111; color: #4caf50;
+            font-size: 0.7rem; font-weight: bold; display: flex; justify-content: center; align-items: center;
+        }
+
+        /* HUD & OVERLAYS */
+        .hud-overlay {
+            position: absolute; top: 20px; left: 30px; right: 30px;
+            display: flex; justify-content: space-between; z-index: 40; pointer-events: none;
+        }
+        .hud-box { background: rgba(0,0,0,0.8); padding: 12px 20px; border: 1px solid #444; border-radius: 4px; }
+        .hud-title { font-size: 1.2rem; color: #d32f2f; font-weight: bold; margin-bottom: 5px; }
+
+        .camera-toggle-bar {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 40;
+            background: rgba(0,0,0,0.85); border: 2px solid #666; padding: 12px 60px; cursor: pointer;
+            font-size: 1.3rem; font-weight: bold; letter-spacing: 2px; transition: all 0.2s;
+        }
+        .camera-toggle-bar:hover { background: #222; border-color: #fff; box-shadow: 0 0 15px rgba(255,255,255,0.4); }
+
+        /* --- SCREEN 4: CAMERA MONITOR --- */
+        #camera-monitor {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #050505; z-index: 60; display: none; flex-direction: row;
+        }
+        #camera-monitor.active-cam { display: flex; }
 
         .camera-feed {
-            flex: 3;
-            height: 100%;
-            position: relative;
-            background: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-right: 2px solid #333;
-            overflow: hidden;
+            flex: 3; height: 100%; position: relative; background: #000;
+            display: flex; justify-content: center; align-items: center; border-right: 2px solid #333; overflow: hidden;
         }
+        #cam-feed-img { width: 100%; height: 100%; object-fit: cover; filter: contrast(120%) brightness(80%); }
+        .camera-label { position: absolute; top: 30px; left: 30px; font-size: 2rem; font-weight: bold; color: #fff; background: rgba(0,0,0,0.6); padding: 5px 15px; }
 
-        #cam-feed-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: contrast(120%) brightness(80%);
-        }
+        .camera-map { flex: 1; height: 100%; background: #0a0a0a; padding: 30px 20px; display: flex; flex-direction: column; justify-content: center; gap: 15px; }
+        .cam-btn { background: #1a1a1a; color: #aaa; border: 1px solid #444; padding: 15px; font-family: inherit; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
+        .cam-btn.selected { background: #2e7d32; color: #fff; border-color: #4caf50; }
 
-        .camera-label {
-            position: absolute;
-            top: 30px;
-            left: 30px;
-            font-size: 2rem;
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 2px 2px 0px #000;
-            z-index: 70;
-            background: rgba(0,0,0,0.6);
-            padding: 5px 15px;
-        }
-
-        .camera-map {
-            flex: 1;
-            height: 100%;
-            background: #0a0a0a;
-            padding: 30px 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .cam-btn {
-            background: #1a1a1a;
-            color: #aaa;
-            border: 1px solid #444;
-            padding: 15px;
-            font-family: inherit;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-        }
-
-        .cam-btn.selected {
-            background: #2e7d32;
-            color: #fff;
-            border-color: #4caf50;
-        }
-
-        /* --- SCREEN 5: JUMPSCARE & WIN SCREENS --- */
-        #gameover-screen, #win-screen {
-            background: #000;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            z-index: 200;
-        }
-
-        #jumpscare-container {
-            position: absolute;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: #000;
-            z-index: 210;
-        }
-
-        #jumpscare-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            animation: scareShake 0.1s infinite;
-        }
+        /* --- SCREEN 5: JUMPSCARE & WIN --- */
+        #gameover-screen, #win-screen { background: #000; justify-content: center; align-items: center; flex-direction: column; z-index: 200; }
+        #jumpscare-container { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; background: #000; z-index: 210; }
+        #jumpscare-img { width: 100%; height: 100%; object-fit: cover; animation: scareShake 0.1s infinite; }
 
         @keyframes scareShake {
             0% { transform: scale(1) translate(0, 0); }
@@ -451,47 +459,21 @@
             100% { transform: scale(1) translate(0, 0); }
         }
 
-        /* --- CRT OVERLAYS --- */
-        .scanlines {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%);
-            background-size: 100% 4px;
-            pointer-events: none;
-            z-index: 100;
-        }
+        /* CRT STATIC OVERLAY */
+        .scanlines { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%); background-size: 100% 4px; pointer-events: none; z-index: 100; }
+        #static-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.12; pointer-events: none; z-index: 99; }
 
-        #static-canvas {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            opacity: 0.12;
-            pointer-events: none;
-            z-index: 99;
-        }
-
-        @keyframes textGlitch {
-            0%, 92%, 100% { transform: translate(0, 0); }
-            93% { transform: translate(-2px, 1px) skewX(5deg); }
-            94% { transform: translate(2px, -1px) skewX(-5deg); }
-            95% { transform: translate(-1px, -1px); }
-        }
-
-        @keyframes blinkSelector {
-            0% { opacity: 1; }
-            100% { opacity: 0.3; }
-        }
+        @keyframes textGlitch { 0%, 92%, 100% { transform: translate(0, 0); } 93% { transform: translate(-2px, 1px) skewX(5deg); } }
+        @keyframes blinkSelector { 0% { opacity: 1; } 100% { opacity: 0.3; } }
     </style>
 </head>
 <body>
 
-    <!-- Main Menu Background Audio -->
     <audio id="homescreen-audio" loop src="menu_music.mp3"></audio>
-
-    <!-- CRT Static & Scanline Overlays -->
     <div class="scanlines"></div>
     <canvas id="static-canvas"></canvas>
 
-    <!-- 1. MAIN MENU SCREEN -->
+    <!-- 1. MAIN MENU -->
     <div id="menu-screen" class="screen active">
         <div class="top-right-info">
             <div>12 AM</div>
@@ -509,27 +491,17 @@
                 <button class="menu-btn" onclick="clickNewGame()">
                     <span class="selector">&gt;</span>New Game
                 </button>
-                <button class="menu-btn">
-                    <span class="selector">&gt;</span>Continue
-                </button>
-                <button class="menu-btn">
-                    <span class="selector">&gt;</span>Custom Night
-                </button>
-                <button class="menu-btn">
-                    <span class="selector">&gt;</span>Settings
-                </button>
-                <button class="menu-btn">
-                    <span class="selector">&gt;</span>Extras
-                </button>
+                <button class="menu-btn"><span class="selector">&gt;</span>Continue</button>
+                <button class="menu-btn"><span class="selector">&gt;</span>Custom Night</button>
+                <button class="menu-btn"><span class="selector">&gt;</span>Settings</button>
+                <button class="menu-btn"><span class="selector">&gt;</span>Extras</button>
             </div>
         </div>
 
-        <div class="copyright">
-            © 2026 Sigrist Entertainment<br>All rights reserved. (probably)
-        </div>
+        <div class="copyright">© 2026 Sigrist Entertainment<br>All rights reserved. (probably)</div>
     </div>
 
-    <!-- 2. EERIE NEWSPAPER STORY SCREEN -->
+    <!-- 2. NEWSPAPER LORE -->
     <div id="newspaper-screen" class="screen">
         <div class="newspaper-container">
             <div class="newspaper-header">
@@ -537,7 +509,7 @@
                 <div class="newspaper-date">
                     <span>Vol. LXIV No. 12</span>
                     <span>OCTOBER 19, 1987</span>
-                    <span>PRICE \$0.25</span>
+                    <span>PRICE $0.25</span>
                 </div>
             </div>
 
@@ -546,7 +518,7 @@
                     <h2>HELP WANTED: NIGHT SECURITY GUARD</h2>
                     <p>Local facility seeking a dependable night security guard to oversee the premises during the midnight shift (12:00 AM to 6:00 AM).</p>
                     <p>Duties include monitoring security cameras, ensuring equipment safety, and remaining vigilant. Must be comfortable working alone in darkness.</p>
-                    <p><strong>Pay:</strong> \$120.00 / week. To apply, contact Sigrist Entertainment.</p>
+                    <p><strong>Pay:</strong> $120.00 / week. To apply, contact Sigrist Entertainment.</p>
                 </div>
 
                 <div class="side-article">
@@ -559,7 +531,7 @@
         <button class="continue-btn" onclick="enterOffice()">[ CLICK TO ENTER OFFICE ]</button>
     </div>
 
-    <!-- 3. PANORAMIC PHYSICAL OFFICE SCREEN -->
+    <!-- 3. PURE CSS PROCEDURAL OFFICE -->
     <div id="office-screen" class="screen">
         <div class="hud-overlay">
             <div class="hud-box">
@@ -572,31 +544,51 @@
             </div>
         </div>
 
-        <!-- Mouse-panning Panoramic Office Body -->
         <div class="office-panoramic" id="office-panoramic">
-            <!-- Left Door Controls -->
-            <div class="door-station">
-                <div style="font-weight:bold; color:#aaa;">LEFT DOOR</div>
+            <div class="office-backwall">
+                <div class="poster poster-work">WORK<br>HARDER</div>
+                <div class="poster poster-watches">SIGRIST<br>HE WATCHES</div>
+            </div>
+            <div class="office-floor"></div>
+
+            <!-- Left Doorway & Metal Blast Door -->
+            <div class="doorway doorway-left" id="hall-left">
+                <div class="metal-blast-door" id="left-blast-door">
+                    <div class="door-stripe"></div><div class="door-stripe"></div><div class="door-stripe"></div>
+                </div>
+            </div>
+
+            <div class="door-station station-left">
                 <button class="ctrl-btn" id="left-door-btn" onclick="toggleLeftDoor()">DOOR: OPEN</button>
                 <button class="ctrl-btn" id="left-light-btn" onclick="toggleLeftLight()">LIGHT: OFF</button>
             </div>
 
-            <!-- Center Desk Marker -->
-            <div style="text-align:center; opacity:0.3; font-weight:bold;">
-                [ SECURITY DESK ]
+            <!-- Center Security Desk with Props -->
+            <div class="security-desk">
+                <div class="desk-fan">
+                    <div class="fan-cage"><div class="fan-blades"></div></div>
+                    <div class="fan-base"></div>
+                </div>
+                <div class="desk-mug">STAY<br>FOCUSED</div>
+                <div class="desk-monitor">
+                    <div class="monitor-screen">CAM 1A</div>
+                </div>
             </div>
 
-            <!-- Right Door Controls -->
-            <div class="door-station">
-                <div style="font-weight:bold; color:#aaa;">RIGHT DOOR</div>
+            <!-- Right Doorway & Metal Blast Door -->
+            <div class="doorway doorway-right" id="hall-right">
+                <div class="metal-blast-door" id="right-blast-door">
+                    <div class="door-stripe"></div><div class="door-stripe"></div><div class="door-stripe"></div>
+                </div>
+            </div>
+
+            <div class="door-station station-right">
                 <button class="ctrl-btn" id="right-door-btn" onclick="toggleRightDoor()">DOOR: OPEN</button>
                 <button class="ctrl-btn" id="right-light-btn" onclick="toggleRightLight()">LIGHT: OFF</button>
             </div>
         </div>
 
-        <div class="camera-toggle-bar" onclick="toggleCameraMonitor()">
-            [ TOGGLE CAMERA MONITOR ]
-        </div>
+        <div class="camera-toggle-bar" onclick="toggleCameraMonitor()">[ TOGGLE CAMERA MONITOR ]</div>
     </div>
 
     <!-- 4. CAMERA MONITOR OVERLAY -->
@@ -627,7 +619,6 @@
         <p style="font-size: 1.5rem; color: #fff; margin-bottom: 30px;">You survived Night 1!</p>
         <button class="continue-btn" onclick="location.reload()">MAIN MENU</button>
     </div>
-
     <!-- JAVASCRIPT GAME LOGIC -->
     <script>
         // State Variables
@@ -642,25 +633,25 @@
         let sigristPosition = '1A'; // '1A', '1B', '2A', '2B', or 'OFFICE'
         let gameInterval = null;
 
-        // 8 MINUTES PER NIGHT CALCULATION: 8 mins = 480 seconds / 6 hours = 80 seconds per hour
+        // 8-MINUTE NIGHT CALCULATION: 480 total seconds / 6 in-game hours = 80 seconds per hour
         const SECONDS_PER_HOUR = 80;
 
-        // Auto-Play Menu Music
+        // Menu Audio Autoplay Handler
         const menuAudio = document.getElementById('homescreen-audio');
         document.body.addEventListener('click', () => {
-            if (menuAudio.paused && document.getElementById('menu-screen').classList.contains('active')) {
+            if (menuAudio && menuAudio.paused && document.getElementById('menu-screen').classList.contains('active')) {
                 menuAudio.play().catch(e => console.log("Audio awaiting user interaction"));
             }
         }, { once: true });
 
-        // Screen Switcher
+        // Smooth Screen Fade Transition
         function showScreen(screenId) {
             const screens = document.querySelectorAll('.screen');
             screens.forEach(s => s.classList.remove('active'));
             setTimeout(() => {
                 const target = document.getElementById(screenId);
                 if (target) target.classList.add('active');
-            }, 300);
+            }, 400);
         }
 
         function clickNewGame() {
@@ -668,7 +659,7 @@
         }
 
         function enterOffice() {
-            menuAudio.pause();
+            if (menuAudio) menuAudio.pause();
             showScreen('office-screen');
             startShift();
         }
@@ -678,19 +669,18 @@
         document.addEventListener('mousemove', (e) => {
             if (!document.getElementById('office-screen').classList.contains('active')) return;
             
-            // Map mouse position ratio across full screen width (0.0 to 1.0)
             const mousePercent = e.clientX / window.innerWidth;
-            
-            // Office width is 180vw, meaning the max translation offset is -80vw
-            const maxPanVW = 80; 
+            const maxPanVW = 80; // 180vw office width minus 100vw viewport width
             const panOffset = -1 * (mousePercent * maxPanVW);
-            officePan.style.transform = `translateX(${panOffset}vw)`;
+            if (officePan) {
+                officePan.style.transform = `translateX(${panOffset}vw)`;
+            }
         });
 
         // START GAME LOOP
         function startShift() {
             gameInterval = setInterval(() => {
-                // Scaled Power Drain Rate for 8-Minute Shift
+                // Scaled Power Drain Rate
                 let drainRate = 0.08; 
                 if (leftDoorClosed) drainRate += 0.12;
                 if (rightDoorClosed) drainRate += 0.12;
@@ -703,72 +693,107 @@
                     power = 0;
                     triggerGameOver();
                 }
-                document.getElementById('power-display').innerText = Math.floor(power);
+                const powerDisplay = document.getElementById('power-display');
+                if (powerDisplay) powerDisplay.innerText = Math.floor(power);
 
-                // Time Advancement (80 seconds per hour)
+                // Clock Advancement
                 hour += (1 / SECONDS_PER_HOUR);
+                const clockDisplay = document.getElementById('clock-display');
                 if (hour >= 6) {
                     triggerWin();
-                } else {
+                } else if (clockDisplay) {
                     let displayHour = Math.floor(hour) === 0 ? 12 : Math.floor(hour);
-                    document.getElementById('clock-display').innerText = displayHour + " AM";
+                    clockDisplay.innerText = displayHour + " AM";
                 }
 
-                // AI THREAT LOGIC (1 AM Grace Period + Randomized Movement)
-                if (hour >= 1.0) { // Will not move before 1 AM
-                    if (Math.random() < 0.15) { // Periodic chance check every second
+                // AI Threat Movement (1 AM Grace Period)
+                if (hour >= 1.0) {
+                    if (Math.random() < 0.15) {
                         moveSigristRandomly();
                     }
                 }
             }, 1000);
         }
 
-        // DOOR & LIGHT CONTROLS
+        // SLIDING METAL BLAST DOOR CONTROLS
         function toggleLeftDoor() {
             leftDoorClosed = !leftDoorClosed;
             const btn = document.getElementById('left-door-btn');
-            btn.innerText = leftDoorClosed ? "DOOR: CLOSED" : "DOOR: OPEN";
-            btn.classList.toggle('active-door', leftDoorClosed);
+            const blastDoor = document.getElementById('left-blast-door');
+            
+            if (btn) {
+                btn.innerText = leftDoorClosed ? "DOOR: CLOSED" : "DOOR: OPEN";
+                btn.classList.toggle('active-door', leftDoorClosed);
+            }
+            if (blastDoor) {
+                blastDoor.classList.toggle('closed', leftDoorClosed);
+            }
         }
 
         function toggleRightDoor() {
             rightDoorClosed = !rightDoorClosed;
             const btn = document.getElementById('right-door-btn');
-            btn.innerText = rightDoorClosed ? "DOOR: CLOSED" : "DOOR: OPEN";
-            btn.classList.toggle('active-door', rightDoorClosed);
+            const blastDoor = document.getElementById('right-blast-door');
+            
+            if (btn) {
+                btn.innerText = rightDoorClosed ? "DOOR: CLOSED" : "DOOR: OPEN";
+                btn.classList.toggle('active-door', rightDoorClosed);
+            }
+            if (blastDoor) {
+                blastDoor.classList.toggle('closed', rightDoorClosed);
+            }
         }
 
+        // DOORWAY LIGHT CONTROLS
         function toggleLeftLight() {
             leftLightOn = !leftLightOn;
             const btn = document.getElementById('left-light-btn');
-            btn.innerText = leftLightOn ? "LIGHT: ON" : "LIGHT: OFF";
-            btn.classList.toggle('active-light', leftLightOn);
+            const hallLeft = document.getElementById('hall-left');
+            
+            if (btn) {
+                btn.innerText = leftLightOn ? "LIGHT: ON" : "LIGHT: OFF";
+                btn.classList.toggle('active-light', leftLightOn);
+            }
+            if (hallLeft) {
+                hallLeft.style.background = leftLightOn ? (sigristPosition === '2A' ? '#4a0d0d' : '#33322f') : '#020202';
+            }
         }
 
         function toggleRightLight() {
             rightLightOn = !rightLightOn;
             const btn = document.getElementById('right-light-btn');
-            btn.innerText = rightLightOn ? "LIGHT: ON" : "LIGHT: OFF";
-            btn.classList.toggle('active-light', rightLightOn);
+            const hallRight = document.getElementById('hall-right');
+            
+            if (btn) {
+                btn.innerText = rightLightOn ? "LIGHT: ON" : "LIGHT: OFF";
+                btn.classList.toggle('active-light', rightLightOn);
+            }
+            if (hallRight) {
+                hallRight.style.background = rightLightOn ? (sigristPosition === '2B' ? '#4a0d0d' : '#33322f') : '#020202';
+            }
         }
 
         // CAMERA MONITOR
         function toggleCameraMonitor() {
             monitorOpen = !monitorOpen;
             const monitor = document.getElementById('camera-monitor');
-            if (monitorOpen) {
-                monitor.classList.add('active-cam');
-                updateCameraPhoto();
-            } else {
-                monitor.classList.remove('active-cam');
+            if (monitor) {
+                if (monitorOpen) {
+                    monitor.classList.add('active-cam');
+                    updateCameraPhoto();
+                } else {
+                    monitor.classList.remove('active-cam');
+                }
             }
         }
 
         function switchCamera(cam) {
             currentCam = cam;
             document.querySelectorAll('.cam-btn').forEach(b => b.classList.remove('selected'));
-            document.getElementById('btn-cam' + cam.toLowerCase()).classList.add('selected');
-            document.getElementById('cam-label').innerText = 'CAM ' + cam;
+            const selBtn = document.getElementById('btn-cam' + cam.toLowerCase());
+            if (selBtn) selBtn.classList.add('selected');
+            const label = document.getElementById('cam-label');
+            if (label) label.innerText = 'CAM ' + cam;
             updateCameraPhoto();
         }
 
@@ -776,10 +801,12 @@
             const imgTag = document.getElementById('cam-feed-img');
             const camKey = currentCam.toLowerCase();
 
-            if (sigristPosition === currentCam) {
-                imgTag.src = `cam${camKey}_sigrist.png`; 
-            } else {
-                imgTag.src = `cam${camKey}_empty.png`;
+            if (imgTag) {
+                if (sigristPosition === currentCam) {
+                    imgTag.src = `cam${camKey}_sigrist.png`; 
+                } else {
+                    imgTag.src = `cam${camKey}_empty.png`;
+                }
             }
         }
 
@@ -788,40 +815,36 @@
             const roll = Math.random();
 
             if (sigristPosition === '1A') {
-                // Move from Stage (1A) to Main Hallway (1B)
                 sigristPosition = '1B';
             } else if (sigristPosition === '1B') {
-                // Random choice: Left Hall (2A), Right Hall (2B), or return to Stage (1A)
                 if (roll < 0.42) {
                     sigristPosition = '2A';
                 } else if (roll < 0.84) {
                     sigristPosition = '2B';
                 } else {
-                    sigristPosition = '1A'; // Retreat
+                    sigristPosition = '1A';
                 }
             } else if (sigristPosition === '2A') {
-                // At Left Door Blindspot
                 if (roll < 0.60) {
                     if (leftDoorClosed) {
-                        sigristPosition = '1B'; // Blocked by left door!
+                        sigristPosition = '1B'; // Door blocked him!
                     } else {
                         sigristPosition = 'OFFICE';
                         triggerGameOver();
                     }
                 } else {
-                    sigristPosition = '1B'; // Reposition back to hallway
+                    sigristPosition = '1B';
                 }
             } else if (sigristPosition === '2B') {
-                // At Right Door Blindspot
                 if (roll < 0.60) {
                     if (rightDoorClosed) {
-                        sigristPosition = '1B'; // Blocked by right door!
+                        sigristPosition = '1B'; // Door blocked him!
                     } else {
                         sigristPosition = 'OFFICE';
                         triggerGameOver();
                     }
                 } else {
-                    sigristPosition = '1B'; // Reposition back to hallway
+                    sigristPosition = '1B';
                 }
             }
 
@@ -830,39 +853,43 @@
 
         function triggerGameOver() {
             clearInterval(gameInterval);
-            document.getElementById('camera-monitor').classList.remove('active-cam');
+            const monitor = document.getElementById('camera-monitor');
+            if (monitor) monitor.classList.remove('active-cam');
             showScreen('gameover-screen');
         }
 
         function triggerWin() {
             clearInterval(gameInterval);
-            document.getElementById('camera-monitor').classList.remove('active-cam');
+            const monitor = document.getElementById('camera-monitor');
+            if (monitor) monitor.classList.remove('active-cam');
             showScreen('win-screen');
         }
 
-        // CRT Static Generator
+        // CRT STATIC GENERATOR
         const canvas = document.getElementById('static-canvas');
-        const ctx = canvas.getContext('2d');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
 
-        function resizeCanvas() {
-            canvas.width = window.innerWidth / 2;
-            canvas.height = window.innerHeight / 2;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        function drawStatic() {
-            const imageData = ctx.createImageData(canvas.width, canvas.height);
-            const buffer = new Uint32Array(imageData.data.buffer);
-            for (let i = 0; i < buffer.length; i++) {
-                if (Math.random() < 0.1) {
-                    buffer[i] = 0xffffffff;
-                }
+            function resizeCanvas() {
+                canvas.width = window.innerWidth / 2;
+                canvas.height = window.innerHeight / 2;
             }
-            ctx.putImageData(imageData, 0, 0);
-            requestAnimationFrame(drawStatic);
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            function drawStatic() {
+                const imageData = ctx.createImageData(canvas.width, canvas.height);
+                const buffer = new Uint32Array(imageData.data.buffer);
+                for (let i = 0; i < buffer.length; i++) {
+                    if (Math.random() < 0.1) {
+                        buffer[i] = 0xffffffff;
+                    }
+                }
+                ctx.putImageData(imageData, 0, 0);
+                requestAnimationFrame(drawStatic);
+            }
+            drawStatic();
         }
-        drawStatic();
     </script>
 </body>
 </html>
