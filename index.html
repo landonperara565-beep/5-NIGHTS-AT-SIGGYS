@@ -256,6 +256,179 @@
             align-items: flex-end;
             transition: transform 0.05s ease-out;
         }
+        /* --- SPOTIFY-STYLE MEDIA PLAYER WIDGET --- */
+.music-player-card {
+    position: absolute;
+    bottom: 25px;
+    right: 30px;
+    width: 380px;
+    background-color: #121212;
+    border: 1px solid #282828;
+    border-radius: 16px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85);
+    z-index: 30;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Left Album Art Square */
+.player-album-art {
+    width: 72px;
+    height: 72px;
+    background-color: #282828;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.album-icon {
+    width: 42px;
+    height: 42px;
+    background-color: #1ed760; /* Iconic Green Accent */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(30, 215, 96, 0.4);
+}
+
+.album-icon svg {
+    fill: #121212;
+    width: 24px;
+    height: 24px;
+}
+
+/* Right Side Track Info & Controls */
+.player-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.player-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.track-meta {
+    display: flex;
+    flex-direction: column;
+}
+
+.track-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.2;
+}
+
+.track-artist {
+    font-size: 0.8rem;
+    color: #b3b3b3;
+    margin-top: 2px;
+}
+
+.btn-icon-action {
+    background: none;
+    border: none;
+    color: #b3b3b3;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0;
+    transition: color 0.15s;
+}
+
+.btn-icon-action:hover {
+    color: #ffffff;
+}
+
+/* Progress Bar & Timestamps */
+.progress-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 2px;
+}
+
+.progress-bar-bg {
+    width: 100%;
+    height: 4px;
+    background-color: #4d4d4d;
+    border-radius: 2px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.progress-bar-fill {
+    width: 0%;
+    height: 100%;
+    background-color: #ffffff;
+    transition: width 0.2s linear;
+}
+
+.timestamps {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.68rem;
+    color: #b3b3b3;
+}
+
+/* Bottom Controls Row */
+.player-controls-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+}
+
+.btn-ctrl {
+    background: none;
+    border: none;
+    color: #b3b3b3;
+    cursor: pointer;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+}
+
+.btn-ctrl:hover {
+    color: #ffffff;
+    transform: scale(1.08);
+}
+
+.btn-ctrl.active {
+    color: #1ed760;
+}
+
+/* Main Circular Play/Pause Button */
+.btn-play-circle {
+    width: 36px;
+    height: 36px;
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 50%;
+    font-size: 1rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.2);
+}
+
+.btn-play-circle:hover {
+    transform: scale(1.08);
+    background-color: #f0f0f0;
+}
 
         /* Office Checkerboard Floor */
         .office-floor {
@@ -478,6 +651,48 @@
         <div class="top-right-info">
             <div>12 AM</div>
             <div style="font-size:1.1rem; color:#ccc;">Night 1</div>
+        </div>
+        <!-- MUSIC PLAYER WIDGET (MATCHING YOUR UPLOADED DESIGN) -->
+        <div class="music-player-card">
+            <!-- Left Album Cover Art -->
+            <div class="player-album-art">
+                <div class="album-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 14.41c-.2.32-.62.42-.94.23-2.58-1.58-5.83-1.94-9.66-1.07-.36.08-.72-.14-.8-.5-.08-.36.14-.72.5-.8 4.19-.96 7.79-.54 10.67 1.22.32.18.42.61.23.92zm1.23-2.74c-.25.41-.78.54-1.19.29-2.95-1.81-7.46-2.34-10.96-1.28-.46.14-.94-.12-1.08-.58-.14-.46.12-.94.58-1.08 4.01-1.21 8.98-.62 12.36 1.46.41.25.54.78.29 1.19zm.11-2.86c-3.54-2.1-9.38-2.29-12.78-1.26-.54.16-1.11-.14-1.27-.68-.16-.54.14-1.11.68-1.27 3.91-1.19 10.36-.96 14.43 1.45.49.29.65.93.36 1.42-.29.48-.93.65-1.42.34z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Track Info, Timestamps & Controls -->
+            <div class="player-details">
+                <div class="player-header">
+                    <div class="track-meta">
+                        <span class="track-title" id="player-track-title">Menu Horror Ambience</span>
+                        <span class="track-artist" id="player-track-artist">Procedural Synth</span>
+                    </div>
+                    <button class="btn-icon-action" title="Add Song">+</button>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress-container">
+                    <div class="progress-bar-bg" onclick="seekTrack(event)">
+                        <div class="progress-bar-fill" id="player-progress"></div>
+                    </div>
+                    <div class="timestamps">
+                        <span id="player-time-current">0:00</span>
+                        <span id="player-time-total">-1:00</span>
+                    </div>
+                </div>
+
+                <!-- Bottom Control Buttons -->
+                <div class="player-controls-row">
+                    <button class="btn-ctrl" id="btn-shuffle" onclick="toggleShuffle()" title="Shuffle">🔀</button>
+                    <button class="btn-ctrl" onclick="prevTrack()" title="Previous">⏮</button>
+                    <button class="btn-ctrl btn-play-circle" id="btn-play-pause" onclick="togglePlayPause()" title="Play/Pause">▶</button>
+                    <button class="btn-ctrl" onclick="nextTrack()" title="Next">⏭</button>
+                    <button class="btn-ctrl" title="Timer">⏱</button>
+                </div>
+            </div>
         </div>
 
         <div class="content-left">
@@ -918,6 +1133,181 @@
 
             if (monitorOpen) updateCameraPhoto();
         }
+         // ==========================================
+        // SOUNDTRACK PLAYLIST & PLACEHOLDERS
+        // ==========================================
+        const soundtrackPlaylist = [
+            { 
+                title: "Menu Horror Ambience", 
+                artist: "Procedural Code Synth", 
+                file: "procedural", // Built-in Web Audio creepy generator
+                duration: 60 
+            },
+            { 
+                title: "Sigrist Main Theme", 
+                artist: "Custom Track 1", 
+                file: "menu_track1.mp3", // PLACEHOLDER: Replace with your file path
+                duration: 135 
+            },
+            { 
+                title: "Dark Hallways", 
+                artist: "Custom Track 2", 
+                file: "menu_track2.mp3", // PLACEHOLDER: Replace with your file path
+                duration: 180 
+            }
+        ];
+
+        let currentTrackIndex = 0;
+        let isPlaying = false;
+        let isShuffle = false;
+        let trackProgressSeconds = 0;
+        let playerTimerInterval = null;
+
+        // Built-in Web Audio Horror Sound Synth
+        let audioCtx = null;
+        let synthOsc1 = null;
+        let synthOsc2 = null;
+        let synthGain = null;
+
+        function initProceduralAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            // Low drone horror oscillator
+            synthOsc1 = audioCtx.createOscillator();
+            synthOsc2 = audioCtx.createOscillator();
+            synthGain = audioCtx.createGain();
+
+            synthOsc1.type = 'sawtooth';
+            synthOsc2.type = 'sine';
+
+            // Eerie detuned pitch
+            synthOsc1.frequency.setValueAtTime(55, audioCtx.currentTime); // A1 note
+            synthOsc2.frequency.setValueAtTime(58.7, audioCtx.currentTime); // Dissonant Bb1 detune
+
+            synthGain.gain.setValueAtTime(0.08, audioCtx.currentTime); // Low volume background hum
+
+            synthOsc1.connect(synthGain);
+            synthOsc2.connect(synthGain);
+            synthGain.connect(audioCtx.destination);
+
+            synthOsc1.start();
+            synthOsc2.start();
+        }
+
+        function stopProceduralAudio() {
+            if (synthGain && audioCtx) {
+                synthGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+                setTimeout(() => {
+                    if (synthOsc1) synthOsc1.stop();
+                    if (synthOsc2) synthOsc2.stop();
+                }, 300);
+            }
+        }
+
+        // PLAYER CONTROLS & UPDATES
+        function togglePlayPause() {
+            isPlaying = !isPlaying;
+            const playBtn = document.getElementById('btn-play-pause');
+
+            if (isPlaying) {
+                playBtn.innerText = '⏸';
+                
+                // Play code sound if first track, or fallback
+                if (soundtrackPlaylist[currentTrackIndex].file === 'procedural') {
+                    initProceduralAudio();
+                }
+
+                playerTimerInterval = setInterval(updatePlayerProgress, 1000);
+            } else {
+                playBtn.innerText = '▶';
+                stopProceduralAudio();
+                clearInterval(playerTimerInterval);
+            }
+        }
+
+        function updatePlayerProgress() {
+            const currentTrack = soundtrackPlaylist[currentTrackIndex];
+            trackProgressSeconds++;
+
+            if (trackProgressSeconds >= currentTrack.duration) {
+                nextTrack();
+                return;
+            }
+
+            // Update Progress Bar %
+            const pct = (trackProgressSeconds / currentTrack.duration) * 100;
+            document.getElementById('player-progress').style.width = pct + '%';
+
+            // Update Timestamps
+            document.getElementById('player-time-current').innerText = formatTime(trackProgressSeconds);
+            const remaining = currentTrack.duration - trackProgressSeconds;
+            document.getElementById('player-time-total').innerText = '-' + formatTime(remaining);
+        }
+
+        function formatTime(sec) {
+            const m = Math.floor(sec / 60);
+            const s = Math.floor(sec % 60);
+            return `${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        function loadTrack(index) {
+            stopProceduralAudio();
+            currentTrackIndex = index;
+            trackProgressSeconds = 0;
+
+            const track = soundtrackPlaylist[currentTrackIndex];
+            document.getElementById('player-track-title').innerText = track.title;
+            document.getElementById('player-track-artist').innerText = track.artist;
+            document.getElementById('player-progress').style.width = '0%';
+            document.getElementById('player-time-current').innerText = '0:00';
+            document.getElementById('player-time-total').innerText = '-' + formatTime(track.duration);
+
+            if (isPlaying) {
+                if (track.file === 'procedural') {
+                    initProceduralAudio();
+                }
+            }
+        }
+
+        function nextTrack() {
+            if (isShuffle) {
+                let randomIndex = Math.floor(Math.random() * soundtrackPlaylist.length);
+                loadTrack(randomIndex);
+            } else {
+                let nextIdx = (currentTrackIndex + 1) % soundtrackPlaylist.length;
+                loadTrack(nextIdx);
+            }
+        }
+
+        function prevTrack() {
+            let prevIdx = (currentTrackIndex - 1 + soundtrackPlaylist.length) % soundtrackPlaylist.length;
+            loadTrack(prevIdx);
+        }
+
+        function toggleShuffle() {
+            isShuffle = !isShuffle;
+            document.getElementById('btn-shuffle').classList.toggle('active', isShuffle);
+        }
+
+        function seekTrack(event) {
+            const bar = event.currentTarget;
+            const clickX = event.offsetX;
+            const totalWidth = bar.clientWidth;
+            const pct = clickX / totalWidth;
+
+            const currentTrack = soundtrackPlaylist[currentTrackIndex];
+            trackProgressSeconds = Math.floor(pct * currentTrack.duration);
+
+            document.getElementById('player-progress').style.width = (pct * 100) + '%';
+            document.getElementById('player-time-current').innerText = formatTime(trackProgressSeconds);
+            document.getElementById('player-time-total').innerText = '-' + formatTime(currentTrack.duration - trackProgressSeconds);
+        }
+
 
         function triggerGameOver() {
             clearInterval(gameInterval);
