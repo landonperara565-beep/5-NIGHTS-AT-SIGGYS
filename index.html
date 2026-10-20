@@ -601,11 +601,11 @@
         <div class="camera-map">
             <button class="cam-btn selected" id="btn-cam1a" onclick="switchCamera('1A')">CAM 1A (Classroom)</button>
             <button class="cam-btn" id="btn-cam1b" onclick="switchCamera('1B')">CAM 1B (Hallway)</button>
+            <button class="cam-btn" id="btn-cam3a" onclick="switchCamera('3A')">CAM 3A (Main Office)</button>
             <button class="cam-btn" id="btn-cam2a" onclick="switchCamera('2A')">CAM 2A (Left Door)</button>
             <button class="cam-btn" id="btn-cam2b" onclick="switchCamera('2B')">CAM 2B (Right Door)</button>
             <button class="cam-btn" style="margin-top:20px; background:#8b0000; color:#fff;" onclick="toggleCameraMonitor()">CLOSE MONITOR</button>
         </div>
-    </div>
 
     <!-- 5. JUMPSCARE & WIN SCREENS -->
     <div id="gameover-screen" class="screen">
@@ -630,7 +630,7 @@
         let rightLightOn = false;
         let monitorOpen = false;
         let currentCam = '1A';
-        let sigristPosition = '1A'; // '1A', '1B', '2A', '2B', or 'OFFICE'
+       let sigristPosition = '1A'; // '1A', '1B', '3A', '2A', '2B', or 'OFFICE'
         let gameInterval = null;
 
         // 8-MINUTE NIGHT CALCULATION: 480 total seconds / 6 in-game hours = 80 seconds per hour
@@ -810,41 +810,47 @@
             }
         }
 
-        // RANDOMIZED AI MOVEMENT PATHING
+        // UPDATED RANDOMIZED AI MOVEMENT PATHING WITH MAIN OFFICE (CAM 3A)
         function moveSigristRandomly() {
             const roll = Math.random();
 
             if (sigristPosition === '1A') {
                 sigristPosition = '1B';
             } else if (sigristPosition === '1B') {
+                if (roll < 0.75) {
+                    sigristPosition = '3A';
+                } else {
+                    sigristPosition = '1A';
+                }
+            } else if (sigristPosition === '3A') {
                 if (roll < 0.42) {
                     sigristPosition = '2A';
                 } else if (roll < 0.84) {
                     sigristPosition = '2B';
                 } else {
-                    sigristPosition = '1A';
+                    sigristPosition = '1B';
                 }
             } else if (sigristPosition === '2A') {
                 if (roll < 0.60) {
                     if (leftDoorClosed) {
-                        sigristPosition = '1B'; // Door blocked him!
+                        sigristPosition = '3A';
                     } else {
                         sigristPosition = 'OFFICE';
                         triggerGameOver();
                     }
                 } else {
-                    sigristPosition = '1B';
+                    sigristPosition = '3A';
                 }
             } else if (sigristPosition === '2B') {
                 if (roll < 0.60) {
                     if (rightDoorClosed) {
-                        sigristPosition = '1B'; // Door blocked him!
+                        sigristPosition = '3A';
                     } else {
                         sigristPosition = 'OFFICE';
                         triggerGameOver();
                     }
                 } else {
-                    sigristPosition = '1B';
+                    sigristPosition = '3A';
                 }
             }
 
