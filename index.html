@@ -302,6 +302,98 @@
     box-shadow: 0 0 25px rgba(255, 0, 0, 0.8);
     transform: scale(1.05);
 }
+        /* --- ANIMATED HORROR TITLE (EXACT IMAGE MATCH & GLITCH EFFECT) --- */
+.title-box {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 0.95;
+}
+
+/* "Five Nights" - Large Distressed White with Red Glow */
+.title-fn {
+    font-size: 4.8rem;
+    color: #ffffff;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-shadow: 
+        0 0 10px rgba(255, 0, 0, 0.8),
+        0 0 20px rgba(139, 0, 0, 0.6),
+        3px 3px 0px #000000;
+    font-family: 'Impact', 'Arial Black', 'Courier New', monospace;
+}
+
+/* "at" - Indented White Row */
+.title-at {
+    font-size: 3.2rem;
+    color: #ffffff;
+    font-weight: 900;
+    margin-left: 110px;
+    margin-top: -5px;
+    margin-bottom: -5px;
+    text-shadow: 
+        0 0 10px rgba(255, 0, 0, 0.8),
+        3px 3px 0px #000000;
+    font-family: 'Impact', 'Arial Black', 'Courier New', monospace;
+}
+
+/* "Sigrist" - Massive Vibrant Red with Glowing Glitch Animation */
+.title-sigrist {
+    font-size: 6.8rem;
+    color: #ff0000;
+    font-weight: 900;
+    letter-spacing: 3px;
+    font-family: 'Impact', 'Arial Black', 'Courier New', monospace;
+    text-transform: capitalize;
+    position: relative;
+    display: inline-block;
+    animation: sigristGlitch 2.2s infinite ease-in-out;
+}
+
+/* High-Energy Glitch & Pulse Keyframe Animation */
+@keyframes sigristGlitch {
+    0% {
+        text-shadow: 
+            0 0 15px #ff0000, 
+            0 0 30px #8b0000, 
+            0 0 50px #ff0000,
+            4px 4px 0px #000000;
+        transform: scale(1);
+    }
+    90% {
+        text-shadow: 
+            0 0 15px #ff0000, 
+            0 0 30px #8b0000, 
+            0 0 50px #ff0000,
+            4px 4px 0px #000000;
+        transform: scale(1);
+        color: #ff0000;
+    }
+    91% {
+        transform: translate(-4px, 2px) scale(1.02);
+        text-shadow: -4px 0 #00ffff, 4px 0 #ff0000, 0 0 40px #ff0000;
+        color: #ffffff;
+    }
+    93% {
+        transform: translate(4px, -2px) scale(0.99);
+        text-shadow: 4px 0 #00ffff, -4px 0 #ff0000, 0 0 60px #ff0000;
+        color: #ff0000;
+    }
+    95% {
+        transform: translate(0, 0) scale(1.03);
+        text-shadow: 0 0 25px #ffffff, 0 0 50px #ff0000;
+    }
+    100% {
+        text-shadow: 
+            0 0 15px #ff0000, 
+            0 0 30px #8b0000, 
+            0 0 50px #ff0000,
+            4px 4px 0px #000000;
+        transform: scale(1);
+        color: #ff0000;
+    }
+}
 
 /* --- FULL-SCREEN CAMERA DISPLAY FIX --- */
 #cam-feed-container {
@@ -776,10 +868,11 @@
     <div class="scanlines"></div>
     <canvas id="static-canvas"></canvas>
 
-    <!-- 1. MAIN TITLE SCREEN -->
-    <div id="menu-screen" class="screen active">
+    <!-- MAIN TITLE DISPLAY -->
         <div class="title-box">
-            <h1 class="game-title">Five Nights<br>at<br>Sigrist</h1>
+            <span class="title-fn">Five Nights</span>
+            <span class="title-at">at</span>
+            <span class="title-sigrist">Sigrist</span>
         </div>
 
         <div class="menu-container">
@@ -844,29 +937,26 @@
         </div>
     </div>
 
-     <!-- 1. VINTAGE HELP WANTED NEWSPAPER INTRO -->
-    <div id="newspaper-screen" class="screen">
+     <!-- 1. NEWSPAPER INTRO SCREEN -->
+    <div id="newspaper-screen" class="screen modal-screen">
         <div class="newspaper-clipping">
             <div class="newspaper-header">
-                <div style="font-size:0.8rem; letter-spacing:3px; margin-bottom:3px;">THE DAILY GAZETTE — OBITUARIES & CLASSIFIEDS</div>
-                <h1 class="newspaper-headline">HELP WANTED</h1>
-                <div class="newspaper-subhead">NIGHT SECURITY GUARD NEEDED IMMEDIATELY</div>
+                <div style="font-size:0.8rem; letter-spacing:2px; margin-bottom:4px; font-weight:bold; color:#444;">THE DAILY GAZETTE — CLASSIFIEDS</div>
+                <h1 class="newspaper-headline" style="font-size:2.8rem; margin:0; color:#111;">HELP WANTED</h1>
+                <div class="newspaper-subhead" style="font-size:0.85rem; letter-spacing:1px; margin-top:5px; color:#333;">NIGHT SECURITY GUARD NEEDED</div>
             </div>
 
-            <div class="newspaper-body">
-                <div>
-                    <strong>GRAND RE-OPENING:</strong> Local educational facility is looking for a night security officer to monitor cameras and keep equipment safe from 12:00 AM to 6:00 AM.<br><br>
-                    Must be comfortable working alone in dark hallways and managing local facility power systems.
-                </div>
-                <div>
-                    <strong>COMPENSATION:</strong> $120.00 / week.<br><br>
-                    <em>"Sigrist Entertainment is not responsible for injury, loss of property, or sudden dark encounters."</em><br><br>
-                    <strong>CALL: 1-800-SIGRIST</strong>
-                </div>
+            <div class="newspaper-body" style="color:#222; margin:20px 0; font-size:0.95rem; line-height:1.4;">
+                <p><strong>POSITION:</strong> Night Security Guard from 12 AM to 6 AM [1].</p>
+                <p><strong>DUTIES:</strong> Monitor security cameras and ensure local facility safety [1].</p>
+                <p><strong>PAY:</strong> $120.00 / week [1].</p>
             </div>
 
-            <div style="text-align: center;">
-                <button class="continue-btn" style="background:#111; color:#fff; border:2px solid #444;" onclick="enterOffice()">ACCEPT JOB & ENTER OFFICE</button>
+            <!-- START GAME BUTTON -->
+            <div style="text-align: center; margin-top:20px;">
+                <button class="continue-btn" id="btn-enter-office" onclick="enterOffice()" style="background:#8b0000; color:#fff; padding:14px 28px; font-size:1.1rem; border:none; cursor:pointer; font-weight:bold; border-radius:4px; box-shadow:0 0 15px rgba(139,0,0,0.6);">
+                    ACCEPT JOB & ENTER OFFICE
+                </button>
             </div>
         </div>
     </div>
@@ -1009,6 +1099,31 @@
     </div>
      <!-- JAVASCRIPT GAME LOGIC -->
     <script>
+       
+        function enterOffice() {
+            console.log("Entering Security Office...");
+            showScreen('office-screen');
+            startShift();
+        }
+
+        // RELIABLE SCREEN SWITCHING ENGINE
+        function showScreen(screenId) {
+            // Hide all active screens
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(s => {
+                s.classList.remove('active');
+                s.style.display = 'none';
+            });
+
+            // Target and show the requested screen
+            const target = document.getElementById(screenId);
+            if (target) {
+                target.style.display = 'flex';
+                setTimeout(() => {
+                    target.classList.add('active');
+                }, 20);
+            }
+        }
         // ==========================================
         // 1. MUSIC PLAYER PLAYLIST & CONTROLLER
         // ==========================================
