@@ -1107,21 +1107,27 @@
         </div>
     </div>
 
-  <!-- GAME OVER & JUMPSCARE SCREEN -->
-    <div id="gameover-screen" class="screen modal-screen">
-        <div id="jumpscare-container" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100vw; height:100vh;">
-            <img id="jumpscare-img" src="jumpscare.png" alt="SIGRIST ATTACKS" style="max-width:80vw; max-height:70vh;" onerror="this.style.display='none'; document.getElementById('jumpscare-fallback').style.display='block';">
-            <div id="jumpscare-fallback" style="display:none; font-size:3rem; color:#d32f2f; text-align:center; font-weight:bold;">
-                SIGRIST ATTACKED!
-            </div>
-        </div>
+ <!-- GAME OVER & JUMPSCARE SCREEN -->
+<div id="gameover-screen" class="screen modal-screen">
+    <div id="jumpscare-container" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100vw; height:100vh;">
+        <!-- AI VIDEO JUMPSCARE -->
+        <video id="jumpscare-video" style="width:100vw; height:100vh; object-fit:cover;" playsinline preload="auto">
+            <source src="jumpscare.mp4" type="video/mp4">
+        </video>
 
-        <div id="gameover-ui" style="display: none; flex-direction: column; align-items: center;">
-            <h1 style="font-size: 4rem; color: #d32f2f; margin-bottom: 20px;">GAME OVER</h1>
-            <button class="continue-btn" onclick="location.reload()">TRY AGAIN</button>
+        <!-- FALLBACK IMAGE IF VIDEO IS MISSING -->
+        <img id="jumpscare-img" src="jumpscare.png" alt="SIGRIST ATTACKS" style="max-width:80vw; max-height:70vh; display:none;" onerror="this.style.display='none'; document.getElementById('jumpscare-fallback').style.display='block';">
+        <div id="jumpscare-fallback" style="display:none; font-size:3rem; color:#d32f2f; text-align:center; font-weight:bold;">
+            SIGRIST ATTACKED!
         </div>
     </div>
 
+    <!-- GAME OVER MENU -->
+    <div id="gameover-ui" style="display: none; flex-direction: column; align-items: center;">
+        <h1 style="font-size: 4rem; color: #d32f2f; margin-bottom: 20px;">GAME OVER</h1>
+        <button class="continue-btn" onclick="location.reload()">TRY AGAIN</button>
+    </div>
+</div>
 
     <!-- 5. WIN SCREEN (6 AM) -->
     <div id="win-screen" class="screen modal-screen">
