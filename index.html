@@ -1472,7 +1472,51 @@
             }
         }
 
+          // ==========================================
+        // GAME OVER & JUMPSCARE EXECUTION
+        // ==========================================
+        function triggerGameOver() {
+            console.log("Game Over triggered!");
+
+            // Stop power drain and AI movement interval
+            if (typeof gameInterval !== 'undefined' && gameInterval) {
+                clearInterval(gameInterval);
+            }
+
+            // Hide camera monitor overlay if active
+            const monitor = document.getElementById('camera-monitor');
+            if (monitor) monitor.classList.remove('active-cam');
+
+            // Display Game Over screen overlay
+            showScreen('gameover-screen');
+
+            const jumpscareBox = document.getElementById('jumpscare-container');
+            const gameoverUI = document.getElementById('gameover-ui');
+            const video = document.getElementById('jumpscare-video');
+
+            if (jumpscareBox) jumpscareBox.style.display = 'flex';
+            if (gameoverUI) gameoverUI.style.display = 'none';
+
+            // Handle jumpscare video playback or image timer fallback
+            if (video && video.src && video.src !== "") {
+                video.currentTime = 0;
+                video.play().catch(err => console.log("Video waiting for user interaction:", err));
+
+                video.onended = () => {
+                    if (jumpscareBox) jumpscareBox.style.display = 'none';
+                    if (gameoverUI) gameoverUI.style.display = 'flex';
+                };
+            } else {
+                setTimeout(() => {
+                    if (jumpscareBox) jumpscareBox.style.display = 'none';
+                    if (gameoverUI) gameoverUI.style.display = 'flex';
+                }, 2500);
+            }
+        }
+
+        // ==========================================
         // RANDOMIZED AI MOVEMENT PATHING
+        // ==========================================
         function moveSigristRandomly() {
             const roll = Math.random();
 
@@ -1491,7 +1535,7 @@
                         sigristPosition = (roll < 0.25) ? '3A' : '1B';
                     } else {
                         sigristPosition = 'OFFICE';
-                        triggerGameOver();
+                        triggerGameOver(); // Triggers global game over function
                     }
                 } else {
                     sigristPosition = '3A';
@@ -1502,12 +1546,17 @@
                         sigristPosition = (roll < 0.25) ? '3A' : '1B';
                     } else {
                         sigristPosition = 'OFFICE';
-                        triggerGameOver();
+                        triggerGameOver(); // Triggers global game over function
                     }
                 } else {
                     sigristPosition = '3A';
                 }
             }
+
+            if (typeof monitorOpen !== 'undefined' && monitorOpen) {
+                updateCameraPhoto();
+            }
+        }
 
             if (monitorOpen) updateCameraPhoto();
         }
