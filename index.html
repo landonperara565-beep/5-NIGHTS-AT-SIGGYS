@@ -1170,309 +1170,9 @@
         </div>
     </div>
      <!-- JAVASCRIPT GAME LOGIC -->
-    <script>
-       
-        function enterOffice() {
-            console.log("Entering Security Office...");
-            showScreen('office-screen');
-            startShift();
-        }
-
-        // RELIABLE SCREEN SWITCHING ENGINE
-        function showScreen(screenId) {
-            // Hide all active screens
-            const screens = document.querySelectorAll('.screen');
-            screens.forEach(s => {
-                s.classList.remove('active');
-                s.style.display = 'none';
-            });
-
-            // Target and show the requested screen
-            const target = document.getElementById(screenId);
-            if (target) {
-                target.style.display = 'flex';
-                setTimeout(() => {
-                    target.classList.add('active');
-                }, 20);
-            }
-        }
-        // ==========================================
-        // 1. MUSIC PLAYER PLAYLIST & CONTROLLER
-        // ==========================================
-        const soundtrackPlaylist = [
-            { 
-                title: "Sigrist Main Theme", 
-                artist: "LandonBeats", 
-                file: "Sigrist main theme.mp3", 
-                duration: 126 
-            }
-            /* 
-            // PLACEHOLDER FOR FUTURE SONGS:
-            , { 
-                title: "Second Track Title", 
-                artist: "Artist Name", 
-                file: "second_track.mp3", 
-                duration: 180 
-            }
-            */
-        ];
-
-        let currentTrackIndex = 0;
-        let isPlaying = false;
-        let isShuffle = false;
-
-        const audioPlayer = new Audio();
-        audioPlayer.src = soundtrackPlaylist.file;
-
-        audioPlayer.addEventListener('timeupdate', () => {
-            if (!audioPlayer.duration) return;
-            const current = audioPlayer.currentTime;
-            const total = audioPlayer.duration;
-            const pct = (current / total) * 100;
-
-            const progressBar = document.getElementById('player-progress');
-            if (progressBar) progressBar.style.width = pct + '%';
-
-            const timeCurrent = document.getElementById('player-time-current');
-            if (timeCurrent) timeCurrent.innerText = formatTime(current);
-
-            const timeTotal = document.getElementById('player-time-total');
-            if (timeTotal) {
-                const remaining = Math.max(0, total - current);
-                timeTotal.innerText = '-' + formatTime(remaining);
-            }
-        });
-
-        audioPlayer.addEventListener('ended', () => {
-            nextTrack();
-        });
-
-        function togglePlayPause() {
-            const playBtn = document.getElementById('btn-play-pause');
-
-            if (!isPlaying) {
-                isPlaying = true;
-                if (playBtn) playBtn.innerText = '⏸';
-                audioPlayer.play().catch(err => console.log("Audio waiting for user click:", err));
-            } else {
-                isPlaying = false;
-                if (playBtn) playBtn.innerText = '▶';
-                audioPlayer.pause();
-            }
-        }
-
-        function formatTime(sec) {
-            const m = Math.floor(sec / 60);
-            const s = Math.floor(sec % 60);
-            return `${m}:${s < 10 ? '0' : ''}${s}`;
-        }
-
-        function loadTrack(index) {
-            currentTrackIndex = index;
-            const track = soundtrackPlaylist[currentTrackIndex];
-
-            audioPlayer.src = track.file;
-            audioPlayer.currentTime = 0;
-
-            document.getElementById('player-track-title').innerText = track.title;
-            document.getElementById('player-track-artist').innerText = track.artist;
-            document.getElementById('player-progress').style.width = '0%';
-            document.getElementById('player-time-current').innerText = '0:00';
-            document.getElementById('player-time-total').innerText = '-' + formatTime(track.duration);
-
-            if (isPlaying) {
-                audioPlayer.play().catch(e => console.log("Audio waiting for user click"));
-            }
-        }
-
-        function nextTrack() {
-            let nextIdx = (currentTrackIndex + 1) % soundtrackPlaylist.length;
-            loadTrack(nextIdx);
-        }
-
-        function prevTrack() {
-            let prevIdx = (currentTrackIndex - 1 + soundtrackPlaylist.length) % soundtrackPlaylist.length;
-            loadTrack(prevIdx);
-        }
-
-        function toggleShuffle() {
-            isShuffle = !isShuffle;
-            const shuffleBtn = document.getElementById('btn-shuffle');
-            if (shuffleBtn) shuffleBtn.classList.toggle('active', isShuffle);
-        }
-
-        function seekTrack(event) {
-            const bar = event.currentTarget;
-            const clickX = event.offsetX;
-            const totalWidth = bar.clientWidth;
-            const pct = clickX / totalWidth;
-
-            if (audioPlayer.duration) {
-                audioPlayer.currentTime = pct * audioPlayer.duration;
-            }
-        }
-
-        // RELIABLE SCREEN SWITCHING ENGINE
-        function showScreen(screenId) {
-            // Hide all active screens
-            const screens = document.querySelectorAll('.screen');
-            screens.forEach(s => {
-                s.classList.remove('active');
-                s.style.display = 'none';
-            });
-
-            // Target and display the selected screen
-            const target = document.getElementById(screenId);
-            if (target) {
-                if (target.classList.contains('modal-screen')) {
-                    target.style.display = 'flex';
-                } else {
-                    target.style.display = 'flex';
-                }
-                setTimeout(() => {
-                    target.classList.add('active');
-                }, 30);
-            }
-        }
-
-        // MENU BUTTON HANDLERS
-        function clickNewGame() { showScreen('newspaper-screen'); }
-        function clickContinue() { alert("Loading saved progress: Night 1"); showScreen('newspaper-screen'); }
-        function openCustomNight() { showScreen('customnight-screen'); }
-        function openSettings() { showScreen('settings-screen'); }
-        function openExtras() { showScreen('extras-screen'); }
-
-        // ==========================================
-        // 3. SECURITY OFFICE ENGINE & AI
-        // ==========================================
-        let power = 100;
-        let hour = 0;
-        let leftDoorClosed = false;
-        let rightDoorClosed = false;
-        let leftLightOn = false;
-        let rightLightOn = false;
-        let monitorOpen = false;
-        let currentCam = '1A';
-        let sigristPosition = '1A'; // '1A', '1B', '3A', '2A', '2B', or 'OFFICE'
-        let gameInterval = null;
-        const SECONDS_PER_HOUR = 80;
-
-        // PANNING OFFICE
-        const officePan = document.getElementById('office-panoramic');
-        document.addEventListener('mousemove', (e) => {
-            if (!document.getElementById('office-screen').classList.contains('active')) return;
-            const mousePercent = e.clientX / window.innerWidth;
-            const panOffset = -1 * (mousePercent * 80);
-            if (officePan) officePan.style.transform = `translateX(${panOffset}vw)`;
-        });
-
-        // GAME LOOP
-        function startShift() {
-            gameInterval = setInterval(() => {
-                let drainRate = 0.08; 
-                if (leftDoorClosed) drainRate += 0.12;
-                if (rightDoorClosed) drainRate += 0.12;
-                if (leftLightOn) drainRate += 0.08;
-                if (rightLightOn) drainRate += 0.08;
-                if (monitorOpen) drainRate += 0.10;
-
-                power -= drainRate;
-                if (power <= 0) {
-                    power = 0;
-                    triggerGameOver();
-                }
-                const powerDisplay = document.getElementById('power-display');
-                if (powerDisplay) powerDisplay.innerText = Math.floor(power);
-
-                hour += (1 / SECONDS_PER_HOUR);
-                const clockDisplay = document.getElementById('clock-display');
-                if (hour >= 6) {
-                    triggerWin();
-                } else if (clockDisplay) {
-                    let displayHour = Math.floor(hour) === 0 ? 12 : Math.floor(hour);
-                    clockDisplay.innerText = displayHour + " AM";
-                }
-
-                // AI Threat Movement (Slower pace rate)
-                if (hour >= 1.0) {
-                    if (Math.random() < 0.05) {
-                        moveSigristRandomly();
-                    }
-                }
-            }, 1000);
-        }
-
-        // DOOR & LIGHT CONTROLS
-        function toggleLeftDoor() {
-            leftDoorClosed = !leftDoorClosed;
-            document.getElementById('left-door-btn').innerText = leftDoorClosed ? "DOOR: CLOSED" : "DOOR: OPEN";
-            document.getElementById('left-door-btn').classList.toggle('active-door', leftDoorClosed);
-            document.getElementById('left-blast-door').classList.toggle('closed', leftDoorClosed);
-        }
-
-        function toggleRightDoor() {
-            rightDoorClosed = !rightDoorClosed;
-            document.getElementById('right-door-btn').innerText = rightDoorClosed ? "DOOR: CLOSED" : "DOOR: OPEN";
-            document.getElementById('right-door-btn').classList.toggle('active-door', rightDoorClosed);
-            document.getElementById('right-blast-door').classList.toggle('closed', rightDoorClosed);
-        }
-
-        function toggleLeftLight() {
-            leftLightOn = !leftLightOn;
-            document.getElementById('left-light-btn').innerText = leftLightOn ? "LIGHT: ON" : "LIGHT: OFF";
-            document.getElementById('left-light-btn').classList.toggle('active-light', leftLightOn);
-            document.getElementById('hall-left').style.background = leftLightOn ? (sigristPosition === '2A' ? '#4a0d0d' : '#33322f') : '#020202';
-        }
-
-        function toggleRightLight() {
-            rightLightOn = !rightLightOn;
-            document.getElementById('right-light-btn').innerText = rightLightOn ? "LIGHT: ON" : "LIGHT: OFF";
-            document.getElementById('right-light-btn').classList.toggle('active-light', rightLightOn);
-            document.getElementById('hall-right').style.background = rightLightOn ? (sigristPosition === '2B' ? '#4a0d0d' : '#33322f') : '#020202';
-        }
-
-        // CAMERA SYSTEM
-        function toggleCameraMonitor() {
-            monitorOpen = !monitorOpen;
-            const monitor = document.getElementById('camera-monitor');
-            if (monitorOpen) {
-                monitor.classList.add('active-cam');
-                updateCameraPhoto();
-            } else {
-                monitor.classList.remove('active-cam');
-            }
-        }
-
-        function switchCamera(cam) {
-            currentCam = cam;
-            document.querySelectorAll('.cam-node').forEach(b => b.classList.remove('selected'));
-            
-            const selBtn = document.getElementById('btn-cam' + cam.toLowerCase());
-            if (selBtn) selBtn.classList.add('selected');
-
-            const camNames = {
-                '1A': 'CAM 1A (Classroom)',
-                '1B': 'CAM 1B (Hallway)',
-                '3A': 'CAM 3A (Main Office)',
-                '2A': 'CAM 2A (Left Door)',
-                '2B': 'CAM 2B (Right Door)'
-            };
-
-            const labelEl = document.getElementById('cam-label');
-            if (labelEl) labelEl.innerText = camNames[cam] || ('CAM ' + cam);
-
-            updateCameraPhoto();
-        }
-
-        function updateCameraPhoto() {
-            const imgTag = document.getElementById('cam-feed-img');
-            const camKey = currentCam.toLowerCase();
-            if (imgTag) {
-                imgTag.src = (sigristPosition === currentCam) ? `cam${camKey}_sigrist.png` : `cam${camKey}_empty.png`;
-            }
-        }
-         // ==========================================
-    // 1. MENU NAVIGATION & SCREEN SWITCHING
+<script>
+    // ==========================================
+    // 1. SCREEN SWITCHING & MENU HANDLERS
     // ==========================================
     function showScreen(screenId) {
         const screens = document.querySelectorAll('.screen');
@@ -1486,11 +1186,10 @@
             target.style.display = 'flex';
             setTimeout(() => {
                 target.classList.add('active');
-            }, 20);
+            }, 30);
         }
     }
 
-    // MENU BUTTON HANDLERS
     function clickNewGame() { 
         showScreen('newspaper-screen'); 
     }
@@ -1513,123 +1212,66 @@
     }
 
     function enterOffice() {
+        console.log("Entering Security Office...");
         showScreen('office-screen');
-        if (typeof startShift === 'function') {
-            startShift();
-        }
+        startShift();
     }
 
     // ==========================================
-    // 2. SPOTIFY-STYLE MUSIC PLAYER WIDGET CONTROLS
+    // 2. MUSIC PLAYER WIDGET CONTROLLER
     // ==========================================
     const soundtrackPlaylist = [
         { 
-            title: "Menu Horror Ambience", 
-            artist: "Procedural Code Synth", 
-            file: "procedural", 
-            duration: 60 
-        },
-        { 
             title: "Sigrist Main Theme", 
-            artist: "Custom Track 1", 
-            file: "menu_track1.mp3", 
-            duration: 135 
-        },
-        { 
-            title: "Dark Hallways", 
-            artist: "Custom Track 2", 
-            file: "menu_track2.mp3", 
-            duration: 180 
+            artist: "LandonBeats", 
+            file: "Sigrist main theme.mp3", 
+            duration: 126 
         }
     ];
 
     let currentTrackIndex = 0;
     let isPlaying = false;
     let isShuffle = false;
-    let trackProgressSeconds = 0;
-    let playerTimerInterval = null;
 
-    // Web Audio Procedural Synth Fallback
-    let audioCtx = null;
-    let synthOsc1 = null;
-    let synthOsc2 = null;
-    let synthGain = null;
-
-    function initProceduralAudio() {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-
-        synthOsc1 = audioCtx.createOscillator();
-        synthOsc2 = audioCtx.createOscillator();
-        synthGain = audioCtx.createGain();
-
-        synthOsc1.type = 'sawtooth';
-        synthOsc2.type = 'sine';
-
-        synthOsc1.frequency.setValueAtTime(55, audioCtx.currentTime);
-        synthOsc2.frequency.setValueAtTime(58.7, audioCtx.currentTime);
-
-        synthGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-
-        synthOsc1.connect(synthGain);
-        synthOsc2.connect(synthGain);
-        synthGain.connect(audioCtx.destination);
-
-        synthOsc1.start();
-        synthOsc2.start();
+    const audioPlayer = new Audio();
+    if (soundtrackPlaylist.length > 0) {
+        audioPlayer.src = soundtrackPlaylist.file;
     }
 
-    function stopProceduralAudio() {
-        if (synthGain && audioCtx) {
-            synthGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
-            setTimeout(() => {
-                if (synthOsc1) synthOsc1.stop();
-                if (synthOsc2) synthOsc2.stop();
-            }, 300);
-        }
-    }
+    audioPlayer.addEventListener('timeupdate', () => {
+        if (!audioPlayer.duration) return;
+        const current = audioPlayer.currentTime;
+        const total = audioPlayer.duration;
+        const pct = (current / total) * 100;
 
-    function togglePlayPause() {
-        isPlaying = !isPlaying;
-        const playBtn = document.getElementById('btn-play-pause');
-
-        if (isPlaying) {
-            if (playBtn) playBtn.innerText = '⏸';
-            if (soundtrackPlaylist[currentTrackIndex].file === 'procedural') {
-                initProceduralAudio();
-            }
-            playerTimerInterval = setInterval(updatePlayerProgress, 1000);
-        } else {
-            if (playBtn) playBtn.innerText = '▶';
-            stopProceduralAudio();
-            clearInterval(playerTimerInterval);
-        }
-    }
-
-    function updatePlayerProgress() {
-        const currentTrack = soundtrackPlaylist[currentTrackIndex];
-        trackProgressSeconds++;
-
-        if (trackProgressSeconds >= currentTrack.duration) {
-            nextTrack();
-            return;
-        }
-
-        const pct = (trackProgressSeconds / currentTrack.duration) * 100;
         const progressBar = document.getElementById('player-progress');
         if (progressBar) progressBar.style.width = pct + '%';
 
-        const currTime = document.getElementById('player-time-current');
-        if (currTime) currTime.innerText = formatTime(trackProgressSeconds);
+        const timeCurrent = document.getElementById('player-time-current');
+        if (timeCurrent) timeCurrent.innerText = formatTime(current);
 
-        const totalTime = document.getElementById('player-time-total');
-        if (totalTime) {
-            const remaining = currentTrack.duration - trackProgressSeconds;
-            totalTime.innerText = '-' + formatTime(remaining);
+        const timeTotal = document.getElementById('player-time-total');
+        if (timeTotal) {
+            const remaining = Math.max(0, total - current);
+            timeTotal.innerText = '-' + formatTime(remaining);
+        }
+    });
+
+    audioPlayer.addEventListener('ended', () => {
+        nextTrack();
+    });
+
+    function togglePlayPause() {
+        const playBtn = document.getElementById('btn-play-pause');
+
+        if (!isPlaying) {
+            isPlaying = true;
+            if (playBtn) playBtn.innerText = '⏸';
+            audioPlayer.play().catch(err => console.log("Audio waiting for user click:", err));
+        } else {
+            isPlaying = false;
+            if (playBtn) playBtn.innerText = '▶';
+            audioPlayer.pause();
         }
     }
 
@@ -1640,32 +1282,28 @@
     }
 
     function loadTrack(index) {
-        stopProceduralAudio();
         currentTrackIndex = index;
-        trackProgressSeconds = 0;
-
         const track = soundtrackPlaylist[currentTrackIndex];
-        const titleElem = document.getElementById('player-track-title');
-        const artistElem = document.getElementById('player-track-artist');
-        const progressBar = document.getElementById('player-progress');
 
-        if (titleElem) titleElem.innerText = track.title;
-        if (artistElem) artistElem.innerText = track.artist;
+        audioPlayer.src = track.file;
+        audioPlayer.currentTime = 0;
+
+        const titleEl = document.getElementById('player-track-title');
+        const artistEl = document.getElementById('player-track-artist');
+        if (titleEl) titleEl.innerText = track.title;
+        if (artistEl) artistEl.innerText = track.artist;
+
+        const progressBar = document.getElementById('player-progress');
         if (progressBar) progressBar.style.width = '0%';
 
-        if (isPlaying && track.file === 'procedural') {
-            initProceduralAudio();
+        if (isPlaying) {
+            audioPlayer.play().catch(e => console.log("Audio waiting for user click"));
         }
     }
 
     function nextTrack() {
-        if (isShuffle) {
-            let randomIndex = Math.floor(Math.random() * soundtrackPlaylist.length);
-            loadTrack(randomIndex);
-        } else {
-            let nextIdx = (currentTrackIndex + 1) % soundtrackPlaylist.length;
-            loadTrack(nextIdx);
-        }
+        let nextIdx = (currentTrackIndex + 1) % soundtrackPlaylist.length;
+        loadTrack(nextIdx);
     }
 
     function prevTrack() {
@@ -1675,8 +1313,8 @@
 
     function toggleShuffle() {
         isShuffle = !isShuffle;
-        const btn = document.getElementById('btn-shuffle');
-        if (btn) btn.classList.toggle('active', isShuffle);
+        const shuffleBtn = document.getElementById('btn-shuffle');
+        if (shuffleBtn) shuffleBtn.classList.toggle('active', isShuffle);
     }
 
     function seekTrack(event) {
@@ -1685,166 +1323,267 @@
         const totalWidth = bar.clientWidth;
         const pct = clickX / totalWidth;
 
-        const currentTrack = soundtrackPlaylist[currentTrackIndex];
-        trackProgressSeconds = Math.floor(pct * currentTrack.duration);
+        if (audioPlayer.duration) {
+            audioPlayer.currentTime = pct * audioPlayer.duration;
+        }
+    }
 
-        const progressBar = document.getElementById('player-progress');
-        if (progressBar) progressBar.style.width = (pct * 100) + '%';
+    // ==========================================
+    // 3. SECURITY OFFICE ENGINE & AI
+    // ==========================================
+    let power = 100;
+    let hour = 0;
+    let leftDoorClosed = false;
+    let rightDoorClosed = false;
+    let leftLightOn = false;
+    let rightLightOn = false;
+    let monitorOpen = false;
+    let currentCam = '1A';
+    let sigristPosition = '1A';
+    let gameInterval = null;
+    const SECONDS_PER_HOUR = 80;
+
+    // PANNING OFFICE
+    const officePan = document.getElementById('office-panoramic');
+    document.addEventListener('mousemove', (e) => {
+        const officeScreen = document.getElementById('office-screen');
+        if (!officeScreen || !officeScreen.classList.contains('active')) return;
+        const mousePercent = e.clientX / window.innerWidth;
+        const panOffset = -1 * (mousePercent * 80);
+        if (officePan) officePan.style.transform = `translateX(${panOffset}vw)`;
+    });
+
+    // GAME LOOP
+    function startShift() {
+        if (gameInterval) clearInterval(gameInterval);
+        gameInterval = setInterval(() => {
+            let drainRate = 0.08; 
+            if (leftDoorClosed) drainRate += 0.12;
+            if (rightDoorClosed) drainRate += 0.12;
+            if (leftLightOn) drainRate += 0.08;
+            if (rightLightOn) drainRate += 0.08;
+            if (monitorOpen) drainRate += 0.10;
+
+            power -= drainRate;
+            if (power <= 0) {
+                power = 0;
+                triggerGameOver();
+            }
+            const powerDisplay = document.getElementById('power-display');
+            if (powerDisplay) powerDisplay.innerText = Math.floor(power);
+
+            hour += (1 / SECONDS_PER_HOUR);
+            const clockDisplay = document.getElementById('clock-display');
+            if (hour >= 6) {
+                triggerWin();
+            } else if (clockDisplay) {
+                let displayHour = Math.floor(hour) === 0 ? 12 : Math.floor(hour);
+                clockDisplay.innerText = displayHour + " AM";
+            }
+
+            // AI Threat Movement
+            if (hour >= 1.0) {
+                if (Math.random() < 0.05) {
+                    moveSigristRandomly();
+                }
+            }
+        }, 1000);
+    }
+
+    // DOOR & LIGHT CONTROLS
+    function toggleLeftDoor() {
+        leftDoorClosed = !leftDoorClosed;
+        const doorBtn = document.getElementById('left-door-btn');
+        if (doorBtn) {
+            doorBtn.innerText = leftDoorClosed ? "DOOR: CLOSED" : "DOOR: OPEN";
+            doorBtn.classList.toggle('active-door', leftDoorClosed);
+        }
+        const blastDoor = document.getElementById('left-blast-door');
+        if (blastDoor) blastDoor.classList.toggle('closed', leftDoorClosed);
+    }
+
+    function toggleRightDoor() {
+        rightDoorClosed = !rightDoorClosed;
+        const doorBtn = document.getElementById('right-door-btn');
+        if (doorBtn) {
+            doorBtn.innerText = rightDoorClosed ? "DOOR: CLOSED" : "DOOR: OPEN";
+            doorBtn.classList.toggle('active-door', rightDoorClosed);
+        }
+        const blastDoor = document.getElementById('right-blast-door');
+        if (blastDoor) blastDoor.classList.toggle('closed', rightDoorClosed);
+    }
+
+    function toggleLeftLight() {
+        leftLightOn = !leftLightOn;
+        const lightBtn = document.getElementById('left-light-btn');
+        if (lightBtn) {
+            lightBtn.innerText = leftLightOn ? "LIGHT: ON" : "LIGHT: OFF";
+            lightBtn.classList.toggle('active-light', leftLightOn);
+        }
+        const hallLeft = document.getElementById('hall-left');
+        if (hallLeft) {
+            hallLeft.style.background = leftLightOn ? (sigristPosition === '2A' ? '#4a0d0d' : '#33322f') : '#020202';
+        }
+    }
+
+    function toggleRightLight() {
+        rightLightOn = !rightLightOn;
+        const lightBtn = document.getElementById('right-light-btn');
+        if (lightBtn) {
+            lightBtn.innerText = rightLightOn ? "LIGHT: ON" : "LIGHT: OFF";
+            lightBtn.classList.toggle('active-light', rightLightOn);
+        }
+        const hallRight = document.getElementById('hall-right');
+        if (hallRight) {
+            hallRight.style.background = rightLightOn ? (sigristPosition === '2B' ? '#4a0d0d' : '#33322f') : '#020202';
+        }
+    }
+
+    // CAMERA SYSTEM
+    function toggleCameraMonitor() {
+        monitorOpen = !monitorOpen;
+        const monitor = document.getElementById('camera-monitor');
+        if (monitor) {
+            if (monitorOpen) {
+                monitor.classList.add('active-cam');
+                updateCameraPhoto();
+            } else {
+                monitor.classList.remove('active-cam');
+            }
+        }
+    }
+
+    function switchCamera(cam) {
+        currentCam = cam;
+        document.querySelectorAll('.cam-node').forEach(b => b.classList.remove('selected'));
+        
+        const selBtn = document.getElementById('btn-cam' + cam.toLowerCase());
+        if (selBtn) selBtn.classList.add('selected');
+
+        const camNames = {
+            '1A': 'CAM 1A (Classroom)',
+            '1B': 'CAM 1B (Hallway)',
+            '3A': 'CAM 3A (Main Office)',
+            '2A': 'CAM 2A (Left Door)',
+            '2B': 'CAM 2B (Right Door)'
+        };
+
+        const labelEl = document.getElementById('cam-label');
+        if (labelEl) labelEl.innerText = camNames[cam] || ('CAM ' + cam);
+
+        updateCameraPhoto();
+    }
+
+    function updateCameraPhoto() {
+        const imgTag = document.getElementById('cam-feed-img');
+        const camKey = currentCam.toLowerCase();
+        if (imgTag) {
+            imgTag.src = (sigristPosition === currentCam) ? `cam${camKey}_sigrist.png` : `cam${camKey}_empty.png`;
+        }
+    }
+
+    // AI MOVEMENT
+    function moveSigristRandomly() {
+        const roll = Math.random();
+
+        if (sigristPosition === '1A') {
+            sigristPosition = '1B';
+        } else if (sigristPosition === '1B') {
+            sigristPosition = (roll < 0.70) ? '3A' : '1A';
+        } else if (sigristPosition === '3A') {
+            if (roll < 0.30) sigristPosition = '2A';
+            else if (roll < 0.60) sigristPosition = '2B';
+            else if (roll < 0.80) sigristPosition = '1B';
+            else sigristPosition = '1A';
+        } else if (sigristPosition === '2A') {
+            if (roll < 0.50) {
+                if (leftDoorClosed) {
+                    sigristPosition = (roll < 0.25) ? '3A' : '1B';
+                } else {
+                    sigristPosition = 'OFFICE';
+                    triggerGameOver();
+                }
+            } else {
+                sigristPosition = '3A';
+            }
+        } else if (sigristPosition === '2B') {
+            if (roll < 0.50) {
+                if (rightDoorClosed) {
+                    sigristPosition = (roll < 0.25) ? '3A' : '1B';
+                } else {
+                    sigristPosition = 'OFFICE';
+                    triggerGameOver();
+                }
+            } else {
+                sigristPosition = '3A';
+            }
+        }
+
+        if (monitorOpen) {
+            updateCameraPhoto();
+        }
+    }
+
+    // GAME OVER & WIN
+    function triggerGameOver() {
+        if (gameInterval) clearInterval(gameInterval);
+        
+        const monitor = document.getElementById('camera-monitor');
+        if (monitor) monitor.classList.remove('active-cam');
+
+        showScreen('gameover-screen');
+        const jumpscareBox = document.getElementById('jumpscare-container');
+        const gameoverUI = document.getElementById('gameover-ui');
+        const video = document.getElementById('jumpscare-video');
+
+        if (jumpscareBox) jumpscareBox.style.display = 'flex';
+        if (gameoverUI) gameoverUI.style.display = 'none';
+
+        if (video && video.src && video.src !== "") {
+            video.currentTime = 0;
+            video.play().catch(err => console.log("Video playback waiting for click:", err));
+
+            video.onended = () => {
+                if (jumpscareBox) jumpscareBox.style.display = 'none';
+                if (gameoverUI) gameoverUI.style.display = 'flex';
+            };
+        } else {
+            setTimeout(() => {
+                if (jumpscareBox) jumpscareBox.style.display = 'none';
+                if (gameoverUI) gameoverUI.style.display = 'flex';
+            }, 2500);
+        }
+    }
+
+    function triggerWin() {
+        if (gameInterval) clearInterval(gameInterval);
+        const monitor = document.getElementById('camera-monitor');
+        if (monitor) monitor.classList.remove('active-cam');
+        showScreen('win-screen');
+    }
+
+    // STATIC CANVAS RENDERER
+    const canvas = document.getElementById('static-canvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        function resizeCanvas() {
+            canvas.width = window.innerWidth / 2;
+            canvas.height = window.innerHeight / 2;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function drawStatic() {
+            const imageData = ctx.createImageData(canvas.width, canvas.height);
+            const buffer = new Uint32Array(imageData.data.buffer);
+            for (let i = 0; i < buffer.length; i++) {
+                if (Math.random() < 0.1) buffer[i] = 0xffffffff;
+            }
+            ctx.putImageData(imageData, 0, 0);
+            requestAnimationFrame(drawStatic);
+        }
+        drawStatic();
     }
 </script>
-
-          // ==========================================
-        // GAME OVER & JUMPSCARE EXECUTION
-        // ==========================================
-        function triggerGameOver() {
-            console.log("Game Over triggered!");
-
-            // Stop power drain and AI movement interval
-            if (typeof gameInterval !== 'undefined' && gameInterval) {
-                clearInterval(gameInterval);
-            }
-
-            // Hide camera monitor overlay if active
-            const monitor = document.getElementById('camera-monitor');
-            if (monitor) monitor.classList.remove('active-cam');
-
-            // Display Game Over screen overlay
-            showScreen('gameover-screen');
-
-            const jumpscareBox = document.getElementById('jumpscare-container');
-            const gameoverUI = document.getElementById('gameover-ui');
-            const video = document.getElementById('jumpscare-video');
-
-            if (jumpscareBox) jumpscareBox.style.display = 'flex';
-            if (gameoverUI) gameoverUI.style.display = 'none';
-
-            // Handle jumpscare video playback or image timer fallback
-            if (video && video.src && video.src !== "") {
-                video.currentTime = 0;
-                video.play().catch(err => console.log("Video waiting for user interaction:", err));
-
-                video.onended = () => {
-                    if (jumpscareBox) jumpscareBox.style.display = 'none';
-                    if (gameoverUI) gameoverUI.style.display = 'flex';
-                };
-            } else {
-                setTimeout(() => {
-                    if (jumpscareBox) jumpscareBox.style.display = 'none';
-                    if (gameoverUI) gameoverUI.style.display = 'flex';
-                }, 2500);
-            }
-        }
-
-        // ==========================================
-        // RANDOMIZED AI MOVEMENT PATHING
-        // ==========================================
-        function moveSigristRandomly() {
-            const roll = Math.random();
-
-            if (sigristPosition === '1A') {
-                sigristPosition = '1B';
-            } else if (sigristPosition === '1B') {
-                sigristPosition = (roll < 0.70) ? '3A' : '1A';
-            } else if (sigristPosition === '3A') {
-                if (roll < 0.30) sigristPosition = '2A';
-                else if (roll < 0.60) sigristPosition = '2B';
-                else if (roll < 0.80) sigristPosition = '1B';
-                else sigristPosition = '1A';
-            } else if (sigristPosition === '2A') {
-                if (roll < 0.50) {
-                    if (leftDoorClosed) {
-                        sigristPosition = (roll < 0.25) ? '3A' : '1B';
-                    } else {
-                        sigristPosition = 'OFFICE';
-                        triggerGameOver(); // Triggers global game over function
-                    }
-                } else {
-                    sigristPosition = '3A';
-                }
-            } else if (sigristPosition === '2B') {
-                if (roll < 0.50) {
-                    if (rightDoorClosed) {
-                        sigristPosition = (roll < 0.25) ? '3A' : '1B';
-                    } else {
-                        sigristPosition = 'OFFICE';
-                        triggerGameOver(); // Triggers global game over function
-                    }
-                } else {
-                    sigristPosition = '3A';
-                }
-            }
-
-            if (typeof monitorOpen !== 'undefined' && monitorOpen) {
-                updateCameraPhoto();
-            }
-        }
-
-            if (monitorOpen) updateCameraPhoto();
-        }
-
-       function triggerGameOver() {
-            clearInterval(gameInterval);
-            
-            // Close camera monitor if active
-            const monitor = document.getElementById('camera-monitor');
-            if (monitor) monitor.classList.remove('active-cam');
-
-            // Show jumpscare overlay
-            showScreen('gameover-screen');
-            const jumpscareBox = document.getElementById('jumpscare-container');
-            const gameoverUI = document.getElementById('gameover-ui');
-            const video = document.getElementById('jumpscare-video');
-
-            if (jumpscareBox) jumpscareBox.style.display = 'flex';
-            if (gameoverUI) gameoverUI.style.display = 'none';
-
-            // Reset and play AI video jumpscare
-            if (video) {
-                video.currentTime = 0;
-                video.play().catch(err => console.log("Video playback waiting for user interaction:", err));
-
-                // Switch to GAME OVER UI once video ends
-                video.onended = () => {
-                    if (jumpscareBox) jumpscareBox.style.display = 'none';
-                    if (gameoverUI) gameoverUI.style.display = 'flex';
-                };
-            } else {
-                setTimeout(() => {
-                    if (jumpscareBox) jumpscareBox.style.display = 'none';
-                    if (gameoverUI) gameoverUI.style.display = 'flex';
-                }, 2500);
-            }
-        }
-
-        function triggerWin() {
-            clearInterval(gameInterval);
-            const monitor = document.getElementById('camera-monitor');
-            if (monitor) monitor.classList.remove('active-cam');
-            showScreen('win-screen');
-        }
-
-        // STATIC CANVAS RENDERER
-        const canvas = document.getElementById('static-canvas');
-        if (canvas) {
-            const ctx = canvas.getContext('2d');
-            function resizeCanvas() {
-                canvas.width = window.innerWidth / 2;
-                canvas.height = window.innerHeight / 2;
-            }
-            window.addEventListener('resize', resizeCanvas);
-            resizeCanvas();
-
-            function drawStatic() {
-                const imageData = ctx.createImageData(canvas.width, canvas.height);
-                const buffer = new Uint32Array(imageData.data.buffer);
-                for (let i = 0; i < buffer.length; i++) {
-                    if (Math.random() < 0.1) buffer[i] = 0xffffffff;
-                }
-                ctx.putImageData(imageData, 0, 0);
-                requestAnimationFrame(drawStatic);
-            }
-            drawStatic();
-        }
-    </script>
 </body>
 </html>
