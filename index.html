@@ -929,75 +929,38 @@
     <div class="scanlines"></div>
     <canvas id="static-canvas"></canvas>
 
-   /* --- MENU CONTAINER CLICKABILITY FIX --- */
-.menu-left-content {
-    position: relative;
-    z-index: 100; /* Forces buttons above background and media card */
-    pointer-events: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    max-width: 520px;
-}
+      <!-- MAIN MENU SCREEN -->
+    <div id="menu-screen" class="screen active">
+        
+        <!-- LEFT COLUMN: ANIMATED TITLE & MENU OPTIONS -->
+        <div class="menu-left-content">
+            <!-- THREE-LINE TITLE MATCHING SOURCE ARTWORK -->
+            <div class="title-box">
+                <span class="title-fn">Five Nights</span>
+                <span class="title-at">at</span>
+                <span class="title-sigrist">Sigrist</span>
+            </div>
 
-.menu-container {
-    position: relative;
-    z-index: 105;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
+            <!-- MAIN MENU OPTIONS -->
+            <div class="menu-container">
+                <button class="menu-btn" onclick="clickNewGame()">
+                    <span class="selector">&gt;</span>New Game
+                </button>
+                <button class="menu-btn" onclick="clickContinue()">
+                    <span class="selector">&gt;</span>Continue
+                </button>
+                <button class="menu-btn" onclick="openCustomNight()">
+                    <span class="selector">&gt;</span>Custom Night
+                </button>
+                <button class="menu-btn" onclick="openSettings()">
+                    <span class="selector">&gt;</span>Settings
+                </button>
+                <button class="menu-btn" onclick="openExtras()">
+                    <span class="selector">&gt;</span>Extras
+                </button>
+            </div>
+        </div>
 
-.menu-btn {
-    background: none;
-    border: none;
-    color: #888888;
-    font-size: 1.8rem;
-    font-family: 'Courier New', Courier, monospace;
-    font-weight: bold;
-    text-align: left;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    display: flex;
-    align-items: center;
-    position: relative;
-    z-index: 110;
-    pointer-events: auto;
-}
-
-.menu-btn:hover {
-    color: #ffffff;
-    transform: translateX(10px);
-}
-
-.menu-btn .selector {
-    visibility: hidden;
-    margin-right: 12px;
-    color: #d32f2f;
-}
-
-.menu-btn:hover .selector {
-    visibility: visible;
-}
-
-/* --- PREVENT INACTIVE MODALS FROM BLOCKING CLICKS --- */
-.modal-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.94);
-    display: none !important; /* Forces inactive screens to unblock mouse clicks */
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    z-index: 250;
-}
-
-.modal-screen.active {
-    display: flex !important;
-}
         <!-- COPYRIGHT NOTICE (BOTTOM LEFT) -->
         <div class="copyright">
             © 2026 Sigrist Entertainment<br>All rights reserved. (probably)
@@ -1372,40 +1335,12 @@
             }
         }
 
-        // RELIABLE SCREEN SWITCHING ENGINE
-        function showScreen(screenId) {
-            const screens = document.querySelectorAll('.screen');
-            screens.forEach(s => {
-                s.classList.remove('active');
-                s.style.display = 'none';
-            });
-
-            const target = document.getElementById(screenId);
-            if (target) {
-                target.style.display = 'flex';
-                setTimeout(() => {
-                    target.classList.add('active');
-                }, 20);
-            }
-        }
-
-        // BUTTON CLICK HANDLERS
-        function clickNewGame() {
-            showScreen('newspaper-screen');
-        }
-
-        function clickContinue() {
-            alert("Loading saved progress: Night 1");
-            showScreen('newspaper-screen');
-        }
-
-        function openCustomNight() {
-            showScreen('customnight-screen');
-        }
-
-        function openSettings() {
-            showScreen('settings-screen');
-        }
+        // MENU BUTTON HANDLERS
+        function clickNewGame() { showScreen('newspaper-screen'); }
+        function clickContinue() { alert("Loading saved progress: Night 1"); showScreen('newspaper-screen'); }
+        function openCustomNight() { showScreen('customnight-screen'); }
+        function openSettings() { showScreen('settings-screen'); }
+        function openExtras() { showScreen('extras-screen'); }
 
         // ==========================================
         // 3. SECURITY OFFICE ENGINE & AI
