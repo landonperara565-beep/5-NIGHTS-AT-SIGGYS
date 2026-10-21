@@ -1471,6 +1471,227 @@
                 imgTag.src = (sigristPosition === currentCam) ? `cam${camKey}_sigrist.png` : `cam${camKey}_empty.png`;
             }
         }
+         // ==========================================
+    // 1. MENU NAVIGATION & SCREEN SWITCHING
+    // ==========================================
+    function showScreen(screenId) {
+        const screens = document.querySelectorAll('.screen');
+        screens.forEach(s => {
+            s.classList.remove('active');
+            s.style.display = 'none';
+        });
+
+        const target = document.getElementById(screenId);
+        if (target) {
+            target.style.display = 'flex';
+            setTimeout(() => {
+                target.classList.add('active');
+            }, 20);
+        }
+    }
+
+    // MENU BUTTON HANDLERS
+    function clickNewGame() { 
+        showScreen('newspaper-screen'); 
+    }
+    
+    function clickContinue() { 
+        alert("Loading saved progress: Night 1"); 
+        showScreen('newspaper-screen'); 
+    }
+    
+    function openCustomNight() { 
+        showScreen('customnight-screen'); 
+    }
+    
+    function openSettings() { 
+        showScreen('settings-screen'); 
+    }
+    
+    function openExtras() { 
+        showScreen('extras-screen'); 
+    }
+
+    function enterOffice() {
+        showScreen('office-screen');
+        if (typeof startShift === 'function') {
+            startShift();
+        }
+    }
+
+    // ==========================================
+    // 2. SPOTIFY-STYLE MUSIC PLAYER WIDGET CONTROLS
+    // ==========================================
+    const soundtrackPlaylist = [
+        { 
+            title: "Menu Horror Ambience", 
+            artist: "Procedural Code Synth", 
+            file: "procedural", 
+            duration: 60 
+        },
+        { 
+            title: "Sigrist Main Theme", 
+            artist: "Custom Track 1", 
+            file: "menu_track1.mp3", 
+            duration: 135 
+        },
+        { 
+            title: "Dark Hallways", 
+            artist: "Custom Track 2", 
+            file: "menu_track2.mp3", 
+            duration: 180 
+        }
+    ];
+
+    let currentTrackIndex = 0;
+    let isPlaying = false;
+    let isShuffle = false;
+    let trackProgressSeconds = 0;
+    let playerTimerInterval = null;
+
+    // Web Audio Procedural Synth Fallback
+    let audioCtx = null;
+    let synthOsc1 = null;
+    let synthOsc2 = null;
+    let synthGain = null;
+
+    function initProceduralAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+
+        synthOsc1 = audioCtx.createOscillator();
+        synthOsc2 = audioCtx.createOscillator();
+        synthGain = audioCtx.createGain();
+
+        synthOsc1.type = 'sawtooth';
+        synthOsc2.type = 'sine';
+
+        synthOsc1.frequency.setValueAtTime(55, audioCtx.currentTime);
+        synthOsc2.frequency.setValueAtTime(58.7, audioCtx.currentTime);
+
+        synthGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+
+        synthOsc1.connect(synthGain);
+        synthOsc2.connect(synthGain);
+        synthGain.connect(audioCtx.destination);
+
+        synthOsc1.start();
+        synthOsc2.start();
+    }
+
+    function stopProceduralAudio() {
+        if (synthGain && audioCtx) {
+            synthGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+            setTimeout(() => {
+                if (synthOsc1) synthOsc1.stop();
+                if (synthOsc2) synthOsc2.stop();
+            }, 300);
+        }
+    }
+
+    function togglePlayPause() {
+        isPlaying = !isPlaying;
+        const playBtn = document.getElementById('btn-play-pause');
+
+        if (isPlaying) {
+            if (playBtn) playBtn.innerText = '⏸';
+            if (soundtrackPlaylist[currentTrackIndex].file === 'procedural') {
+                initProceduralAudio();
+            }
+            playerTimerInterval = setInterval(updatePlayerProgress, 1000);
+        } else {
+            if (playBtn) playBtn.innerText = '▶';
+            stopProceduralAudio();
+            clearInterval(playerTimerInterval);
+        }
+    }
+
+    function updatePlayerProgress() {
+        const currentTrack = soundtrackPlaylist[currentTrackIndex];
+        trackProgressSeconds++;
+
+        if (trackProgressSeconds >= currentTrack.duration) {
+            nextTrack();
+            return;
+        }
+
+        const pct = (trackProgressSeconds / currentTrack.duration) * 100;
+        const progressBar = document.getElementById('player-progress');
+        if (progressBar) progressBar.style.width = pct + '%';
+
+        const currTime = document.getElementById('player-time-current');
+        if (currTime) currTime.innerText = formatTime(trackProgressSeconds);
+
+        const totalTime = document.getElementById('player-time-total');
+        if (totalTime) {
+            const remaining = currentTrack.duration - trackProgressSeconds;
+            totalTime.innerText = '-' + formatTime(remaining);
+        }
+    }
+
+    function formatTime(sec) {
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60);
+        return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    function loadTrack(index) {
+        stopProceduralAudio();
+        currentTrackIndex = index;
+        trackProgressSeconds = 0;
+
+        const track = soundtrackPlaylist[currentTrackIndex];
+        const titleElem = document.getElementById('player-track-title');
+        const artistElem = document.getElementById('player-track-artist');
+        const progressBar = document.getElementById('player-progress');
+
+        if (titleElem) titleElem.innerText = track.title;
+        if (artistElem) artistElem.innerText = track.artist;
+        if (progressBar) progressBar.style.width = '0%';
+
+        if (isPlaying && track.file === 'procedural') {
+            initProceduralAudio();
+        }
+    }
+
+    function nextTrack() {
+        if (isShuffle) {
+            let randomIndex = Math.floor(Math.random() * soundtrackPlaylist.length);
+            loadTrack(randomIndex);
+        } else {
+            let nextIdx = (currentTrackIndex + 1) % soundtrackPlaylist.length;
+            loadTrack(nextIdx);
+        }
+    }
+
+    function prevTrack() {
+        let prevIdx = (currentTrackIndex - 1 + soundtrackPlaylist.length) % soundtrackPlaylist.length;
+        loadTrack(prevIdx);
+    }
+
+    function toggleShuffle() {
+        isShuffle = !isShuffle;
+        const btn = document.getElementById('btn-shuffle');
+        if (btn) btn.classList.toggle('active', isShuffle);
+    }
+
+    function seekTrack(event) {
+        const bar = event.currentTarget;
+        const clickX = event.offsetX;
+        const totalWidth = bar.clientWidth;
+        const pct = clickX / totalWidth;
+
+        const currentTrack = soundtrackPlaylist[currentTrackIndex];
+        trackProgressSeconds = Math.floor(pct * currentTrack.duration);
+
+        const progressBar = document.getElementById('player-progress');
+        if (progressBar) progressBar.style.width = (pct * 100) + '%';
+    }
+</script>
 
           // ==========================================
         // GAME OVER & JUMPSCARE EXECUTION
