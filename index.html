@@ -75,51 +75,7 @@
             margin-top: 20px;
         }
 
-      /* --- CINEMATIC PULSING HORROR TITLE --- */
-.game-title {
-    font-size: 4.2rem;
-    color: #ff1a1a;
-    text-shadow: 
-        0 0 10px #ff0000,
-        0 0 20px #8b0000,
-        0 0 40px #d32f2f,
-        0 0 80px #600000;
-    letter-spacing: 3px;
-    line-height: 1.05;
-    font-weight: 900;
-    text-transform: uppercase;
-    position: relative;
-    display: inline-block;
-    animation: titleHorrorPulse 3s infinite ease-in-out;
-}
-
-/* Pulsing blood-red glow and slight atmospheric scale */
-@keyframes titleHorrorPulse {
-    0% {
-        text-shadow: 0 0 10px #ff0000, 0 0 20px #8b0000, 0 0 35px #d32f2f;
-        transform: scale(1);
-    }
-    50% {
-        text-shadow: 0 0 18px #ff3333, 0 0 35px #ff0000, 0 0 60px #8b0000, 0 0 90px #ff0000;
-        transform: scale(1.02);
-        color: #ffffff;
-    }
-    52% {
-        opacity: 0.8;
-        transform: scale(1.01) skewX(-2deg);
-    }
-    54% {
-        opacity: 1;
-        transform: scale(1.02) skewX(0deg);
-    }
-    100% {
-        text-shadow: 0 0 10px #ff0000, 0 0 20px #8b0000, 0 0 35px #d32f2f;
-        transform: scale(1);
-        color: #ff1a1a;
-    }
-}
-
-/* --- SUB-SCREEN OVERLAYS & MODAL BLANK-SCREEN FIX --- */
+     /* --- SUB-SCREEN OVERLAY & MODAL FIX --- */
 .modal-screen {
     position: fixed;
     top: 0;
@@ -131,7 +87,7 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    z-index: 200;
+    z-index: 250;
 }
 
 .modal-screen.active {
@@ -140,11 +96,11 @@
 }
 
 .modal-box {
-    background: #0d0d0d;
+    background: #0a0a0a;
     border: 2px solid #d32f2f;
-    box-shadow: 0 0 40px rgba(211, 47, 47, 0.6);
-    padding: 40px 50px;
-    border-radius: 12px;
+    box-shadow: 0 0 45px rgba(211, 47, 47, 0.6);
+    padding: 35px 45px;
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -153,6 +109,178 @@
     text-align: center;
     color: #ffffff;
 }
+
+/* --- VINTAGE HORROR NEWSPAPER CLIPPING --- */
+#newspaper-screen {
+    background: #050505;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+}
+
+.newspaper-clipping {
+    width: 90%;
+    max-width: 680px;
+    background: #d8ceb9;
+    color: #111111;
+    border: 12px solid #1c1813;
+    box-shadow: 0 0 50px rgba(0,0,0,0.95), inset 0 0 80px rgba(0,0,0,0.3);
+    padding: 35px;
+    font-family: 'Times New Roman', Times, serif;
+    position: relative;
+    transform: rotate(-1deg);
+}
+
+.newspaper-header {
+    text-align: center;
+    border-bottom: 4px double #222;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.newspaper-headline {
+    font-size: 3rem;
+    font-weight: 900;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.newspaper-subhead {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-top: 1px solid #333;
+    padding-top: 4px;
+    font-weight: bold;
+}
+
+.newspaper-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    text-align: justify;
+    margin-bottom: 25px;
+}
+
+/* --- ATMOSPHERIC SECURITY OFFICE (MATCHING TITLE ARTWORK) --- */
+#office-panoramic {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 180vw;
+    height: 100vh;
+    background: #040404;
+    display: flex;
+    transition: transform 0.1s linear;
+}
+
+/* Grimy Wall and Checkered Floor Trim [1] */
+.office-wall {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: 
+        radial-gradient(circle at 50% 30%, rgba(255, 200, 150, 0.12) 0%, rgba(0,0,0,0.95) 75%),
+        linear-gradient(0deg, #1a0202 0px, #1a0202 120px, transparent 120px),
+        repeating-linear-gradient(90deg, #141414 0px, #141414 80px, #0d0d0d 80px, #0d0d0d 160px);
+    box-shadow: inset 0 0 100px #000;
+}
+
+/* Checkered Wall Border [1] */
+.checkered-trim {
+    position: absolute;
+    bottom: 120px;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background-image: repeating-conic-gradient(#111 0 25%, #d8ceb9 0 50%);
+    background-size: 40px 40px;
+    opacity: 0.6;
+    border-top: 3px solid #000;
+    border-bottom: 3px solid #000;
+}
+
+/* Wall Posters ("WORK HARDER", "SIGRIST HE WATCHES") [1] */
+.office-poster {
+    position: absolute;
+    background: #c2b59b;
+    color: #111;
+    padding: 10px;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    border: 2px solid #222;
+    box-shadow: 3px 3px 12px rgba(0,0,0,0.8);
+    transform: rotate(-2deg);
+}
+
+#poster-work {
+    top: 22%;
+    left: 38vw;
+    width: 110px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #444;
+}
+
+#poster-sigrist {
+    top: 18%;
+    right: 38vw;
+    width: 140px;
+    text-align: center;
+    border: 2px solid #8b0000;
+    color: #8b0000;
+    transform: rotate(3deg);
+}
+
+/* Security Desk Setup [1] */
+.security-desk {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60vw;
+    height: 180px;
+    background: linear-gradient(#1f1915, #0a0806);
+    border-top: 8px solid #3d3128;
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.9);
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    padding: 15px 40px;
+    z-index: 25;
+}
+
+/* Desk Props: Fan & "STAY FOCUSED" Mug [1] */
+.desk-prop-mug {
+    width: 55px;
+    height: 65px;
+    background: #d35400;
+    border-radius: 4px;
+    border: 2px solid #5e2300;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 3px 3px 10px #000;
+}
+
+.desk-prop-fan {
+    width: 90px;
+    height: 110px;
+    border: 4px solid #222;
+    border-radius: 50%;
+    background: radial-gradient(#333, #111);
+    box-shadow: 0 0 15px #000;
+    position: relative;
+}
+
 
 .continue-btn {
     background: #d32f2f;
@@ -716,27 +844,48 @@
         </div>
     </div>
 
-    <!-- 2. NEWSPAPER INTRO SCREEN -->
+     <!-- 1. VINTAGE HELP WANTED NEWSPAPER INTRO -->
     <div id="newspaper-screen" class="screen">
-        <div class="modal-box" style="background:#e0d8c3; color:#111; border:4px solid #333;">
-            <h1 style="font-size:2.2rem; border-bottom:2px solid #333; margin-bottom:15px;">HELP WANTED</h1>
-            <p style="font-size:1.1rem; margin-bottom:20px; line-height:1.5;">
-                Local school seeking night guard for security from 12 AM to 6 AM.<br>
-                Monitor cameras and ensure equipment safety.<br>
-                $120 a week.
-            </p>
-            <button class="continue-btn" onclick="enterOffice()">ENTER OFFICE</button>
+        <div class="newspaper-clipping">
+            <div class="newspaper-header">
+                <div style="font-size:0.8rem; letter-spacing:3px; margin-bottom:3px;">THE DAILY GAZETTE — OBITUARIES & CLASSIFIEDS</div>
+                <h1 class="newspaper-headline">HELP WANTED</h1>
+                <div class="newspaper-subhead">NIGHT SECURITY GUARD NEEDED IMMEDIATELY</div>
+            </div>
+
+            <div class="newspaper-body">
+                <div>
+                    <strong>GRAND RE-OPENING:</strong> Local educational facility is looking for a night security officer to monitor cameras and keep equipment safe from 12:00 AM to 6:00 AM.<br><br>
+                    Must be comfortable working alone in dark hallways and managing local facility power systems.
+                </div>
+                <div>
+                    <strong>COMPENSATION:</strong> $120.00 / week.<br><br>
+                    <em>"Sigrist Entertainment is not responsible for injury, loss of property, or sudden dark encounters."</em><br><br>
+                    <strong>CALL: 1-800-SIGRIST</strong>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="continue-btn" style="background:#111; color:#fff; border:2px solid #444;" onclick="enterOffice()">ACCEPT JOB & ENTER OFFICE</button>
+            </div>
         </div>
     </div>
 
-    <!-- 3. SECURITY OFFICE SCREEN -->
+  <!-- 2. DETAILED SECURITY OFFICE (MATCHING MENU BACKGROUND ARTWORK) -->
     <div id="office-screen" class="screen">
         <div class="hud-overlay">POWER: <span id="power-display">100</span>%</div>
         <div class="hud-clock"><span id="clock-display">12 AM</span><br><span style="font-size:1rem; color:#aaa;">Night 1</span></div>
 
         <div id="office-panoramic">
             <div class="office-wall">
-                <!-- Left Doorway -->
+                <!-- Checkered Wall Border Trim [1] -->
+                <div class="checkered-trim"></div>
+
+                <!-- Posters [1] -->
+                <div class="office-poster" id="poster-work">WORK<br>HARDER</div>
+                <div class="office-poster" id="poster-sigrist">SIGRIST<br><small>HE WATCHES</small></div>
+
+                <!-- Left Blast Door & Control Panel -->
                 <div class="doorway" id="doorway-left">
                     <div class="blast-door" id="left-blast-door"></div>
                     <div id="hall-left" style="width:100%; height:100%; background:#020202;"></div>
@@ -746,7 +895,7 @@
                     <button class="ctrl-btn" id="left-light-btn" onclick="toggleLeftLight()">LIGHT: OFF</button>
                 </div>
 
-                <!-- Right Doorway -->
+                <!-- Right Blast Door & Control Panel -->
                 <div class="doorway" id="doorway-right">
                     <div class="blast-door" id="right-blast-door"></div>
                     <div id="hall-right" style="width:100%; height:100%; background:#020202;"></div>
@@ -756,44 +905,47 @@
                     <button class="ctrl-btn" id="right-light-btn" onclick="toggleRightLight()">LIGHT: OFF</button>
                 </div>
 
-                <!-- Center Desk & Flip Camera Trigger -->
-                <button class="ctrl-btn" style="position:absolute; bottom:20px; left:50%; transform:translateX(-50%); z-index:40; padding:15px 40px;" onclick="toggleCameraMonitor()">TOGGLE CAMERA MONITOR</button>
+                <!-- Security Desk Prop Setup [1] -->
+                <div class="security-desk">
+                    <!-- "STAY FOCUSED :)" Mug [1] -->
+                    <div class="desk-prop-mug">STAY<br>FOCUSED<br>:)</div>
+
+                    <!-- Flip Camera Monitor Button -->
+                    <button class="ctrl-btn" style="background:#8b0000; color:#fff; padding:15px 35px; font-weight:bold; font-size:1.1rem;" onclick="toggleCameraMonitor()">TOGGLE CAMERA MONITOR</button>
+
+                    <!-- Desk Fan [1] -->
+                    <div class="desk-prop-fan"></div>
+                </div>
             </div>
         </div>
 
-         <!-- CAMERA MONITOR OVERLAY WITH FULL IMAGE & BRANCHING MAP -->
+
+         <!-- CAMERA MONITOR OVERLAY -->
         <div id="camera-monitor">
-            <h2 id="cam-label" style="position:absolute; top:25px; left:35px; color:#1ed760; font-size:1.8rem; letter-spacing:2px; text-shadow:0 0 8px #000;">CAM 1A (Classroom)</h2>
-            
+            <h2 id="cam-label" style="position:absolute; top:25px; left:35px; color:#1ed760;">CAM 1A (Classroom)</h2>
             <div id="cam-feed-container">
                 <img id="cam-feed-img" src="cam1a_empty.png" alt="Camera Feed" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'800\' height=\'600\'><rect width=\'100%\' height=\'100%\' fill=\'%23111\'/><text x=\'50%\' y=\'50%\' fill=\'%23888\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'24\'>CAMERA FEED LOADING...</text></svg>';">
             </div>
 
-            <!-- FNAF BRANCHING MAP UI -->
             <div class="fnaf-map-wrapper">
                 <div style="font-size:0.8rem; color:#888; font-weight:bold; letter-spacing:1px;">BUILDING MAP</div>
-                
                 <div class="map-grid">
-                    <!-- Branch Lines -->
-                    <div class="map-line-v" style="top:25px; left:50%; height:130px;"></div> <!-- Main Center Corridor -->
-                    <div class="map-line-h" style="top:115px; left:20%; width:60%;"></div>  <!-- Door Branch -->
-                    <div class="map-line-v" style="top:115px; left:20%; height:50px;"></div>  <!-- Left Branch -->
-                    <div class="map-line-v" style="top:115px; right:20%; height:50px;"></div> <!-- Right Branch -->
+                    <div class="map-line-v" style="top:25px; left:50%; height:130px;"></div>
+                    <div class="map-line-h" style="top:115px; left:20%; width:60%;"></div>
+                    <div class="map-line-v" style="top:115px; left:20%; height:50px;"></div>
+                    <div class="map-line-v" style="top:115px; right:20%; height:50px;"></div>
 
-                    <!-- Camera Nodes (Positioned on the Map) -->
                     <button class="cam-node selected" id="btn-cam1a" style="top:0px; left:50%; transform:translateX(-50%);" onclick="switchCamera('1A')">CAM 1A</button>
                     <button class="cam-node" id="btn-cam1b" style="top:50px; left:50%; transform:translateX(-50%);" onclick="switchCamera('1B')">CAM 1B</button>
                     <button class="cam-node" id="btn-cam3a" style="top:100px; left:50%; transform:translateX(-50%);" onclick="switchCamera('3A')">CAM 3A</button>
                     <button class="cam-node" id="btn-cam2a" style="top:150px; left:10%;" onclick="switchCamera('2A')">CAM 2A</button>
                     <button class="cam-node" id="btn-cam2b" style="top:150px; right:10%;" onclick="switchCamera('2B')">CAM 2B</button>
-
-                    <!-- Office Location -->
                     <div class="you-indicator">YOU ARE HERE</div>
                 </div>
-
                 <button class="ctrl-btn" style="width:100%; background:#8b0000; color:#fff; border:none; padding:8px; margin-top:5px; cursor:pointer;" onclick="toggleCameraMonitor()">CLOSE MONITOR</button>
             </div>
         </div>
+    </div>
 
     <!-- 4. JUMPSCARE / GAME OVER SCREEN -->
     <div id="gameover-screen" class="screen modal-screen">
@@ -818,51 +970,40 @@
         </div>
     </div>
 
-    <!-- 1. CUSTOM NIGHT SCREEN -->
+    <!-- 3. WORKING SUB-SCREENS (EXTRAS, SETTINGS, CUSTOM NIGHT) -->
     <div id="customnight-screen" class="screen modal-screen">
         <div class="modal-box">
-            <h1 style="color:#d32f2f; font-size:2.8rem; margin-bottom:15px; text-shadow:0 0 15px #ff0000;">CUSTOM NIGHT</h1>
+            <h1 style="color:#d32f2f; font-size:2.8rem; margin-bottom:15px;">CUSTOM NIGHT</h1>
             <p style="font-size:1.8rem; color:#888; letter-spacing:4px; margin-bottom:30px; font-weight:bold;">COMING SOON</p>
             <button class="continue-btn" onclick="showScreen('menu-screen')">BACK TO MENU</button>
         </div>
     </div>
 
-    <!-- 2. SETTINGS SCREEN -->
     <div id="settings-screen" class="screen modal-screen">
         <div class="modal-box">
-            <h1 style="color:#d32f2f; font-size:2.8rem; margin-bottom:15px; text-shadow:0 0 15px #ff0000;">SETTINGS</h1>
+            <h1 style="color:#d32f2f; font-size:2.8rem; margin-bottom:15px;">SETTINGS</h1>
             <p style="font-size:1.8rem; color:#888; letter-spacing:4px; margin-bottom:30px; font-weight:bold;">COMING SOON</p>
             <button class="continue-btn" onclick="showScreen('menu-screen')">BACK TO MENU</button>
         </div>
     </div>
 
-    <!-- 3. CREDITS & EXTRAS SCREEN -->
     <div id="extras-screen" class="screen modal-screen">
         <div class="modal-box" style="max-width: 650px;">
-            <h1 style="color:#d32f2f; font-size:2.8rem; margin-bottom:20px; text-shadow:0 0 15px #ff0000;">CREDITS & EXTRAS</h1>
-            
-            <div style="width:100%; max-height:280px; overflow-y:auto; text-align:center; margin-bottom:25px; padding-right:5px;">
+            <h1 style="color:#d32f2f; font-size:2.8rem; margin-bottom:20px;">CREDITS & EXTRAS</h1>
+            <div style="width:100%; max-height:280px; overflow-y:auto; text-align:center; margin-bottom:25px;">
                 <div style="margin-bottom: 20px;">
-                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px; letter-spacing:1px;">GAME CREATOR & DEVELOPER</h3>
-                    <p style="color:#ffffff; font-size:1.1rem; font-weight:bold;">[ Type Your Name Here ]</p>
+                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px;">GAME CREATOR & DEVELOPER</h3>
+                    <p style="color:#ffffff; font-size:1.1rem; font-weight:bold;">Landon</p>
                 </div>
-
                 <div style="margin-bottom: 20px;">
-                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px; letter-spacing:1px;">MUSIC & SOUND DESIGN</h3>
-                    <p style="color:#ffffff; font-size:1.1rem; font-weight:bold;">[ Type Composer Name / Your Name ]</p>
+                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px;">MUSIC & SOUND DESIGN</h3>
+                    <p style="color:#ffffff; font-size:1.1rem; font-weight:bold;">Landon & Joshua</p>
                 </div>
-
                 <div style="margin-bottom: 20px;">
-                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px; letter-spacing:1px;">ART & GRAPHICS</h3>
-                    <p style="color:#ffffff; font-size:1.1rem; font-weight:bold;">Sigrist Entertainment</p>
-                </div>
-
-                <div style="margin-bottom: 10px;">
-                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px; letter-spacing:1px;">SPECIAL THANKS</h3>
-                    <p style="color:#cccccc; font-size:0.95rem;">Thanks to everyone playing Five Nights at Sigrist!</p>
+                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px;">ART & GRAPHICS</h3>
+                    <p style="color:#ffffff; font-size:1.1rem; font-weight:bold;">Landon</p>
                 </div>
             </div>
-
             <button class="continue-btn" onclick="showScreen('menu-screen')">BACK TO MENU</button>
         </div>
     </div>
@@ -984,52 +1125,35 @@
             }
         }
 
-        // ==========================================
-        // 2. SUB-MENU NAVIGATION
-        // ==========================================
-       // SCREEN SWITCHING ENGINE (Preserves Music Widget Playback)
+        // RELIABLE SCREEN SWITCHING ENGINE
         function showScreen(screenId) {
+            // Hide all active screens
             const screens = document.querySelectorAll('.screen');
             screens.forEach(s => {
                 s.classList.remove('active');
                 s.style.display = 'none';
             });
 
+            // Target and display the selected screen
             const target = document.getElementById(screenId);
             if (target) {
-                target.style.display = 'flex';
+                if (target.classList.contains('modal-screen')) {
+                    target.style.display = 'flex';
+                } else {
+                    target.style.display = 'flex';
+                }
                 setTimeout(() => {
                     target.classList.add('active');
-                }, 50);
+                }, 30);
             }
         }
 
-        // MENU BUTTON CLICK HANDLERS
-        function clickNewGame() { 
-            showScreen('newspaper-screen'); 
-        }
-
-        function clickContinue() { 
-            alert("Loading saved progress: Night 1"); 
-            showScreen('newspaper-screen'); 
-        }
-
-        function openCustomNight() { 
-            showScreen('customnight-screen'); 
-        }
-
-        function openSettings() { 
-            showScreen('settings-screen'); 
-        }
-
-        function openExtras() { 
-            showScreen('extras-screen'); 
-        }
-
-        function enterOffice() {
-            showScreen('office-screen');
-            startShift();
-        }
+        // MENU BUTTON HANDLERS
+        function clickNewGame() { showScreen('newspaper-screen'); }
+        function clickContinue() { alert("Loading saved progress: Night 1"); showScreen('newspaper-screen'); }
+        function openCustomNight() { showScreen('customnight-screen'); }
+        function openSettings() { showScreen('settings-screen'); }
+        function openExtras() { showScreen('extras-screen'); }
 
         // ==========================================
         // 3. SECURITY OFFICE ENGINE & AI
