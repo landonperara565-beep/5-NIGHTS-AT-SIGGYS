@@ -55,6 +55,39 @@
                 </div>
             </div>
 
+        <!-- CUSTOM NIGHT SCREEN -->
+<div id="customnight-screen" class="screen">
+    <div class="modal-box">
+        <h1 style="color:#d32f2f;">CUSTOM NIGHT</h1>
+        <div style="margin:20px 0;">
+            <span>SIGRIST AI LEVEL: </span>
+            <button onclick="changeAI(-1)">&lt;</button>
+            <span id="ai-level-display" style="font-weight:bold; color:#4caf50;">10</span>
+            <button onclick="changeAI(1)">&gt;</button>
+        </div>
+        <button class="continue-btn" onclick="startCustomNight()">START NIGHT</button>
+        <button class="continue-btn" onclick="showScreen('menu-screen')">BACK</button>
+    </div>
+</div>
+
+<!-- SETTINGS SCREEN -->
+<div id="settings-screen" class="screen">
+    <div class="modal-box">
+        <h1 style="color:#d32f2f;">SETTINGS</h1>
+        <label><input type="checkbox" checked onchange="toggleScanlines(this.checked)"> CRT Scanlines</label>
+        <button class="continue-btn" onclick="showScreen('menu-screen')">BACK</button>
+    </div>
+</div>
+
+<!-- EXTRAS SCREEN -->
+<div id="extras-screen" class="screen">
+    <div class="modal-box">
+        <h1 style="color:#d32f2f;">EXTRAS</h1>
+        <p>Sigrist Animatronic Model Viewer</p>
+        <button class="continue-btn" onclick="showScreen('menu-screen')">BACK</button>
+    </div>
+</div>
+
             <!-- Track Info, Timestamps & Controls -->
             <div class="player-details">
                 <div class="player-header">
@@ -745,19 +778,29 @@
                 <span class="title-main">Sigrist</span>
             </div>
 
+            <!-- MAIN MENU BUTTONS -->
             <div class="menu-container">
                 <button class="menu-btn" onclick="clickNewGame()">
                     <span class="selector">&gt;</span>New Game
                 </button>
-                <button class="menu-btn"><span class="selector">&gt;</span>Continue</button>
-                <button class="menu-btn"><span class="selector">&gt;</span>Custom Night</button>
-                <button class="menu-btn"><span class="selector">&gt;</span>Settings</button>
-                <button class="menu-btn"><span class="selector">&gt;</span>Extras</button>
+                <button class="menu-btn" onclick="clickContinue()">
+                    <span class="selector">&gt;</span>Continue
+                </button>
+                <button class="menu-btn" onclick="openCustomNight()">
+                    <span class="selector">&gt;</span>Custom Night
+                </button>
+                <button class="menu-btn" onclick="openSettings()">
+                    <span class="selector">&gt;</span>Settings
+                </button>
+                <button class="menu-btn" onclick="openExtras()">
+                    <span class="selector">&gt;</span>Extras
+                </button>
             </div>
         </div>
 
-        <div class="copyright">© 2026 Sigrist Entertainment<br>All rights reserved. (probably)</div>
-    </div>
+        <div class="copyright">
+            © 2026 Sigrist Entertainment<br>All rights reserved. (probably)
+        </div>
 
     <!-- 2. NEWSPAPER LORE -->
     <div id="newspaper-screen" class="screen">
@@ -939,6 +982,11 @@
                 officePan.style.transform = `translateX(${panOffset}vw)`;
             }
         });
+
+        function openCustomNight() { showScreen('customnight-screen'); }
+function openSettings() { showScreen('settings-screen'); }
+function openExtras() { showScreen('extras-screen'); }
+function clickContinue() { alert("Loading saved progress..."); showScreen('newspaper-screen'); }
 
         // START GAME LOOP WITH SLOWER AI MOVEMENT RATE
         function startShift() {
