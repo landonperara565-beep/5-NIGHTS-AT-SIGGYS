@@ -54,39 +54,81 @@
                     </svg>
                 </div>
             </div>
+        
+        /* --- SUB-SCREEN OVERLAYS & MODAL FIX --- */
+.modal-screen {
+    background: rgba(0, 0, 0, 0.92);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 100;
+}
 
-        <!-- CUSTOM NIGHT SCREEN -->
-<div id="customnight-screen" class="screen">
-    <div class="modal-box">
-        <h1 style="color:#d32f2f;">CUSTOM NIGHT</h1>
-        <div style="margin:20px 0;">
-            <span>SIGRIST AI LEVEL: </span>
-            <button onclick="changeAI(-1)">&lt;</button>
-            <span id="ai-level-display" style="font-weight:bold; color:#4caf50;">10</span>
-            <button onclick="changeAI(1)">&gt;</button>
+.modal-box {
+    background: #111111;
+    border: 2px solid #d32f2f;
+    box-shadow: 0 0 35px rgba(211, 47, 47, 0.5);
+    padding: 35px 45px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 600px;
+    width: 85%;
+    text-align: center;
+    color: #ffffff;
+}
+
+       <!-- 1. CUSTOM NIGHT SCREEN (COMING SOON) -->
+    <div id="customnight-screen" class="screen modal-screen">
+        <div class="modal-box">
+            <h1 style="color:#d32f2f; font-size:2.5rem; margin-bottom:15px; text-shadow:0 0 10px #000;">CUSTOM NIGHT</h1>
+            <p style="font-size:1.8rem; color:#888; letter-spacing:3px; margin-bottom:30px; font-weight:bold;">COMING SOON</p>
+            <button class="continue-btn" onclick="showScreen('menu-screen')">BACK TO MENU</button>
         </div>
-        <button class="continue-btn" onclick="startCustomNight()">START NIGHT</button>
-        <button class="continue-btn" onclick="showScreen('menu-screen')">BACK</button>
     </div>
-</div>
 
-<!-- SETTINGS SCREEN -->
-<div id="settings-screen" class="screen">
-    <div class="modal-box">
-        <h1 style="color:#d32f2f;">SETTINGS</h1>
-        <label><input type="checkbox" checked onchange="toggleScanlines(this.checked)"> CRT Scanlines</label>
-        <button class="continue-btn" onclick="showScreen('menu-screen')">BACK</button>
+    <!-- 2. SETTINGS SCREEN (COMING SOON) -->
+    <div id="settings-screen" class="screen modal-screen">
+        <div class="modal-box">
+            <h1 style="color:#d32f2f; font-size:2.5rem; margin-bottom:15px; text-shadow:0 0 10px #000;">SETTINGS</h1>
+            <p style="font-size:1.8rem; color:#888; letter-spacing:3px; margin-bottom:30px; font-weight:bold;">COMING SOON</p>
+            <button class="continue-btn" onclick="showScreen('menu-screen')">BACK TO MENU</button>
+        </div>
     </div>
-</div>
 
-<!-- EXTRAS SCREEN -->
-<div id="extras-screen" class="screen">
-    <div class="modal-box">
-        <h1 style="color:#d32f2f;">EXTRAS</h1>
-        <p>Sigrist Animatronic Model Viewer</p>
-        <button class="continue-btn" onclick="showScreen('menu-screen')">BACK</button>
+    <!-- 3. EXTRAS & CREDITS SCREEN -->
+    <div id="extras-screen" class="screen modal-screen">
+        <div class="modal-box" style="max-width: 650px;">
+            <h1 style="color:#d32f2f; font-size:2.5rem; margin-bottom:20px; text-shadow:0 0 10px #000;">CREDITS & EXTRAS</h1>
+            
+            <div style="width:100%; max-height:280px; overflow-y:auto; text-align:center; margin-bottom:25px; padding-right:5px;">
+                
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px; letter-spacing:1px;">GAME CREATOR & DEVELOPER</h3>
+                    <p style="color:#ffffff; font-size:1.05rem;">[ Type Your Name Here ]</p>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px; letter-spacing:1px;">MUSIC & SOUND DESIGN</h3>
+                    <p style="color:#ffffff; font-size:1.05rem;">[ Type Composer Name / Your Name ]</p>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px; letter-spacing:1px;">ART & GRAPHICS</h3>
+                    <p style="color:#ffffff; font-size:1.05rem;">Sigrist Entertainment</p>
+                </div>
+
+                <div style="margin-bottom: 10px;">
+                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px; letter-spacing:1px;">SPECIAL THANKS</h3>
+                    <p style="color:#cccccc; font-size:0.95rem;">Thanks to everyone playing Five Nights at Sigrist!</p>
+                </div>
+
+            </div>
+
+            <button class="continue-btn" onclick="showScreen('menu-screen')">BACK TO MENU</button>
+        </div>
     </div>
-</div>
 
             <!-- Track Info, Timestamps & Controls -->
             <div class="player-details">
@@ -1037,11 +1079,23 @@
             }
         });
 
-        function openCustomNight() { showScreen('customnight-screen'); }
-function openSettings() { showScreen('settings-screen'); }
-function openExtras() { showScreen('extras-screen'); }
-function clickContinue() { alert("Loading saved progress..."); showScreen('newspaper-screen'); }
+        // NAVIGATION HANDLERS FOR MENU BUTTONS
+        function openCustomNight() {
+            showScreen('customnight-screen');
+        }
 
+        function openSettings() {
+            showScreen('settings-screen');
+        }
+
+        function openExtras() {
+            showScreen('extras-screen');
+        }
+
+        function clickContinue() {
+            alert("Loading saved progress...");
+            showScreen('newspaper-screen');
+        }
         // START GAME LOOP WITH SLOWER AI MOVEMENT RATE
         function startShift() {
             gameInterval = setInterval(() => {
