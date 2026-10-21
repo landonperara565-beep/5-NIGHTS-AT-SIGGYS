@@ -63,128 +63,150 @@
             opacity: 1;
         }
 
-       /* --- MAIN MENU SCREEN & BACKGROUND PICTURE FIX --- */
+      /* --- MAIN MENU CONTAINER & BACKGROUND PICTURE FIX --- */
 #menu-screen {
     position: relative;
     width: 100vw;
     height: 100vh;
-    background: #000 url('siggy.png') center/c no-repeat; /* Ensure siggy.png is in your root folder */
+    /* UPDATE 'siggy.png' TO MATCH YOUR EXACT UPLOADED IMAGE FILE NAME */
+    background: #000000 url('siggy.png') center/cover no-repeat;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     padding: 50px 60px;
     box-sizing: border-box;
-    flow: hidden;
-}
-
-/* LEFT COLUMN LAYOUT FOR TITLE AND MENU BUTTONS */
-.menu-left-content {
-    display: flex;
-    flex-direction: column;
-    gap: 35px; /* Clean spacing between title and menu options */
-    max-width: 500px;
+    overflow: hidden;
     z-index: 10;
 }
 
-/* THREE-LINE TITLE LAYOUT (EXACT MATCH TO SOURCE ARTWORK) */
+/* LEFT SIDE COLUMN FOR TITLE & MENU BUTTONS */
+.menu-left-content {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    max-width: 520px;
+    z-index: 20;
+}
+
+/* --- HIGH-SPEC ANIMATED HORROR TITLE --- */
 .title-box {
     display: flex;
     flex-direction: column;
-    line-height: 0.95;
+    line-height: 0.92;
+    user-select: none;
 }
 
+/* "Five Nights" - Distressed White Header */
 .title-fn {
-    font-size: 4.5rem;
+    font-size: 4.8rem;
     color: #ffffff;
     font-weight: 900;
-    letter-spacing: 2px;
-    text-shadow: 0 0 10px rgba(255, 0, 0, 0.8), 3px 3px 0px #000000;
-    font-family: 'Impact', 'Arial Black', monospace;
+    letter-spacing: 1px;
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    text-shadow: 
+        0 0 12px rgba(255, 0, 0, 0.8),
+        3px 3px 0px #000000,
+        5px 5px 15px rgba(0, 0, 0, 0.9);
 }
 
+/* "at" - Indented Sub-header Row */
 .title-at {
-    font-size: 3.0rem;
+    font-size: 3.2rem;
     color: #ffffff;
     font-weight: 900;
     margin-left: 95px;
-    margin-top: -5px;
-    margin-bottom: -5px;
-    text-shadow: 0 0 10px rgba(255, 0, 0, 0.8), 3px 3px 0px #000000;
-    font-family: 'Impact', 'Arial Black', monospace;
+    margin-top: -6px;
+    margin-bottom: -6px;
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    text-shadow: 
+        0 0 10px rgba(255, 0, 0, 0.8),
+        3px 3px 0px #000000;
 }
 
+/* "Sigrist" - Glowing Blood-Red Title with Chromatic Glitch */
 .title-sigrist {
-    font-size: 6.5rem;
-    color: #ff0000;
+    font-size: 6.8rem;
+    color: #d32f2f;
     font-weight: 900;
-    letter-spacing: 3px;
-    text-shadow: 0 0 20px #ff0000, 0 0 40px #8b0000, 4px 4px 0px #000000;
-    font-family: 'Impact', 'Arial Black', monospace;
-    animation: titleGlitch 2.5s infinite ease-in-out;
+    letter-spacing: 2px;
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    text-transform: capitalize;
+    position: relative;
+    display: inline-block;
+    animation: agentGlitchPulse 2.8s infinite ease-in-out;
 }
 
-/* GLITCH ANIMATION FOR SIGRIST TITLE */
-@keyframes titleGlitch {
-    0%, 90%, 100% {
-        transform: scale(1);
-        text-shadow: 0 0 20px #ff0000, 0 0 40px #8b0000, 4px 4px 0px #000000;
-        color: #ff0000;
+/* Keyframe Glitch & Chromatic Aberration Animation */
+@keyframes agentGlitchPulse {
+    0%, 88%, 100% {
+        color: #d32f2f;
+        text-shadow: 
+            0 0 15px #ff0000, 
+            0 0 30px #8b0000, 
+            0 0 50px rgba(211, 47, 47, 0.8),
+            4px 4px 0px #000000;
+        transform: scale(1) skewX(0deg);
     }
-    92% {
-        transform: translate(-3px, 2px);
-        text-shadow: -3px 0 #00ffff, 3px 0 #ff0000;
+    89% {
         color: #ffffff;
+        text-shadow: -4px 0 #00ffff, 4px 0 #ff0000, 0 0 30px #ff0000;
+        transform: translate(-3px, 1px) skewX(-3deg);
     }
-    94% {
-        transform: translate(3px, -2px);
-        text-shadow: 3px 0 #00ffff, -3px 0 #ff0000;
+    91% {
         color: #ff0000;
+        text-shadow: 4px 0 #00ffff, -4px 0 #ff0000, 0 0 50px #ff0000;
+        transform: translate(3px, -2px) skewX(2deg);
+    }
+    93% {
+        color: #ffffff;
+        text-shadow: 0 0 25px #ffffff, 0 0 60px #ff0000;
+        transform: translate(0px, 0px) scale(1.02);
     }
 }
 
-/* MENU BUTTONS SPACING */
+/* MENU BUTTONS & HOVER SELECTORS */
 .menu-container {
     display: flex;
     flex-direction: column;
-    gap: 12px; /* Distinct spacing between each button */
+    gap: 10px;
 }
 
 .menu-btn {
     background: none;
     border: none;
-    color: #aaaaaa;
+    color: #888888;
     font-size: 1.8rem;
     font-family: 'Courier New', Courier, monospace;
     font-weight: bold;
     text-align: left;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
     display: flex;
     align-items: center;
 }
 
-.menu-btn:h {
+.menu-btn:hover {
     color: #ffffff;
-    transform: translateX(8px);
+    transform: translateX(10px);
 }
 
 .menu-btn .selector {
     visibility: hidden;
     margin-right: 12px;
-    color: #ffffff;
+    color: #d32f2f;
 }
 
-.menu-btn:h .selector {
+.menu-btn:hover .selector {
     visibility: visible;
 }
 
-/* COPYRIGHT STATEMENT (BOTTOM LEFT) */
+/* COPYRIGHT NOTICE AT BOTTOM LEFT */
 .copyright {
-    color: #888888;
+    color: #555555;
     font-size: 0.85rem;
     font-family: 'Courier New', Courier, monospace;
     line-height: 1.3;
-    z-index: 10;
+    z-index: 20;
 }
 
 /* SPOTIFY MEDIA PLAYER WIDGET (BOTTOM RIGHT) */
@@ -907,19 +929,19 @@
     <div class="scanlines"></div>
     <canvas id="static-canvas"></canvas>
 
-      <!-- MAIN TITLE MENU SCREEN -->
+      <!-- MAIN MENU SCREEN -->
     <div id="menu-screen" class="screen active">
         
-        <!-- LEFT COLUMN: TITLE & MENU OPTIONS -->
+        <!-- LEFT COLUMN: ANIMATED TITLE & MENU OPTIONS -->
         <div class="menu-left-content">
-            <!-- THREE-LINE TITLE -->
+            <!-- THREE-LINE TITLE MATCHING SOURCE ARTWORK -->
             <div class="title-box">
                 <span class="title-fn">Five Nights</span>
                 <span class="title-at">at</span>
                 <span class="title-sigrist">Sigrist</span>
             </div>
 
-            <!-- MENU OPTIONS -->
+            <!-- MAIN MENU OPTIONS -->
             <div class="menu-container">
                 <button class="menu-btn" onclick="clickNewGame()">
                     <span class="selector">&gt;</span>New Game
