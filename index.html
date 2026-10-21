@@ -68,13 +68,13 @@
     position: relative;
     width: 100vw;
     height: 100vh;
-    background: #000 url('siggy.png') center/cover no-repeat; /* Ensure siggy.png is in your root folder */
+    background: #000 url('siggy.png') center/c no-repeat; /* Ensure siggy.png is in your root folder */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     padding: 50px 60px;
     box-sizing: border-box;
-    overflow: hidden;
+    flow: hidden;
 }
 
 /* LEFT COLUMN LAYOUT FOR TITLE AND MENU BUTTONS */
@@ -163,7 +163,7 @@
     align-items: center;
 }
 
-.menu-btn:hover {
+.menu-btn:h {
     color: #ffffff;
     transform: translateX(8px);
 }
@@ -174,7 +174,7 @@
     color: #ffffff;
 }
 
-.menu-btn:hover .selector {
+.menu-btn:h .selector {
     visibility: visible;
 }
 
@@ -205,7 +205,7 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-     /* --- SUB-SCREEN OVERLAY & MODAL FIX --- */
+     /* --- SUB-SCREEN LAY & MODAL FIX --- */
 .modal-screen {
     position: fixed;
     top: 0;
@@ -427,7 +427,7 @@
     transition: all 0.2s ease;
 }
 
-.continue-btn:hover {
+.continue-btn:h {
     background: #ff0000;
     box-shadow: 0 0 25px rgba(255, 0, 0, 0.8);
     transform: scale(1.05);
@@ -506,7 +506,7 @@
     z-index: 5;
 }
 
-.cam-node:hover {
+.cam-node:h {
     color: #fff;
     border-color: #aaa;
 }
@@ -549,7 +549,7 @@
             align-items: center;
         }
 
-        .menu-btn:hover {
+        .menu-btn:h {
             color: #fff;
             transform: translateX(10px);
         }
@@ -560,7 +560,7 @@
             color: #d32f2f;
         }
 
-        .menu-btn:hover .selector {
+        .menu-btn:h .selector {
             visibility: visible;
         }
 
@@ -596,7 +596,7 @@
             justify-content: center;
             align-items: center;
             flex-shrink: 0;
-            overflow: hidden;
+            flow: hidden;
         }
 
         .album-icon {
@@ -668,7 +668,7 @@
             height: 4px;
             background-color: #4d4d4d;
             border-radius: 2px;
-            overflow: hidden;
+            flow: hidden;
             cursor: pointer;
         }
 
@@ -705,7 +705,7 @@
             transition: all 0.15s ease;
         }
 
-        .btn-ctrl:hover {
+        .btn-ctrl:h {
             color: #ffffff;
             transform: scale(1.08);
         }
@@ -764,7 +764,7 @@
             transition: background 0.2s;
         }
 
-        .continue-btn:hover {
+        .continue-btn:h {
             background: #ff0000;
         }
 
@@ -795,7 +795,7 @@
             height: 80%;
             background: #020202;
             border: 8px solid #222;
-            overflow: hidden;
+            flow: hidden;
         }
 
         #doorway-left { left: 5vw; }
@@ -838,7 +838,7 @@
         .ctrl-btn.active-light { background: #d4af37; color: #000; }
 
         /* HUD & CAMERA MONITOR */
-        .hud-overlay {
+        .hud-lay {
             position: fixed;
             top: 20px;
             left: 20px;
@@ -1011,7 +1011,7 @@
 
   <!-- 2. DETAILED SECURITY OFFICE (MATCHING MENU BACKGROUND ARTWORK) -->
     <div id="office-screen" class="screen">
-        <div class="hud-overlay">POWER: <span id="power-display">100</span>%</div>
+        <div class="hud-lay">POWER: <span id="power-display">100</span>%</div>
         <div class="hud-clock"><span id="clock-display">12 AM</span><br><span style="font-size:1rem; color:#aaa;">Night 1</span></div>
 
         <div id="office-panoramic">
@@ -1058,7 +1058,7 @@
         </div>
 
 
-         <!-- CAMERA MONITOR OVERLAY -->
+         <!-- CAMERA MONITOR LAY -->
         <div id="camera-monitor">
             <h2 id="cam-label" style="position:absolute; top:25px; left:35px; color:#1ed760;">CAM 1A (Classroom)</h2>
             <div id="cam-feed-container">
@@ -1085,14 +1085,16 @@
         </div>
     </div>
 
-    <!-- 4. JUMPSCARE / GAME OVER SCREEN -->
+  <!-- JUMPSCARE & GAME OVER SCREEN -->
     <div id="gameover-screen" class="screen modal-screen">
-        <div id="jumpscare-container" style="display:flex; flex-direction:column; align-items:center;">
-            <img id="jumpscare-img" src="jumpscare.png" alt="SIGRIST CAUGHT YOU" style="max-width:80vw; max-height:70vh;" onerror="this.style.display='none'; document.getElementById('jumpscare-fallback').style.display='block';">
-            <div id="jumpscare-fallback" style="display:none; font-size:3rem; color:#d32f2f; text-align:center; font-weight:bold;">
-                SIGRIST ATTACKED!
-            </div>
+        <div id="jumpscare-container" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100vw; height:100vh;">
+            <!-- AI-GENERATED JUMPSCARE VIDEO -->
+            <video id="jumpscare-video" style="width:100vw; height:100vh; object-fit:cover;" playsinline preload="auto">
+                <source src="jumpscare.mp4" type="video/mp4">
+            </video>
         </div>
+
+        <!-- GAME OVER MENU -->
         <div id="gameover-ui" style="display: none; flex-direction: column; align-items: center;">
             <h1 style="font-size: 4rem; color: #d32f2f; margin-bottom: 20px;">GAME OVER</h1>
             <button class="continue-btn" onclick="location.reload()">TRY AGAIN</button>
@@ -1488,22 +1490,38 @@
             if (monitorOpen) updateCameraPhoto();
         }
 
-        function triggerGameOver() {
+       function triggerGameOver() {
             clearInterval(gameInterval);
+            
+            // Close camera monitor if active
             const monitor = document.getElementById('camera-monitor');
             if (monitor) monitor.classList.remove('active-cam');
 
+            // Show jumpscare overlay
             showScreen('gameover-screen');
             const jumpscareBox = document.getElementById('jumpscare-container');
             const gameoverUI = document.getElementById('gameover-ui');
+            const video = document.getElementById('jumpscare-video');
 
             if (jumpscareBox) jumpscareBox.style.display = 'flex';
             if (gameoverUI) gameoverUI.style.display = 'none';
 
-            setTimeout(() => {
-                if (jumpscareBox) jumpscareBox.style.display = 'none';
-                if (gameoverUI) gameoverUI.style.display = 'flex';
-            }, 2500);
+            // Reset and play AI video jumpscare
+            if (video) {
+                video.currentTime = 0;
+                video.play().catch(err => console.log("Video playback waiting for user interaction:", err));
+
+                // Switch to GAME OVER UI once video ends
+                video.onended = () => {
+                    if (jumpscareBox) jumpscareBox.style.display = 'none';
+                    if (gameoverUI) gameoverUI.style.display = 'flex';
+                };
+            } else {
+                setTimeout(() => {
+                    if (jumpscareBox) jumpscareBox.style.display = 'none';
+                    if (gameoverUI) gameoverUI.style.display = 'flex';
+                }, 2500);
+            }
         }
 
         function triggerWin() {
