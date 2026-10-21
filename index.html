@@ -75,13 +75,124 @@
             margin-top: 20px;
         }
 
-        .game-title {
-            font-size: 4rem;
-            color: #d32f2f;
-            text-shadow: 0 0 15px #ff0000;
-            letter-spacing: 2px;
-            line-height: 1.1;
-        }
+       /* --- ANIMATED GLITCH TITLE --- */
+.game-title {
+    font-size: 4rem;
+    color: #d32f2f;
+    text-shadow: 0 0 15px #ff0000;
+    letter-spacing: 2px;
+    line-height: 1.1;
+    font-weight: bold;
+    position: relative;
+    display: inline-block;
+    animation: titleGlitch 2.5s infinite;
+}
+
+@keyframes titleGlitch {
+    0% { transform: translate(0); text-shadow: 0 0 15px #ff0000; }
+    92% { transform: translate(0); text-shadow: 0 0 15px #ff0000; }
+    93% { transform: translate(-3px, 2px); text-shadow: 3px 0 #00ffff, -3px 0 #ff0000; }
+    94% { transform: translate(3px, -1px); text-shadow: -3px 0 #00ffff, 3px 0 #ff0000; }
+    95% { transform: translate(0); text-shadow: 0 0 15px #ff0000; }
+    97% { transform: translate(-2px, -2px); opacity: 0.8; }
+    98% { transform: translate(2px, 1px); opacity: 1; }
+    100% { transform: translate(0); text-shadow: 0 0 15px #ff0000; }
+}
+
+/* --- FULL-SCREEN CAMERA DISPLAY FIX --- */
+#cam-feed-container {
+    position: relative;
+    width: 82vw;
+    height: 78vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid #222;
+    background: #000;
+    box-shadow: 0 0 25px rgba(0,0,0,0.9);
+}
+
+#cam-feed-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Displays full image without cropping */
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+}
+
+/* --- FNAF BRANCHING CAMERA MAP LAYOUT --- */
+.fnaf-map-wrapper {
+    position: absolute;
+    bottom: 25px;
+    right: 35px;
+    width: 280px;
+    height: 320px;
+    background: rgba(0, 0, 0, 0.85);
+    border: 2px solid #333;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 80;
+}
+
+.map-grid {
+    position: relative;
+    width: 100%;
+    height: 230px;
+    margin-top: 10px;
+}
+
+/* Branching Connection Lines */
+.map-line-v {
+    position: absolute;
+    width: 2px;
+    background-color: #555;
+}
+
+.map-line-h {
+    position: absolute;
+    height: 2px;
+    background-color: #555;
+}
+
+.cam-node {
+    position: absolute;
+    background: #111;
+    color: #aaa;
+    border: 1px solid #555;
+    font-size: 0.72rem;
+    font-weight: bold;
+    padding: 5px 8px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.15s ease;
+    z-index: 5;
+}
+
+.cam-node:hover {
+    color: #fff;
+    border-color: #aaa;
+}
+
+.cam-node.selected {
+    background: #1ed760; /* Iconic green accent [1] */
+    color: #000;
+    border-color: #ffffff;
+    box-shadow: 0 0 10px rgba(30, 215, 96, 0.6);
+}
+
+.you-indicator {
+    position: absolute;
+    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: #ff0000;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
 
         .menu-container {
             display: flex;
@@ -574,21 +685,39 @@
             </div>
         </div>
 
-        <!-- CAMERA MONITOR OVERLAY -->
+         <!-- CAMERA MONITOR OVERLAY WITH FULL IMAGE & BRANCHING MAP -->
         <div id="camera-monitor">
-            <h2 id="cam-label" style="position:absolute; top:30px; left:40px; color:#1ed760;">CAM 1A</h2>
-            <img id="cam-feed-img" src="cam1a_empty.png" alt="Camera Feed" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\'><rect width=\'100%\' height=\'100%\' fill=\'%23111\'/><text x=\'50%\' y=\'50%\' fill=\'%23888\' dominant-baseline=\'middle\' text-anchor=\'middle\'>CAMERA FEED</text></svg>';">
+            <h2 id="cam-label" style="position:absolute; top:25px; left:35px; color:#1ed760; font-size:1.8rem; letter-spacing:2px; text-shadow:0 0 8px #000;">CAM 1A (Classroom)</h2>
+            
+            <div id="cam-feed-container">
+                <img id="cam-feed-img" src="cam1a_empty.png" alt="Camera Feed" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'800\' height=\'600\'><rect width=\'100%\' height=\'100%\' fill=\'%23111\'/><text x=\'50%\' y=\'50%\' fill=\'%23888\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'24\'>CAMERA FEED LOADING...</text></svg>';">
+            </div>
 
-            <div class="camera-map">
-                <button class="cam-btn selected" id="btn-cam1a" onclick="switchCamera('1A')">CAM 1A (Classroom)</button>
-                <button class="cam-btn" id="btn-cam1b" onclick="switchCamera('1B')">CAM 1B (Hallway)</button>
-                <button class="cam-btn" id="btn-cam3a" onclick="switchCamera('3A')">CAM 3A (Main Office)</button>
-                <button class="cam-btn" id="btn-cam2a" onclick="switchCamera('2A')">CAM 2A (Left Door)</button>
-                <button class="cam-btn" id="btn-cam2b" onclick="switchCamera('2B')">CAM 2B (Right Door)</button>
-                <button class="cam-btn" style="margin-top:15px; background:#8b0000; color:#fff;" onclick="toggleCameraMonitor()">CLOSE MONITOR</button>
+            <!-- FNAF BRANCHING MAP UI -->
+            <div class="fnaf-map-wrapper">
+                <div style="font-size:0.8rem; color:#888; font-weight:bold; letter-spacing:1px;">BUILDING MAP</div>
+                
+                <div class="map-grid">
+                    <!-- Branch Lines -->
+                    <div class="map-line-v" style="top:25px; left:50%; height:130px;"></div> <!-- Main Center Corridor -->
+                    <div class="map-line-h" style="top:115px; left:20%; width:60%;"></div>  <!-- Door Branch -->
+                    <div class="map-line-v" style="top:115px; left:20%; height:50px;"></div>  <!-- Left Branch -->
+                    <div class="map-line-v" style="top:115px; right:20%; height:50px;"></div> <!-- Right Branch -->
+
+                    <!-- Camera Nodes (Positioned on the Map) -->
+                    <button class="cam-node selected" id="btn-cam1a" style="top:0px; left:50%; transform:translateX(-50%);" onclick="switchCamera('1A')">CAM 1A</button>
+                    <button class="cam-node" id="btn-cam1b" style="top:50px; left:50%; transform:translateX(-50%);" onclick="switchCamera('1B')">CAM 1B</button>
+                    <button class="cam-node" id="btn-cam3a" style="top:100px; left:50%; transform:translateX(-50%);" onclick="switchCamera('3A')">CAM 3A</button>
+                    <button class="cam-node" id="btn-cam2a" style="top:150px; left:10%;" onclick="switchCamera('2A')">CAM 2A</button>
+                    <button class="cam-node" id="btn-cam2b" style="top:150px; right:10%;" onclick="switchCamera('2B')">CAM 2B</button>
+
+                    <!-- Office Location -->
+                    <div class="you-indicator">YOU ARE HERE</div>
+                </div>
+
+                <button class="ctrl-btn" style="width:100%; background:#8b0000; color:#fff; border:none; padding:8px; margin-top:5px; cursor:pointer;" onclick="toggleCameraMonitor()">CLOSE MONITOR</button>
             </div>
         </div>
-    </div>
 
     <!-- 4. JUMPSCARE / GAME OVER SCREEN -->
     <div id="gameover-screen" class="screen modal-screen">
@@ -900,10 +1029,22 @@
 
         function switchCamera(cam) {
             currentCam = cam;
-            document.querySelectorAll('.cam-btn').forEach(b => b.classList.remove('selected'));
+            document.querySelectorAll('.cam-node').forEach(b => b.classList.remove('selected'));
+            
             const selBtn = document.getElementById('btn-cam' + cam.toLowerCase());
             if (selBtn) selBtn.classList.add('selected');
-            document.getElementById('cam-label').innerText = 'CAM ' + cam;
+
+            const camNames = {
+                '1A': 'CAM 1A (Classroom)',
+                '1B': 'CAM 1B (Hallway)',
+                '3A': 'CAM 3A (Main Office)',
+                '2A': 'CAM 2A (Left Door)',
+                '2B': 'CAM 2B (Right Door)'
+            };
+
+            const labelEl = document.getElementById('cam-label');
+            if (labelEl) labelEl.innerText = camNames[cam] || ('CAM ' + cam);
+
             updateCameraPhoto();
         }
 
