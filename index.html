@@ -739,6 +739,60 @@
                 </div>
             </div>
 
+
+             <!-- 1. CUSTOM NIGHT SCREEN (COMING SOON) -->
+    <div id="customnight-screen" class="screen">
+        <div class="modal-box">
+            <h1 style="color:#d32f2f; font-size:2.5rem; margin-bottom:15px; text-shadow:0 0 10px #000;">CUSTOM NIGHT</h1>
+            <p style="font-size:1.8rem; color:#888; letter-spacing:3px; margin-bottom:30px; font-weight:bold;">COMING SOON</p>
+            <button class="continue-btn" onclick="showScreen('menu-screen')">BACK TO MENU</button>
+        </div>
+    </div>
+
+    <!-- 2. SETTINGS SCREEN (COMING SOON) -->
+    <div id="settings-screen" class="screen">
+        <div class="modal-box">
+            <h1 style="color:#d32f2f; font-size:2.5rem; margin-bottom:15px; text-shadow:0 0 10px #000;">SETTINGS</h1>
+            <p style="font-size:1.8rem; color:#888; letter-spacing:3px; margin-bottom:30px; font-weight:bold;">COMING SOON</p>
+            <button class="continue-btn" onclick="showScreen('menu-screen')">BACK TO MENU</button>
+        </div>
+    </div>
+
+    <!-- 3. EXTRAS & CREDITS SCREEN (EASY TO EDIT) -->
+    <div id="extras-screen" class="screen">
+        <div class="modal-box" style="max-width: 650px;">
+            <h1 style="color:#d32f2f; font-size:2.5rem; margin-bottom:20px; text-shadow:0 0 10px #000;">CREDITS & EXTRAS</h1>
+            
+            <div class="credits-list" style="width:100%; max-height:300px; overflow-y:auto; text-align:center; padding-right:5px; margin-bottom:25px;">
+                
+                <!-- === TYPE YOUR CREDITS HERE === -->
+                <div style="margin-bottom: 22px;">
+                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px; letter-spacing:1px;">GAME CREATOR & DEVELOPER</h3>
+                    <p style="color:#ffffff; font-size:1.05rem;">[ Type Your Name Here ]</p>
+                </div>
+
+                <div style="margin-bottom: 22px;">
+                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px; letter-spacing:1px;">MUSIC & SOUND DESIGN</h3>
+                    <p style="color:#ffffff; font-size:1.05rem;">[ Type Composer Name / Your Name ]</p>
+                </div>
+
+                <div style="margin-bottom: 22px;">
+                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px; letter-spacing:1px;">ART & GRAPHICS</h3>
+                    <p style="color:#ffffff; font-size:1.05rem;">Sigrist Entertainment</p>
+                </div>
+
+                <div style="margin-bottom: 10px;">
+                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px; letter-spacing:1px;">SPECIAL THANKS</h3>
+                    <p style="color:#cccccc; font-size:0.95rem; line-height:1.4;">Thanks to everyone testing and playing Five Nights at Sigrist!</p>
+                </div>
+                <!-- ============================== -->
+
+            </div>
+
+            <button class="continue-btn" onclick="showScreen('menu-screen')">BACK TO MENU</button>
+        </div>
+    </div>
+
             <!-- Track Info, Timestamps & Controls -->
             <div class="player-details">
                 <div class="player-header">
@@ -1139,6 +1193,19 @@ function clickContinue() { alert("Loading saved progress..."); showScreen('newsp
             if (hallRight) {
                 hallRight.style.background = rightLightOn ? (sigristPosition === '2B' ? '#4a0d0d' : '#33322f') : '#020202';
             }
+        }
+
+        // NAVIGATION HANDLERS FOR OTHER MENU BUTTONS
+        function openCustomNight() {
+            showScreen('customnight-screen');
+        }
+
+        function openSettings() {
+            showScreen('settings-screen');
+        }
+
+        function openExtras() {
+            showScreen('extras-screen');
         }
 
         // CAMERA MONITOR
