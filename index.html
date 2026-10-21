@@ -75,28 +75,104 @@
             margin-top: 20px;
         }
 
-       /* --- ANIMATED GLITCH TITLE --- */
+      /* --- CINEMATIC PULSING HORROR TITLE --- */
 .game-title {
-    font-size: 4rem;
-    color: #d32f2f;
-    text-shadow: 0 0 15px #ff0000;
-    letter-spacing: 2px;
-    line-height: 1.1;
-    font-weight: bold;
+    font-size: 4.2rem;
+    color: #ff1a1a;
+    text-shadow: 
+        0 0 10px #ff0000,
+        0 0 20px #8b0000,
+        0 0 40px #d32f2f,
+        0 0 80px #600000;
+    letter-spacing: 3px;
+    line-height: 1.05;
+    font-weight: 900;
+    text-transform: uppercase;
     position: relative;
     display: inline-block;
-    animation: titleGlitch 2.5s infinite;
+    animation: titleHorrorPulse 3s infinite ease-in-out;
 }
 
-@keyframes titleGlitch {
-    0% { transform: translate(0); text-shadow: 0 0 15px #ff0000; }
-    92% { transform: translate(0); text-shadow: 0 0 15px #ff0000; }
-    93% { transform: translate(-3px, 2px); text-shadow: 3px 0 #00ffff, -3px 0 #ff0000; }
-    94% { transform: translate(3px, -1px); text-shadow: -3px 0 #00ffff, 3px 0 #ff0000; }
-    95% { transform: translate(0); text-shadow: 0 0 15px #ff0000; }
-    97% { transform: translate(-2px, -2px); opacity: 0.8; }
-    98% { transform: translate(2px, 1px); opacity: 1; }
-    100% { transform: translate(0); text-shadow: 0 0 15px #ff0000; }
+/* Pulsing blood-red glow and slight atmospheric scale */
+@keyframes titleHorrorPulse {
+    0% {
+        text-shadow: 0 0 10px #ff0000, 0 0 20px #8b0000, 0 0 35px #d32f2f;
+        transform: scale(1);
+    }
+    50% {
+        text-shadow: 0 0 18px #ff3333, 0 0 35px #ff0000, 0 0 60px #8b0000, 0 0 90px #ff0000;
+        transform: scale(1.02);
+        color: #ffffff;
+    }
+    52% {
+        opacity: 0.8;
+        transform: scale(1.01) skewX(-2deg);
+    }
+    54% {
+        opacity: 1;
+        transform: scale(1.02) skewX(0deg);
+    }
+    100% {
+        text-shadow: 0 0 10px #ff0000, 0 0 20px #8b0000, 0 0 35px #d32f2f;
+        transform: scale(1);
+        color: #ff1a1a;
+    }
+}
+
+/* --- SUB-SCREEN OVERLAYS & MODAL BLANK-SCREEN FIX --- */
+.modal-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.94);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 200;
+}
+
+.modal-screen.active {
+    display: flex !important;
+    opacity: 1 !important;
+}
+
+.modal-box {
+    background: #0d0d0d;
+    border: 2px solid #d32f2f;
+    box-shadow: 0 0 40px rgba(211, 47, 47, 0.6);
+    padding: 40px 50px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 620px;
+    width: 88%;
+    text-align: center;
+    color: #ffffff;
+}
+
+.continue-btn {
+    background: #d32f2f;
+    color: #fff;
+    border: none;
+    padding: 12px 32px;
+    font-size: 1.2rem;
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    border-radius: 4px;
+    box-shadow: 0 0 15px rgba(211, 47, 47, 0.4);
+    transition: all 0.2s ease;
+}
+
+.continue-btn:hover {
+    background: #ff0000;
+    box-shadow: 0 0 25px rgba(255, 0, 0, 0.8);
+    transform: scale(1.05);
 }
 
 /* --- FULL-SCREEN CAMERA DISPLAY FIX --- */
@@ -614,7 +690,7 @@
                 <div class="player-header">
                     <div class="track-meta">
                         <span class="track-title" id="player-track-title">Sigrist Main Theme</span>
-                        <span class="track-artist" id="player-track-artist">Custom Track 1</span>
+                        <span class="track-artist" id="player-track-artist">LandonBeats</span>
                     </div>
                     <button class="btn-icon-action" title="Add Song">+</button>
                 </div>
@@ -742,46 +818,51 @@
         </div>
     </div>
 
-    <!-- 6. CUSTOM NIGHT SCREEN (COMING SOON) -->
+    <!-- 1. CUSTOM NIGHT SCREEN -->
     <div id="customnight-screen" class="screen modal-screen">
         <div class="modal-box">
-            <h1 style="color:#d32f2f; font-size:2.5rem; margin-bottom:15px;">CUSTOM NIGHT</h1>
-            <p style="font-size:1.8rem; color:#888; letter-spacing:3px; margin-bottom:30px; font-weight:bold;">COMING SOON</p>
+            <h1 style="color:#d32f2f; font-size:2.8rem; margin-bottom:15px; text-shadow:0 0 15px #ff0000;">CUSTOM NIGHT</h1>
+            <p style="font-size:1.8rem; color:#888; letter-spacing:4px; margin-bottom:30px; font-weight:bold;">COMING SOON</p>
             <button class="continue-btn" onclick="showScreen('menu-screen')">BACK TO MENU</button>
         </div>
     </div>
 
-    <!-- 7. SETTINGS SCREEN (COMING SOON) -->
+    <!-- 2. SETTINGS SCREEN -->
     <div id="settings-screen" class="screen modal-screen">
         <div class="modal-box">
-            <h1 style="color:#d32f2f; font-size:2.5rem; margin-bottom:15px;">SETTINGS</h1>
-            <p style="font-size:1.8rem; color:#888; letter-spacing:3px; margin-bottom:30px; font-weight:bold;">COMING SOON</p>
+            <h1 style="color:#d32f2f; font-size:2.8rem; margin-bottom:15px; text-shadow:0 0 15px #ff0000;">SETTINGS</h1>
+            <p style="font-size:1.8rem; color:#888; letter-spacing:4px; margin-bottom:30px; font-weight:bold;">COMING SOON</p>
             <button class="continue-btn" onclick="showScreen('menu-screen')">BACK TO MENU</button>
         </div>
     </div>
 
-    <!-- 8. EXTRAS & CREDITS SCREEN -->
+    <!-- 3. CREDITS & EXTRAS SCREEN -->
     <div id="extras-screen" class="screen modal-screen">
         <div class="modal-box" style="max-width: 650px;">
-            <h1 style="color:#d32f2f; font-size:2.5rem; margin-bottom:20px;">CREDITS & EXTRAS</h1>
-            <div style="width:100%; max-height:280px; overflow-y:auto; text-align:center; margin-bottom:25px;">
+            <h1 style="color:#d32f2f; font-size:2.8rem; margin-bottom:20px; text-shadow:0 0 15px #ff0000;">CREDITS & EXTRAS</h1>
+            
+            <div style="width:100%; max-height:280px; overflow-y:auto; text-align:center; margin-bottom:25px; padding-right:5px;">
                 <div style="margin-bottom: 20px;">
-                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px;">GAME CREATOR & DEVELOPER</h3>
-                    <p style="color:#ffffff; font-size:1.05rem;">[ Type Your Name Here ]</p>
+                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px; letter-spacing:1px;">GAME CREATOR & DEVELOPER</h3>
+                    <p style="color:#ffffff; font-size:1.1rem; font-weight:bold;">[ Type Your Name Here ]</p>
                 </div>
+
                 <div style="margin-bottom: 20px;">
-                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px;">MUSIC & SOUND DESIGN</h3>
-                    <p style="color:#ffffff; font-size:1.05rem;">[ Type Composer Name / Your Name ]</p>
+                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px; letter-spacing:1px;">MUSIC & SOUND DESIGN</h3>
+                    <p style="color:#ffffff; font-size:1.1rem; font-weight:bold;">[ Type Composer Name / Your Name ]</p>
                 </div>
+
                 <div style="margin-bottom: 20px;">
-                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px;">ART & GRAPHICS</h3>
-                    <p style="color:#ffffff; font-size:1.05rem;">Sigrist Entertainment</p>
+                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px; letter-spacing:1px;">ART & GRAPHICS</h3>
+                    <p style="color:#ffffff; font-size:1.1rem; font-weight:bold;">Sigrist Entertainment</p>
                 </div>
+
                 <div style="margin-bottom: 10px;">
-                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px;">SPECIAL THANKS</h3>
+                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px; letter-spacing:1px;">SPECIAL THANKS</h3>
                     <p style="color:#cccccc; font-size:0.95rem;">Thanks to everyone playing Five Nights at Sigrist!</p>
                 </div>
             </div>
+
             <button class="continue-btn" onclick="showScreen('menu-screen')">BACK TO MENU</button>
         </div>
     </div>
@@ -793,7 +874,7 @@
         const soundtrackPlaylist = [
             { 
                 title: "Sigrist Main Theme", 
-                artist: "Custom Track 1", 
+                artist: "LandonBeats", 
                 file: "Sigrist main theme.mp3", 
                 duration: 126 
             }
@@ -906,20 +987,44 @@
         // ==========================================
         // 2. SUB-MENU NAVIGATION
         // ==========================================
+       // SCREEN SWITCHING ENGINE (Preserves Music Widget Playback)
         function showScreen(screenId) {
             const screens = document.querySelectorAll('.screen');
-            screens.forEach(s => s.classList.remove('active'));
-            setTimeout(() => {
-                const target = document.getElementById(screenId);
-                if (target) target.classList.add('active');
-            }, 300);
+            screens.forEach(s => {
+                s.classList.remove('active');
+                s.style.display = 'none';
+            });
+
+            const target = document.getElementById(screenId);
+            if (target) {
+                target.style.display = 'flex';
+                setTimeout(() => {
+                    target.classList.add('active');
+                }, 50);
+            }
         }
 
-        function clickNewGame() { showScreen('newspaper-screen'); }
-        function clickContinue() { alert("Loading saved progress..."); showScreen('newspaper-screen'); }
-        function openCustomNight() { showScreen('customnight-screen'); }
-        function openSettings() { showScreen('settings-screen'); }
-        function openExtras() { showScreen('extras-screen'); }
+        // MENU BUTTON CLICK HANDLERS
+        function clickNewGame() { 
+            showScreen('newspaper-screen'); 
+        }
+
+        function clickContinue() { 
+            alert("Loading saved progress: Night 1"); 
+            showScreen('newspaper-screen'); 
+        }
+
+        function openCustomNight() { 
+            showScreen('customnight-screen'); 
+        }
+
+        function openSettings() { 
+            showScreen('settings-screen'); 
+        }
+
+        function openExtras() { 
+            showScreen('extras-screen'); 
+        }
 
         function enterOffice() {
             showScreen('office-screen');
