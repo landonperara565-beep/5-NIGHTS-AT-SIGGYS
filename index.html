@@ -88,16 +88,15 @@
     z-index: 20;
 }
 
-/* --- ORIGINAL ARTWORK TITLE STYLE (RESIZED & SPOOKY PULSE) --- */
+/* --- RESTORED ORIGINAL ANIMATED TITLE (SCALED DOWN) --- */
 .title-box {
     display: flex;
     flex-direction: column;
-    line-height: 0.90;
+    line-height: 0.92;
     user-select: none;
-    filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.95));
 }
 
-/* "Five Nights" - Classic White Header */
+/* "Five Nights" - White Impact Header */
 .title-fn {
     font-size: 3.6rem; /* Scaled down from 4.8rem */
     color: #ffffff;
@@ -105,26 +104,26 @@
     letter-spacing: 1px;
     font-family: 'Impact', 'Arial Black', sans-serif;
     text-shadow: 
-        0 0 10px rgba(255, 0, 0, 0.7),
+        0 0 12px rgba(255, 0, 0, 0.8),
         3px 3px 0px #000000,
         5px 5px 15px rgba(0, 0, 0, 0.9);
 }
 
-/* "at" - Indented Middle Row */
+/* "at" - Indented Sub-header */
 .title-at {
     font-size: 2.4rem; /* Scaled down from 3.2rem */
     color: #ffffff;
     font-weight: 900;
-    margin-left: 70px; /* Adjusted for smaller size */
-    margin-top: -4px;
-    margin-bottom: -4px;
+    margin-left: 70px; /* Scaled down from 95px */
+    margin-top: -5px;
+    margin-bottom: -5px;
     font-family: 'Impact', 'Arial Black', sans-serif;
     text-shadow: 
-        0 0 8px rgba(255, 0, 0, 0.7),
+        0 0 10px rgba(255, 0, 0, 0.8),
         3px 3px 0px #000000;
 }
 
-/* "Sigrist" - Blood-Red Title with Eerie Slow Glow */
+/* "Sigrist" - Red Title linked to Original Glitch Pulse */
 .title-sigrist {
     font-size: 5.2rem; /* Scaled down from 6.8rem */
     color: #d32f2f;
@@ -134,39 +133,37 @@
     text-transform: capitalize;
     position: relative;
     display: inline-block;
-    animation: spookySubtlePulse 4.5s infinite ease-in-out;
+    animation: agentGlitchPulse 2.8s infinite ease-in-out;
 }
 
-/* --- SUBTLE ATMOSPHERIC GLOW & RARE MICRO-GLITCH --- */
-@keyframes spookySubtlePulse {
-    0%, 100% {
+/* --- EXACT ORIGINAL SIDE-GLITCH & FLASH KEYFRAMES --- */
+@keyframes agentGlitchPulse {
+    0%, 88%, 100% {
         color: #d32f2f;
         text-shadow: 
-            0 0 12px rgba(255, 0, 0, 0.8),
-            0 0 25px rgba(139, 0, 0, 0.6),
+            0 0 15px #ff0000,
+            0 0 30px #8b0000,
+            0 0 50px rgba(211, 47, 47, 0.8),
             4px 4px 0px #000000;
-        transform: scale(1);
-        opacity: 1;
+        transform: scale(1) skewX(0deg);
     }
-    50% {
-        color: #b71c1c;
-        text-shadow: 
-            0 0 6px rgba(255, 0, 0, 0.4),
-            0 0 15px rgba(139, 0, 0, 0.3),
-            4px 4px 0px #000000;
-        transform: scale(0.995);
-        opacity: 0.92;
-    }
-    /* Quick single-frame subtle twitch at 92% */
-    92% {
+    /* Shifts sideways to the left with cyan/red split */
+    89% {
         color: #ffffff;
-        text-shadow: -3px 0 #00ffff, 3px 0 #ff0000, 0 0 20px #ff0000;
-        transform: translate(-2px, 1px);
+        text-shadow: -4px 0 #00ffff, 4px 0 #ff0000, 0 0 30px #ff0000;
+        transform: translate(-3px, 1px) skewX(-3deg);
     }
-    94% {
-        color: #d32f2f;
-        text-shadow: 0 0 12px rgba(255, 0, 0, 0.8), 4px 4px 0px #000000;
-        transform: translate(0, 0);
+    /* Flashes red and shifts right */
+    91% {
+        color: #ff0000;
+        text-shadow: 4px 0 #00ffff, -4px 0 #ff0000, 0 0 50px #ff0000;
+        transform: translate(3px, -2px) skewX(2deg);
+    }
+    /* White flash pop before snapping back */
+    93% {
+        color: #ffffff;
+        text-shadow: 0 0 25px #ffffff, 0 0 60px #ff0000;
+        transform: translate(0px, 0px) scale(1.02);
     }
 }
 
