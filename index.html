@@ -1175,18 +1175,20 @@
             <button class="continue-btn" onclick="showScreen('menu-screen')">BACK TO MENU</button>
         </div>
     </div>
-     <!-- JAVASCRIPT GAME LOGIC -->
+ <!-- JAVASCRIPT GAME LOGIC -->
 <script>
     // ==========================================
     // 1. SCREEN SWITCHING & MENU HANDLERS
     // ==========================================
     function showScreen(screenId) {
+        // Hide all screens
         const screens = document.querySelectorAll('.screen');
         screens.forEach(s => {
             s.classList.remove('active');
             s.style.display = 'none';
         });
 
+        // Activate requested screen
         const target = document.getElementById(screenId);
         if (target) {
             target.style.display = 'flex';
@@ -1196,27 +1198,14 @@
         }
     }
 
-    function clickNewGame() { 
-        showScreen('newspaper-screen'); 
-    }
-    
-    function clickContinue() { 
-        alert("Loading saved progress: Night 1"); 
-        showScreen('newspaper-screen'); 
-    }
-    
-    function openCustomNight() { 
-        showScreen('customnight-screen'); 
-    }
-    
-    function openSettings() { 
-        showScreen('settings-screen'); 
-    }
-    
-    function openExtras() { 
-        showScreen('extras-screen'); 
-    }
+    // Main menu buttons
+    function clickNewGame() { showScreen('newspaper-screen'); }
+    function clickContinue() { alert("Loading saved progress: Night 1"); showScreen('newspaper-screen'); }
+    function openCustomNight() { showScreen('customnight-screen'); }
+    function openSettings() { showScreen('settings-screen'); }
+    function openExtras() { showScreen('extras-screen'); }
 
+    // Start night shift from newspaper clipping
     function enterOffice() {
         console.log("Entering Security Office...");
         showScreen('office-screen');
@@ -1224,7 +1213,7 @@
     }
 
     // ==========================================
-    // 2. MUSIC PLAYER WIDGET CONTROLLER
+    // 2. SPOTIFY-STYLE MUSIC PLAYER CONTROLLER
     // ==========================================
     const soundtrackPlaylist = [
         { 
@@ -1335,7 +1324,7 @@
     }
 
     // ==========================================
-    // 3. SECURITY OFFICE ENGINE & AI
+    // 3. SECURITY OFFICE ENGINE & CONTROLS
     // ==========================================
     let power = 100;
     let hour = 0;
@@ -1345,11 +1334,11 @@
     let rightLightOn = false;
     let monitorOpen = false;
     let currentCam = '1A';
-    let sigristPosition = '1A';
+    let sigristPosition = '1A'; // Node positions: '1A', '1B', '3A', '2A', '2B', or 'OFFICE'
     let gameInterval = null;
     const SECONDS_PER_HOUR = 80;
 
-    // PANNING OFFICE
+    // Panning office camera follow
     const officePan = document.getElementById('office-panoramic');
     document.addEventListener('mousemove', (e) => {
         const officeScreen = document.getElementById('office-screen');
@@ -1359,7 +1348,7 @@
         if (officePan) officePan.style.transform = `translateX(${panOffset}vw)`;
     });
 
-    // GAME LOOP
+    // Night Shift Loop
     function startShift() {
         if (gameInterval) clearInterval(gameInterval);
         gameInterval = setInterval(() => {
@@ -1387,65 +1376,63 @@
                 clockDisplay.innerText = displayHour + " AM";
             }
 
-            // AI Threat Movement
-            if (hour >= 1.0) {
-                if (Math.random() < 0.05) {
-                    moveSigristRandomly();
-                }
+            // AI Threat Movement Tick
+            if (hour >= 1.0 && Math.random() < 0.05) {
+                moveSigristRandomly();
             }
         }, 1000);
     }
 
-    // DOOR & LIGHT CONTROLS
+    // Door and Hallway Light Controls
     function toggleLeftDoor() {
         leftDoorClosed = !leftDoorClosed;
-        const doorBtn = document.getElementById('left-door-btn');
-        if (doorBtn) {
-            doorBtn.innerText = leftDoorClosed ? "DOOR: CLOSED" : "DOOR: OPEN";
-            doorBtn.classList.toggle('active-door', leftDoorClosed);
+        const btn = document.getElementById('left-door-btn');
+        if (btn) {
+            btn.innerText = leftDoorClosed ? "DOOR: CLOSED" : "DOOR: OPEN";
+            btn.classList.toggle('active-door', leftDoorClosed);
         }
-        const blastDoor = document.getElementById('left-blast-door');
-        if (blastDoor) blastDoor.classList.toggle('closed', leftDoorClosed);
+        const door = document.getElementById('left-blast-door');
+        if (door) door.classList.toggle('closed', leftDoorClosed);
     }
 
     function toggleRightDoor() {
         rightDoorClosed = !rightDoorClosed;
-        const doorBtn = document.getElementById('right-door-btn');
-        if (doorBtn) {
-            doorBtn.innerText = rightDoorClosed ? "DOOR: CLOSED" : "DOOR: OPEN";
-            doorBtn.classList.toggle('active-door', rightDoorClosed);
+        const btn = document.getElementById('right-door-btn');
+        if (btn) {
+            btn.innerText = rightDoorClosed ? "DOOR: CLOSED" : "DOOR: OPEN";
+            btn.classList.toggle('active-door', rightDoorClosed);
         }
-        const blastDoor = document.getElementById('right-blast-door');
-        if (blastDoor) blastDoor.classList.toggle('closed', rightDoorClosed);
+        const door = document.getElementById('right-blast-door');
+        if (door) door.classList.toggle('closed', rightDoorClosed);
     }
 
     function toggleLeftLight() {
         leftLightOn = !leftLightOn;
-        const lightBtn = document.getElementById('left-light-btn');
-        if (lightBtn) {
-            lightBtn.innerText = leftLightOn ? "LIGHT: ON" : "LIGHT: OFF";
-            lightBtn.classList.toggle('active-light', leftLightOn);
+        const btn = document.getElementById('left-light-btn');
+        if (btn) {
+            btn.innerText = leftLightOn ? "LIGHT: ON" : "LIGHT: OFF";
+            btn.classList.toggle('active-light', leftLightOn);
         }
-        const hallLeft = document.getElementById('hall-left');
-        if (hallLeft) {
-            hallLeft.style.background = leftLightOn ? (sigristPosition === '2A' ? '#4a0d0d' : '#33322f') : '#020202';
+        const hall = document.getElementById('hall-left');
+        if (hall) {
+            hall.style.background = leftLightOn ? (sigristPosition === '2A' ? '#4a0d0d' : '#33322f') : '#020202';
         }
     }
 
     function toggleRightLight() {
         rightLightOn = !rightLightOn;
-        const lightBtn = document.getElementById('right-light-btn');
-        if (lightBtn) {
-            lightBtn.innerText = rightLightOn ? "LIGHT: ON" : "LIGHT: OFF";
-            lightBtn.classList.toggle('active-light', rightLightOn);
+        const btn = document.getElementById('right-light-btn');
+        if (btn) {
+            btn.innerText = rightLightOn ? "LIGHT: ON" : "LIGHT: OFF";
+            btn.classList.toggle('active-light', rightLightOn);
         }
-        const hallRight = document.getElementById('hall-right');
-        if (hallRight) {
-            hallRight.style.background = rightLightOn ? (sigristPosition === '2B' ? '#4a0d0d' : '#33322f') : '#020202';
+        const hall = document.getElementById('hall-right');
+        if (hall) {
+            hall.style.background = rightLightOn ? (sigristPosition === '2B' ? '#4a0d0d' : '#33322f') : '#020202';
         }
     }
 
-    // CAMERA SYSTEM
+    // Camera Monitor System
     function toggleCameraMonitor() {
         monitorOpen = !monitorOpen;
         const monitor = document.getElementById('camera-monitor');
@@ -1488,7 +1475,9 @@
         }
     }
 
-    // AI MOVEMENT
+    // ==========================================
+    // 4. RANDOMIZED AI MOVEMENT PATHING
+    // ==========================================
     function moveSigristRandomly() {
         const roll = Math.random();
 
@@ -1530,14 +1519,19 @@
         }
     }
 
-    // GAME OVER & WIN
+    // ==========================================
+    // 5. GAME OVER & WIN CONDITIONS
+    // ==========================================
     function triggerGameOver() {
+        console.log("Game Over triggered!");
+
         if (gameInterval) clearInterval(gameInterval);
-        
+
         const monitor = document.getElementById('camera-monitor');
         if (monitor) monitor.classList.remove('active-cam');
 
         showScreen('gameover-screen');
+
         const jumpscareBox = document.getElementById('jumpscare-container');
         const gameoverUI = document.getElementById('gameover-ui');
         const video = document.getElementById('jumpscare-video');
@@ -1545,9 +1539,15 @@
         if (jumpscareBox) jumpscareBox.style.display = 'flex';
         if (gameoverUI) gameoverUI.style.display = 'none';
 
-        if (video && video.src && video.src !== "") {
+        if (video && video.querySelector('source') && video.querySelector('source').src) {
             video.currentTime = 0;
-            video.play().catch(err => console.log("Video playback waiting for click:", err));
+            video.play().catch(err => {
+                console.log("Video playback waiting for click:", err);
+                setTimeout(() => {
+                    if (jumpscareBox) jumpscareBox.style.display = 'none';
+                    if (gameoverUI) gameoverUI.style.display = 'flex';
+                }, 2500);
+            });
 
             video.onended = () => {
                 if (jumpscareBox) jumpscareBox.style.display = 'none';
@@ -1568,7 +1568,9 @@
         showScreen('win-screen');
     }
 
-    // STATIC CANVAS RENDERER
+    // ==========================================
+    // 6. CRT STATIC OVERLAY RENDERER
+    // ==========================================
     const canvas = document.getElementById('static-canvas');
     if (canvas) {
         const ctx = canvas.getContext('2d');
