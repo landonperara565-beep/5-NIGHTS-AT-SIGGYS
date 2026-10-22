@@ -88,82 +88,110 @@
     z-index: 20;
 }
 
-/* --- HIGH-SPEC ANIMATED HORROR TITLE (RESIZED & REFINED) --- */
+/* --- REFINED HORROR TITLE (SLIMMER, NON-BULKY & MULTI-ACTION GLITCH) --- */
 .title-box {
     display: flex;
     flex-direction: column;
-    line-height: 0.88;
+    line-height: 0.90;
     user-select: none;
-    filter: drop-shadow(0 0 25px rgba(0, 0, 0, 0.95)); /* Adds background depth behind title */
+    filter: drop-shadow(0 0 18px rgba(0, 0, 0, 0.95));
 }
 
-/* "Five Nights" - Scaled Header */
+/* "Five Nights" - Slim, Stretched Header */
 .title-fn {
-    font-size: 3.6rem; /* Scaled down from 4.8rem */
-    color: #f5f5f5;
-    font-weight: 900;
-    letter-spacing: 2px;
+    font-size: 2.8rem; /* Scaled down from bulky 4.8rem */
+    color: #e6e6e6;
+    font-weight: 700; /* Less bulky weight */
+    letter-spacing: 5px; /* Stretched horror tracking */
     text-transform: uppercase;
-    font-family: 'Impact', 'Arial Black', sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     text-shadow: 
-        0 0 10px rgba(255, 0, 0, 0.7),
-        3px 3px 0px #000000,
-        6px 6px 15px rgba(0, 0, 0, 0.95);
-}
-
-/* "at" - Scaled Sub-header Row */
-.title-at {
-    font-size: 2.2rem; /* Scaled down from 3.2rem */
-    color: #e0e0e0;
-    font-weight: 900;
-    margin-left: 70px; /* Adjusted alignment to match smaller font */
-    margin-top: -2px;
-    margin-bottom: -2px;
-    font-family: 'Impact', 'Arial Black', sans-serif;
-    text-transform: lowercase;
-    text-shadow: 
-        0 0 8px rgba(255, 0, 0, 0.7),
+        0 0 10px rgba(255, 0, 0, 0.6),
         2px 2px 0px #000000;
 }
 
-/* "Sigrist" - Scaled Blood-Red Title with Glitch Animation */
-.title-sigrist {
-    font-size: 5.2rem; /* Scaled down from 6.8rem */
-    color: #d32f2f;
-    font-weight: 900;
-    letter-spacing: 3px;
-    font-family: 'Impact', 'Arial Black', sans-serif;
-    text-transform: capitalize;
-    position: relative;
-    display: inline-block;
-    animation: agentGlitchPulse 2.8s infinite ease-in-out; /* Retains chromatic glitch pulse */
+/* "at" - Sub-header Row */
+.title-at {
+    font-size: 1.8rem; /* Scaled down from 3.2rem */
+    color: #cccccc;
+    font-weight: 700;
+    margin-left: 35px;
+    margin-top: -4px;
+    margin-bottom: -4px;
+    font-family: Arial, Helvetica, sans-serif;
+    text-transform: lowercase;
+    text-shadow: 
+        0 0 8px rgba(255, 0, 0, 0.5),
+        2px 2px 0px #000000;
 }
 
-/* Keyframe Glitch & Chromatic Aberration Animation */
-@keyframes agentGlitchPulse {
-    0%, 88%, 100% {
+/* "Sigrist" - Scary Non-Bulky Title with Dynamic Glitch Engine */
+.title-sigrist {
+    font-size: 4.2rem; /* Scaled down from bulky 6.8rem */
+    color: #d32f2f;
+    font-weight: 800; /* Refined scary weight */
+    letter-spacing: 7px;
+    font-family: Arial, Helvetica, sans-serif;
+    text-transform: uppercase;
+    position: relative;
+    display: inline-block;
+    animation: advancedGlitchEngine 3.5s infinite ease-in-out;
+}
+
+/* --- MULTI-ACTION GLITCH: SHEARING, SLICING, WARPING & SCALE JUMPS --- */
+@keyframes advancedGlitchEngine {
+    0%, 68%, 100% {
         color: #d32f2f;
         text-shadow: 
-            0 0 15px #ff0000, 
-            0 0 30px #8b0000, 
-            0 0 50px rgba(211, 47, 47, 0.8),
-            4px 4px 0px #000000;
-        transform: scale(1) skewX(0deg);
+            0 0 10px #ff0000,
+            0 0 22px #8b0000,
+            3px 3px 0px #000000;
+        transform: translate(0, 0) skewX(0deg) scale(1);
+        letter-spacing: 7px;
+        clip-path: inset(0 0 0 0);
     }
-    89% {
+    /* 1. Horizontal Shear & Cyan/Red Chromatic Shift */
+    69% {
         color: #ffffff;
-        text-shadow: -4px 0 #00ffff, 4px 0 #ff0000, 0 0 30px #ff0000;
-        transform: translate(-3px, 1px) skewX(-3deg);
+        text-shadow: -7px 0 #00ffff, 7px 0 #ff0000, 0 0 15px #ff0000;
+        transform: translate(-8px, -2px) skewX(-14deg) scale(1.02);
+        letter-spacing: 10px;
     }
-    91% {
+    /* 2. Top-Sliced Horizontal Shift */
+    71% {
         color: #ff0000;
-        text-shadow: 4px 0 #00ffff, -4px 0 #ff0000, 0 0 50px #ff0000;
-        transform: translate(3px, -2px) skewX(2deg);
+        text-shadow: 6px 0 #00ffff, -6px 0 #ff0000, 0 0 25px #ff0000;
+        transform: translate(10px, 3px) skewX(12deg) scale(0.97);
+        clip-path: inset(15% 0 45% 0);
     }
-    93% {
+    /* 3. Vertical Jitter & Compressed Letter Spacing */
+    73% {
+        color: #8b0000;
+        text-shadow: -3px 3px 0 #000;
+        transform: translate(-5px, 6px) skewY(-4deg);
+        letter-spacing: 3px;
+        clip-path: inset(50% 0 10% 0);
+    }
+    /* 4. Sudden Scale Jump & Full Inversion */
+    75% {
         color: #ffffff;
-        text-shadow: 0 0 25px #ffffff, 0 0 60px #ff0000;
-        transform: translate(0px, 0px) scale(1.02);
+        text-shadow: 0 0 30px #ffffff, 0 0 50px #ff0000;
+        transform: translate(4px, -5px) scale(1.08) skewX(-6deg);
+        clip-path: inset(0 0 0 0);
+    }
+    /* 5. Bottom Sliced Glitch Offset */
+    77% {
+        color: #d32f2f;
+        text-shadow: -10px 0 #00ffff, 10px 0 #ff0000;
+        transform: translate(-12px, 2px) skewX(18deg);
+        clip-path: inset(0 0 55% 0);
+    }
+    /* 6. Return to Normal State */
+    79% {
+        color: #d32f2f;
+        text-shadow: 0 0 10px #ff0000, 3px 3px 0px #000000;
+        transform: translate(0, 0) skewX(0deg) scale(1);
+        clip-path: inset(0 0 0 0);
     }
 }
 
