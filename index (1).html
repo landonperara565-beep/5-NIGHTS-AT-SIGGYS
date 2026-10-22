@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Five Nights at Sigrist</title>
+    <style>
+        /* BASE & RESETS */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+        }
+
+        /* CRT SCANLINES & STATIC OVERLAYS */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px;
+            z-index: 90;
+        }
+
+        #static-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            opacity: 0.05;
+            z-index: 85;
+        }
+
+        /* SCREEN SWITCHING SYSTEM */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .screen.active {
+            display: flex;
+            opacity: 1;
+        }
+
+      /* --- MAIN MENU CONTAINER & BACKGROUND PICTURE FIX --- */
+#menu-screen {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    /* UPDATE 'siggy.png' TO MATCH YOUR EXACT UPLOADED IMAGE FILE NAME */
+    background: #000000 url('siggy.png') center/cover no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 50px 60px;
+    box-sizing: border-box;
+    overflow: hidden;
+    z-index: 10;
+}
+
+/* LEFT SIDE COLUMN FOR TITLE & MENU BUTTONS */
+.menu-left-content {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    max-width: 520px;
+    z-index: 20;
+}
+
+/* --- RESTORED ORIGINAL ANIMATED TITLE (SCALED DOWN) --- */
+.title-box {
+    display: flex;
+    flex-direction: column;
+    line-height: 0.92;
+    user-select: none;
+}
+
+/* "Five Nights" - White Impact Header */
+.title-fn {
+    font-size: 3.6rem; /* Scaled down from 4.8rem */
+    color: #ffffff;
+    font-weight: 900;
+    letter-spacing: 1px;
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    text-shadow: 
+        0 0 12px rgba(255, 0, 0, 0.8),
+        3px 3px 0px #000000,
+        5px 5px 15px rgba(0, 0, 0, 0.9);
+}
+
+/* "at" - Indented Sub-header */
+.title-at {
+    font-size: 2.4rem; /* Scaled down from 3.2rem */
+    color: #ffffff;
+    font-weight: 900;
+    margin-left: 70px; /* Scaled down from 95px */
+    margin-top: -5px;
+    margin-bottom: -5px;
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    text-shadow: 
+        0 0 10px rgba(255, 0, 0, 0.8),
+        3px 3px 0px #000000;
+}
+
+/* "Sigrist" - Red Title linked to Original Glitch Pulse */
+.title-sigrist {
+    font-size: 5.2rem; /* Scaled down from 6.8rem */
+    color: #d32f2f;
+    font-weight: 900;
+    letter-spacing: 2px;
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    text-transform: capitalize;
+    position: relative;
+    display: inline-block;
+    animation: agentGlitchPulse 2.8s infinite ease-in-out;
+}
+
+/* --- EXACT ORIGINAL SIDE-GLITCH & FLASH KEYFRAMES --- */
+@keyframes agentGlitchPulse {
+    0%, 88%, 100% {
+        color: #d32f2f;
+        text-shadow: 
+            0 0 15px #ff0000,
+            0 0 30px #8b0000,
+            0 0 50px rgba(211, 47, 47, 0.8),
+            4px 4px 0px #000000;
+        transform: scale(1) skewX(0deg);
+    }
+    /* Shifts sideways to the left with cyan/red split */
+    89% {
+        color: #ffffff;
+        text-shadow: -4px 0 #00ffff, 4px 0 #ff0000, 0 0 30px #ff0000;
+        transform: translate(-3px, 1px) skewX(-3deg);
+    }
+    /* Flashes red and shifts right */
+    91% {
+        color: #ff0000;
+        text-shadow: 4px 0 #00ffff, -4px 0 #ff0000, 0 0 50px #ff0000;
+        transform: translate(3px, -2px) skewX(2deg);
+    }
+    /* White flash pop before snapping back */
+    93% {
+        color: #ffffff;
+        text-shadow: 0 0 25px #ffffff, 0 0 60px #ff0000;
+        transform: translate(0px, 0px) scale(1.02);
+    }
+}
+
+/* MENU BUTTONS & HOVER SELECTORS */
+.menu-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.menu-btn {
+    background: none;
+    border: none;
+    color: #888888;
+    font-size: 1.8rem;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+}
+
+.menu-btn:hover {
+    color: #ffffff;
+    transform: translateX(10px);
+}
+
+.menu-btn .selector {
+    visibility: hidden;
+    margin-right: 12px;
+    color: #d32f2f;
+}
+
+.menu-btn:hover .selector {
+    visibility: visible;
+}
+
+/* COPYRIGHT NOTICE AT BOTTOM LEFT */
+.copyright {
+    color: #555555;
+    font-size: 0.85rem;
+    font-family: 'Courier New', Courier, monospace;
+    line-height: 1.3;
+    z-index: 20;
+}
+
+/* SPOTIFY MEDIA PLAYER WIDGET (BOTTOM RIGHT) */
+.music-player-card {
+    position: absolute;
+    bottom: 30px;
+    right: 35px;
+    width: 380px;
+    background-color: #121212;
+    border: 1px solid #282828;
+    border-radius: 16px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85);
+    z-index: 30;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+     /* --- SUB-SCREEN LAY & MODAL FIX --- */
+.modal-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.94);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 250;
+}
+
+.modal-screen.active {
+    display: flex !important;
+    opacity: 1 !important;
+}
+
+.modal-box {
+    background: #0a0a0a;
+    border: 2px solid #d32f2f;
+    box-shadow: 0 0 45px rgba(211, 47, 47, 0.6);
+    padding: 35px 45px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 620px;
+    width: 88%;
+    text-align: center;
+    color: #ffffff;
+}
+
+/* --- VINTAGE HORROR NEWSPAPER CLIPPING --- */
+#newspaper-screen {
+    background: #050505;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+}
+
+.newspaper-clipping {
+    width: 90%;
+    max-width: 680px;
+    background: #d8ceb9;
+    color: #111111;
+    border: 12px solid #1c1813;
+    box-shadow: 0 0 50px rgba(0,0,0,0.95), inset 0 0 80px rgba(0,0,0,0.3);
+    padding: 35px;
+    font-family: 'Times New Roman', Times, serif;
+    position: relative;
+    transform: rotate(-1deg);
+}
+
+.newspaper-header {
+    text-align: center;
+    border-bottom: 4px double #222;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.newspaper-headline {
+    font-size: 3rem;
+    font-weight: 900;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.newspaper-subhead {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-top: 1px solid #333;
+    padding-top: 4px;
+    font-weight: bold;
+}
+
+.newspaper-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    text-align: justify;
+    margin-bottom: 25px;
+}
+
+/* --- ATMOSPHERIC SECURITY OFFICE (MATCHING TITLE ARTWORK) --- */
+#office-panoramic {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 180vw;
+    height: 100vh;
+    background: #040404;
+    display: flex;
+    transition: transform 0.1s linear;
+}
+
+/* Grimy Wall and Checkered Floor Trim [1] */
+.office-wall {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: 
+        radial-gradient(circle at 50% 30%, rgba(255, 200, 150, 0.12) 0%, rgba(0,0,0,0.95) 75%),
+        linear-gradient(0deg, #1a0202 0px, #1a0202 120px, transparent 120px),
+        repeating-linear-gradient(90deg, #141414 0px, #141414 80px, #0d0d0d 80px, #0d0d0d 160px);
+    box-shadow: inset 0 0 100px #000;
+}
+
+/* Checkered Wall Border [1] */
+.checkered-trim {
+    position: absolute;
+    bottom: 120px;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background-image: repeating-conic-gradient(#111 0 25%, #d8ceb9 0 50%);
+    background-size: 40px 40px;
+    opacity: 0.6;
+    border-top: 3px solid #000;
+    border-bottom: 3px solid #000;
+}
+
+/* Wall Posters ("WORK HARDER", "SIGRIST HE WATCHES") [1] */
+.office-poster {
+    position: absolute;
+    background: #c2b59b;
+    color: #111;
+    padding: 10px;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    border: 2px solid #222;
+    box-shadow: 3px 3px 12px rgba(0,0,0,0.8);
+    transform: rotate(-2deg);
+}
+
+#poster-work {
+    top: 22%;
+    left: 38vw;
+    width: 110px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #444;
+}
+
+#poster-sigrist {
+    top: 18%;
+    right: 38vw;
+    width: 140px;
+    text-align: center;
+    border: 2px solid #8b0000;
+    color: #8b0000;
+    transform: rotate(3deg);
+}
+
+/* Security Desk Setup [1] */
+.security-desk {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60vw;
+    height: 180px;
+    background: linear-gradient(#1f1915, #0a0806);
+    border-top: 8px solid #3d3128;
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.9);
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    padding: 15px 40px;
+    z-index: 25;
+}
+
+/* Desk Props: Fan & "STAY FOCUSED" Mug [1] */
+.desk-prop-mug {
+    width: 55px;
+    height: 65px;
+    background: #d35400;
+    border-radius: 4px;
+    border: 2px solid #5e2300;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 3px 3px 10px #000;
+}
+
+.desk-prop-fan {
+    width: 90px;
+    height: 110px;
+    border: 4px solid #222;
+    border-radius: 50%;
+    background: radial-gradient(#333, #111);
+    box-shadow: 0 0 15px #000;
+    position: relative;
+}
+
+
+.continue-btn {
+    background: #d32f2f;
+    color: #fff;
+    border: none;
+    padding: 12px 32px;
+    font-size: 1.2rem;
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    border-radius: 4px;
+    box-shadow: 0 0 15px rgba(211, 47, 47, 0.4);
+    transition: all 0.2s ease;
+}
+
+.continue-btn:h {
+    background: #ff0000;
+    box-shadow: 0 0 25px rgba(255, 0, 0, 0.8);
+    transform: scale(1.05);
+}
+
+
+/* --- FULL-SCREEN CAMERA DISPLAY FIX --- */
+#cam-feed-container {
+    position: relative;
+    width: 82vw;
+    height: 78vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid #222;
+    background: #000;
+    box-shadow: 0 0 25px rgba(0,0,0,0.9);
+}
+
+#cam-feed-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Displays full image without cropping */
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+}
+
+/* --- FNAF BRANCHING CAMERA MAP LAYOUT --- */
+.fnaf-map-wrapper {
+    position: absolute;
+    bottom: 25px;
+    right: 35px;
+    width: 280px;
+    height: 320px;
+    background: rgba(0, 0, 0, 0.85);
+    border: 2px solid #333;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 80;
+}
+
+.map-grid {
+    position: relative;
+    width: 100%;
+    height: 230px;
+    margin-top: 10px;
+}
+
+/* Branching Connection Lines */
+.map-line-v {
+    position: absolute;
+    width: 2px;
+    background-color: #555;
+}
+
+.map-line-h {
+    position: absolute;
+    height: 2px;
+    background-color: #555;
+}
+
+.cam-node {
+    position: absolute;
+    background: #111;
+    color: #aaa;
+    border: 1px solid #555;
+    font-size: 0.72rem;
+    font-weight: bold;
+    padding: 5px 8px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.15s ease;
+    z-index: 5;
+}
+
+.cam-node:h {
+    color: #fff;
+    border-color: #aaa;
+}
+
+.cam-node.selected {
+    background: #1ed760; /* Iconic green accent [1] */
+    color: #000;
+    border-color: #ffffff;
+    box-shadow: 0 0 10px rgba(30, 215, 96, 0.6);
+}
+
+.you-indicator {
+    position: absolute;
+    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: #ff0000;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+        .menu-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1.8rem;
+            font-family: inherit;
+            text-align: left;
+            cursor: pointer;
+            transition: color 0.2s, transform 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-btn:h {
+            color: #fff;
+            transform: translateX(10px);
+        }
+
+        .menu-btn .selector {
+            visibility: hidden;
+            margin-right: 10px;
+            color: #d32f2f;
+        }
+
+        .menu-btn:h .selector {
+            visibility: visible;
+        }
+
+        .copyright {
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        /* SPOTIFY-STYLE MUSIC PLAYER WIDGET */
+        .music-player-card {
+            position: absolute;
+            bottom: 25px;
+            right: 30px;
+            width: 380px;
+            background-color: #121212;
+            border: 1px solid #282828;
+            border-radius: 16px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85);
+            z-index: 30;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        .player-album-art {
+            width: 72px;
+            height: 72px;
+            background-color: #282828;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            flow: hidden;
+        }
+
+        .album-icon {
+            width: 42px;
+            height: 42px;
+            background-color: #1ed760;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(30, 215, 96, 0.4);
+        }
+
+        .album-icon svg {
+            fill: #121212;
+            width: 24px;
+            height: 24px;
+        }
+
+        .player-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .track-meta {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .track-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.2;
+        }
+
+        .track-artist {
+            font-size: 0.8rem;
+            color: #b3b3b3;
+            margin-top: 2px;
+        }
+
+        .btn-icon-action {
+            background: none;
+            border: none;
+            color: #b3b3b3;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 0;
+        }
+
+        .progress-container {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-top: 2px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 4px;
+            background-color: #4d4d4d;
+            border-radius: 2px;
+            flow: hidden;
+            cursor: pointer;
+        }
+
+        .progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background-color: #ffffff;
+            transition: width 0.1s linear;
+        }
+
+        .timestamps {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.68rem;
+            color: #b3b3b3;
+        }
+
+        .player-controls-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+        }
+
+        .btn-ctrl {
+            background: none;
+            border: none;
+            color: #b3b3b3;
+            cursor: pointer;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+        .btn-ctrl:h {
+            color: #ffffff;
+            transform: scale(1.08);
+        }
+
+        .btn-ctrl.active {
+            color: #1ed760;
+        }
+
+        .btn-play-circle {
+            width: 36px;
+            height: 36px;
+            background-color: #ffffff;
+            color: #000000;
+            border-radius: 50%;
+            font-size: 1rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* MODAL POPUP SUB-SCREENS */
+        .modal-screen {
+            background: rgba(0, 0, 0, 0.92);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .modal-box {
+            background: #111111;
+            border: 2px solid #d32f2f;
+            box-shadow: 0 0 35px rgba(211, 47, 47, 0.5);
+            padding: 35px 45px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 600px;
+            width: 85%;
+            text-align: center;
+            color: #ffffff;
+        }
+
+        .continue-btn {
+            background: #d32f2f;
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            cursor: pointer;
+            margin-top: 20px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .continue-btn:h {
+            background: #ff0000;
+        }
+
+        /* SECURITY OFFICE PANNING LAYOUT */
+        #office-panoramic {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 180vw;
+            height: 100vh;
+            background: #080808;
+            display: flex;
+            transition: transform 0.1s linear;
+        }
+
+        .office-wall {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: repeating-linear-gradient(90deg, #111 0px, #111 100px, #0d0d0d 100px, #0d0d0d 200px);
+        }
+
+        /* BLAST DOORS & DOORWAY LIGHTS */
+        .doorway {
+            position: absolute;
+            top: 10%;
+            width: 15vw;
+            height: 80%;
+            background: #020202;
+            border: 8px solid #222;
+            flow: hidden;
+        }
+
+        #doorway-left { left: 5vw; }
+        #doorway-right { right: 5vw; }
+
+        .blast-door {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(#333, #111);
+            border-bottom: 10px solid #555;
+            transform: translateY(-100%);
+            transition: transform 0.4s ease-in-out;
+        }
+
+        .blast-door.closed {
+            transform: translateY(0%);
+        }
+
+        .door-panel {
+            position: absolute;
+            top: 40%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        #panel-left { left: 21vw; }
+        #panel-right { right: 21vw; }
+
+        .ctrl-btn {
+            padding: 10px 15px;
+            background: #222;
+            color: #fff;
+            border: 2px solid #444;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .ctrl-btn.active-door { background: #8b0000; }
+        .ctrl-btn.active-light { background: #d4af37; color: #000; }
+
+        /* HUD & CAMERA MONITOR */
+        .hud-lay {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 50;
+            font-size: 1.5rem;
+            text-shadow: 0 0 5px #000;
+        }
+
+        .hud-clock {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 50;
+            font-size: 2rem;
+        }
+
+        #camera-monitor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            z-index: 70;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #camera-monitor.active-cam {
+            display: flex;
+        }
+
+        #cam-feed-img {
+            max-width: 80vw;
+            max-height: 70vh;
+            border: 4px solid #333;
+        }
+
+        .camera-map {
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .cam-btn {
+            background: #111;
+            color: #aaa;
+            border: 1px solid #444;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .cam-btn.selected {
+            background: #1ed760;
+            color: #000;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+    <canvas id="static-canvas"></canvas>
+
+      <!-- MAIN MENU SCREEN -->
+    <div id="menu-screen" class="screen active">
+        
+        <!-- LEFT COLUMN: ANIMATED TITLE & MENU OPTIONS -->
+        <div class="menu-left-content">
+            <!-- THREE-LINE TITLE MATCHING SOURCE ARTWORK -->
+            <div class="title-box">
+                <span class="title-fn">Five Nights</span>
+                <span class="title-at">at</span>
+                <span class="title-sigrist">Sigrist</span>
+            </div>
+
+            <!-- MAIN MENU OPTIONS -->
+            <div class="menu-container">
+                <button class="menu-btn" onclick="clickNewGame()">
+                    <span class="selector">&gt;</span>New Game
+                </button>
+                <button class="menu-btn" onclick="clickContinue()">
+                    <span class="selector">&gt;</span>Continue
+                </button>
+                <button class="menu-btn" onclick="openCustomNight()">
+                    <span class="selector">&gt;</span>Custom Night
+                </button>
+                <button class="menu-btn" onclick="openSettings()">
+                    <span class="selector">&gt;</span>Settings
+                </button>
+                <button class="menu-btn" onclick="openExtras()">
+                    <span class="selector">&gt;</span>Extras
+                </button>
+            </div>
+        </div>
+
+        <!-- COPYRIGHT NOTICE (BOTTOM LEFT) -->
+        <div class="copyright">
+            © 2026 Sigrist Entertainment<br>All rights reserved. (probably)
+        </div>
+
+        <!-- SPOTIFY AUDIO PLAYER WIDGET (BOTTOM RIGHT) -->
+        <div class="music-player-card">
+            <div class="player-album-art">
+                <div class="album-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 14.41c-.2.32-.62.42-.94.23-2.58-1.58-5.83-1.94-9.66-1.07-.36.08-.72-.14-.8-.5-.08-.36.14-.72.5-.8 4.19-.96 7.79-.54 10.67 1.22.32.18.42.61.23.92zm1.23-2.74c-.25.41-.78.54-1.19.29-2.95-1.81-7.46-2.34-10.96-1.28-.46.14-.94-.12-1.08-.58-.14-.46.12-.94.58-1.08 4.01-1.21 8.98-.62 12.36 1.46.41.25.54.78.29 1.19zm.11-2.86c-3.54-2.1-9.38-2.29-12.78-1.26-.54.16-1.11-.14-1.27-.68-.16-.54.14-1.11.68-1.27 3.91-1.19 10.36-.96 14.43 1.45.49.29.65.93.36 1.42-.29.48-.93.65-1.42.34z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="player-details">
+                <div class="player-header">
+                    <div class="track-meta">
+                        <span class="track-title" id="player-track-title">Sigrist Main Theme</span>
+                        <span class="track-artist" id="player-track-artist">LandonBeats</span>
+                    </div>
+                    <button class="btn-icon-action" title="Add Song">+</button>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-bar-bg" onclick="seekTrack(event)">
+                        <div class="progress-bar-fill" id="player-progress"></div>
+                    </div>
+                    <div class="timestamps">
+                        <span id="player-time-current">0:00</span>
+                        <span id="player-time-total">-2:06</span>
+                    </div>
+                </div>
+
+                <div class="player-controls-row">
+                    <button class="btn-ctrl" id="btn-shuffle" onclick="toggleShuffle()" title="Shuffle">🔀</button>
+                    <button class="btn-ctrl" onclick="prevTrack()" title="Previous">⏮</button>
+                    <button class="btn-ctrl btn-play-circle" id="btn-play-pause" onclick="togglePlayPause()" title="Play/Pause">▶</button>
+                    <button class="btn-ctrl" onclick="nextTrack()" title="Next">⏭</button>
+                    <button class="btn-ctrl" title="Timer">⏱</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+     <!-- 1. NEWSPAPER INTRO SCREEN -->
+    <div id="newspaper-screen" class="screen modal-screen">
+        <div class="newspaper-clipping">
+            <div class="newspaper-header">
+                <div style="font-size:0.8rem; letter-spacing:2px; margin-bottom:4px; font-weight:bold; color:#444;">THE DAILY GAZETTE — CLASSIFIEDS</div>
+                <h1 class="newspaper-headline" style="font-size:2.8rem; margin:0; color:#111;">HELP WANTED</h1>
+                <div class="newspaper-subhead" style="font-size:0.85rem; letter-spacing:1px; margin-top:5px; color:#333;">NIGHT SECURITY GUARD NEEDED</div>
+            </div>
+
+            <div class="newspaper-body" style="color:#222; margin:20px 0; font-size:0.95rem; line-height:1.4;">
+                <p><strong>POSITION:</strong> Night Security Guard from 12 AM to 6 AM [1].</p>
+                <p><strong>DUTIES:</strong> Monitor security cameras and ensure local facility safety [1].</p>
+                <p><strong>PAY:</strong> $120.00 / week [1].</p>
+            </div>
+
+            <!-- START GAME BUTTON -->
+            <div style="text-align: center; margin-top:20px;">
+                <button class="continue-btn" id="btn-enter-office" onclick="enterOffice()" style="background:#8b0000; color:#fff; padding:14px 28px; font-size:1.1rem; border:none; cursor:pointer; font-weight:bold; border-radius:4px; box-shadow:0 0 15px rgba(139,0,0,0.6);">
+                    ACCEPT JOB & ENTER OFFICE
+                </button>
+            </div>
+        </div>
+    </div>
+
+  <!-- 2. DETAILED SECURITY OFFICE (MATCHING MENU BACKGROUND ARTWORK) -->
+    <div id="office-screen" class="screen">
+        <div class="hud-lay">POWER: <span id="power-display">100</span>%</div>
+        <div class="hud-clock"><span id="clock-display">12 AM</span><br><span style="font-size:1rem; color:#aaa;">Night 1</span></div>
+
+        <div id="office-panoramic">
+            <div class="office-wall">
+                <!-- Checkered Wall Border Trim [1] -->
+                <div class="checkered-trim"></div>
+
+                <!-- Posters [1] -->
+                <div class="office-poster" id="poster-work">WORK<br>HARDER</div>
+                <div class="office-poster" id="poster-sigrist">SIGRIST<br><small>HE WATCHES</small></div>
+
+                <!-- Left Blast Door & Control Panel -->
+                <div class="doorway" id="doorway-left">
+                    <div class="blast-door" id="left-blast-door"></div>
+                    <div id="hall-left" style="width:100%; height:100%; background:#020202;"></div>
+                </div>
+                <div class="door-panel" id="panel-left">
+                    <button class="ctrl-btn" id="left-door-btn" onclick="toggleLeftDoor()">DOOR: OPEN</button>
+                    <button class="ctrl-btn" id="left-light-btn" onclick="toggleLeftLight()">LIGHT: OFF</button>
+                </div>
+
+                <!-- Right Blast Door & Control Panel -->
+                <div class="doorway" id="doorway-right">
+                    <div class="blast-door" id="right-blast-door"></div>
+                    <div id="hall-right" style="width:100%; height:100%; background:#020202;"></div>
+                </div>
+                <div class="door-panel" id="panel-right">
+                    <button class="ctrl-btn" id="right-door-btn" onclick="toggleRightDoor()">DOOR: OPEN</button>
+                    <button class="ctrl-btn" id="right-light-btn" onclick="toggleRightLight()">LIGHT: OFF</button>
+                </div>
+
+                <!-- Security Desk Prop Setup [1] -->
+                <div class="security-desk">
+                    <!-- "STAY FOCUSED :)" Mug [1] -->
+                    <div class="desk-prop-mug">STAY<br>FOCUSED<br>:)</div>
+
+                    <!-- Flip Camera Monitor Button -->
+                    <button class="ctrl-btn" style="background:#8b0000; color:#fff; padding:15px 35px; font-weight:bold; font-size:1.1rem;" onclick="toggleCameraMonitor()">TOGGLE CAMERA MONITOR</button>
+
+                    <!-- Desk Fan [1] -->
+                    <div class="desk-prop-fan"></div>
+                </div>
+            </div>
+        </div>
+
+
+         <!-- CAMERA MONITOR LAY -->
+        <div id="camera-monitor">
+            <h2 id="cam-label" style="position:absolute; top:25px; left:35px; color:#1ed760;">CAM 1A (Classroom)</h2>
+            <div id="cam-feed-container">
+                <img id="cam-feed-img" src="cam1a_empty.png" alt="Camera Feed" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'800\' height=\'600\'><rect width=\'100%\' height=\'100%\' fill=\'%23111\'/><text x=\'50%\' y=\'50%\' fill=\'%23888\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'24\'>CAMERA FEED LOADING...</text></svg>';">
+            </div>
+
+            <div class="fnaf-map-wrapper">
+                <div style="font-size:0.8rem; color:#888; font-weight:bold; letter-spacing:1px;">BUILDING MAP</div>
+                <div class="map-grid">
+                    <div class="map-line-v" style="top:25px; left:50%; height:130px;"></div>
+                    <div class="map-line-h" style="top:115px; left:20%; width:60%;"></div>
+                    <div class="map-line-v" style="top:115px; left:20%; height:50px;"></div>
+                    <div class="map-line-v" style="top:115px; right:20%; height:50px;"></div>
+
+                    <button class="cam-node selected" id="btn-cam1a" style="top:0px; left:50%; transform:translateX(-50%);" onclick="switchCamera('1A')">CAM 1A</button>
+                    <button class="cam-node" id="btn-cam1b" style="top:50px; left:50%; transform:translateX(-50%);" onclick="switchCamera('1B')">CAM 1B</button>
+                    <button class="cam-node" id="btn-cam3a" style="top:100px; left:50%; transform:translateX(-50%);" onclick="switchCamera('3A')">CAM 3A</button>
+                    <button class="cam-node" id="btn-cam2a" style="top:150px; left:10%;" onclick="switchCamera('2A')">CAM 2A</button>
+                    <button class="cam-node" id="btn-cam2b" style="top:150px; right:10%;" onclick="switchCamera('2B')">CAM 2B</button>
+                    <div class="you-indicator">YOU ARE HERE</div>
+                </div>
+                <button class="ctrl-btn" style="width:100%; background:#8b0000; color:#fff; border:none; padding:8px; margin-top:5px; cursor:pointer;" onclick="toggleCameraMonitor()">CLOSE MONITOR</button>
+            </div>
+        </div>
+    </div>
+
+ <!-- GAME OVER & JUMPSCARE SCREEN -->
+<div id="gameover-screen" class="screen modal-screen">
+    <div id="jumpscare-container" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100vw; height:100vh;">
+        <!-- AI VIDEO JUMPSCARE -->
+        <video id="jumpscare-video" style="width:100vw; height:100vh; object-fit:cover;" playsinline preload="auto">
+            <source src="jumpscare.mp4" type="video/mp4">
+        </video>
+
+        <!-- FALLBACK IMAGE IF VIDEO IS MISSING -->
+        <img id="jumpscare-img" src="jumpscare.png" alt="SIGRIST ATTACKS" style="max-width:80vw; max-height:70vh; display:none;" onerror="this.style.display='none'; document.getElementById('jumpscare-fallback').style.display='block';">
+        <div id="jumpscare-fallback" style="display:none; font-size:3rem; color:#d32f2f; text-align:center; font-weight:bold;">
+            SIGRIST ATTACKED!
+        </div>
+    </div>
+
+    <!-- GAME OVER MENU -->
+    <div id="gameover-ui" style="display: none; flex-direction: column; align-items: center;">
+        <h1 style="font-size: 4rem; color: #d32f2f; margin-bottom: 20px;">GAME OVER</h1>
+        <button class="continue-btn" onclick="location.reload()">TRY AGAIN</button>
+    </div>
+</div>
+
+    <!-- 5. WIN SCREEN (6 AM) -->
+    <div id="win-screen" class="screen modal-screen">
+        <div class="modal-box">
+            <h1 style="font-size: 5rem; color: #1ed760; margin-bottom: 10px;">6:00 AM</h1>
+            <p style="font-size: 1.5rem; color: #ccc; margin-bottom: 20px;">You survived Night 1!</p>
+            <button class="continue-btn" onclick="location.reload()">MAIN MENU</button>
+        </div>
+    </div>
+
+    <!-- 3. WORKING SUB-SCREENS (EXTRAS, SETTINGS, CUSTOM NIGHT) -->
+    <div id="customnight-screen" class="screen modal-screen">
+        <div class="modal-box">
+            <h1 style="color:#d32f2f; font-size:2.8rem; margin-bottom:15px;">CUSTOM NIGHT</h1>
+            <p style="font-size:1.8rem; color:#888; letter-spacing:4px; margin-bottom:30px; font-weight:bold;">COMING SOON</p>
+            <button class="continue-btn" onclick="showScreen('menu-screen')">BACK TO MENU</button>
+        </div>
+    </div>
+
+    <div id="settings-screen" class="screen modal-screen">
+        <div class="modal-box">
+            <h1 style="color:#d32f2f; font-size:2.8rem; margin-bottom:15px;">SETTINGS</h1>
+            <p style="font-size:1.8rem; color:#888; letter-spacing:4px; margin-bottom:30px; font-weight:bold;">COMING SOON</p>
+            <button class="continue-btn" onclick="showScreen('menu-screen')">BACK TO MENU</button>
+        </div>
+    </div>
+
+    <div id="extras-screen" class="screen modal-screen">
+        <div class="modal-box" style="max-width: 650px;">
+            <h1 style="color:#d32f2f; font-size:2.8rem; margin-bottom:20px;">CREDITS & EXTRAS</h1>
+            <div style="width:100%; max-height:280px; overflow-y:auto; text-align:center; margin-bottom:25px;">
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px;">GAME CREATOR & DEVELOPER</h3>
+                    <p style="color:#ffffff; font-size:1.1rem; font-weight:bold;">Landon</p>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px;">MUSIC & SOUND DESIGN</h3>
+                    <p style="color:#ffffff; font-size:1.1rem; font-weight:bold;">Landon & Joshua</p>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px;">INFO</h3>
+                    <p style="color:#ffffff; font-size:1.1rem; font-weight:bold;">Pre-Release is out more updates coming dw</p>
+                </div>
+            </div>
+            <button class="continue-btn" onclick="showScreen('menu-screen')">BACK TO MENU</button>
+        </div>
+    </div>
+ <!-- JAVASCRIPT GAME LOGIC -->
+<script>
+    // ==========================================
+    // 1. SCREEN SWITCHING & MENU HANDLERS
+    // ==========================================
+    function showScreen(screenId) {
+        // Hide all screens
+        const screens = document.querySelectorAll('.screen');
+        screens.forEach(s => {
+            s.classList.remove('active');
+            s.style.display = 'none';
+        });
+
+        // Activate requested screen
+        const target = document.getElementById(screenId);
+        if (target) {
+            target.style.display = 'flex';
+            setTimeout(() => {
+                target.classList.add('active');
+            }, 30);
+        }
+    }
+
+    // Main menu buttons
+    function clickNewGame() { showScreen('newspaper-screen'); }
+    function clickContinue() { alert("Loading saved progress: Night 1"); showScreen('newspaper-screen'); }
+    function openCustomNight() { showScreen('customnight-screen'); }
+    function openSettings() { showScreen('settings-screen'); }
+    function openExtras() { showScreen('extras-screen'); }
+
+    // Start night shift from newspaper clipping
+    function enterOffice() {
+        console.log("Entering Security Office...");
+        showScreen('office-screen');
+        startShift();
+    }
+
+    // ==========================================
+    // 2. SPOTIFY-STYLE MUSIC PLAYER CONTROLLER
+    // ==========================================
+    const soundtrackPlaylist = [
+        { 
+            title: "Sigrist Main Theme", 
+            artist: "LandonBeats", 
+            file: "Sigrist main theme.mp3", 
+            duration: 126 
+        }
+    ];
+
+    let currentTrackIndex = 0;
+    let isPlaying = false;
+    let isShuffle = false;
+
+    const audioPlayer = new Audio();
+    if (soundtrackPlaylist.length > 0) {
+        audioPlayer.src = soundtrackPlaylist.file;
+    }
+
+    audioPlayer.addEventListener('timeupdate', () => {
+        if (!audioPlayer.duration) return;
+        const current = audioPlayer.currentTime;
+        const total = audioPlayer.duration;
+        const pct = (current / total) * 100;
+
+        const progressBar = document.getElementById('player-progress');
+        if (progressBar) progressBar.style.width = pct + '%';
+
+        const timeCurrent = document.getElementById('player-time-current');
+        if (timeCurrent) timeCurrent.innerText = formatTime(current);
+
+        const timeTotal = document.getElementById('player-time-total');
+        if (timeTotal) {
+            const remaining = Math.max(0, total - current);
+            timeTotal.innerText = '-' + formatTime(remaining);
+        }
+    });
+
+    audioPlayer.addEventListener('ended', () => {
+        nextTrack();
+    });
+
+    function togglePlayPause() {
+        const playBtn = document.getElementById('btn-play-pause');
+
+        if (!isPlaying) {
+            isPlaying = true;
+            if (playBtn) playBtn.innerText = '⏸';
+            audioPlayer.play().catch(err => console.log("Audio waiting for user click:", err));
+        } else {
+            isPlaying = false;
+            if (playBtn) playBtn.innerText = '▶';
+            audioPlayer.pause();
+        }
+    }
+
+    function formatTime(sec) {
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60);
+        return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    function loadTrack(index) {
+        currentTrackIndex = index;
+        const track = soundtrackPlaylist[currentTrackIndex];
+
+        audioPlayer.src = track.file;
+        audioPlayer.currentTime = 0;
+
+        const titleEl = document.getElementById('player-track-title');
+        const artistEl = document.getElementById('player-track-artist');
+        if (titleEl) titleEl.innerText = track.title;
+        if (artistEl) artistEl.innerText = track.artist;
+
+        const progressBar = document.getElementById('player-progress');
+        if (progressBar) progressBar.style.width = '0%';
+
+        if (isPlaying) {
+            audioPlayer.play().catch(e => console.log("Audio waiting for user click"));
+        }
+    }
+
+    function nextTrack() {
+        let nextIdx = (currentTrackIndex + 1) % soundtrackPlaylist.length;
+        loadTrack(nextIdx);
+    }
+
+    function prevTrack() {
+        let prevIdx = (currentTrackIndex - 1 + soundtrackPlaylist.length) % soundtrackPlaylist.length;
+        loadTrack(prevIdx);
+    }
+
+    function toggleShuffle() {
+        isShuffle = !isShuffle;
+        const shuffleBtn = document.getElementById('btn-shuffle');
+        if (shuffleBtn) shuffleBtn.classList.toggle('active', isShuffle);
+    }
+
+    function seekTrack(event) {
+        const bar = event.currentTarget;
+        const clickX = event.offsetX;
+        const totalWidth = bar.clientWidth;
+        const pct = clickX / totalWidth;
+
+        if (audioPlayer.duration) {
+            audioPlayer.currentTime = pct * audioPlayer.duration;
+        }
+    }
+
+    // ==========================================
+    // 3. SECURITY OFFICE ENGINE & CONTROLS
+    // ==========================================
+    let power = 100;
+    let hour = 0;
+    let leftDoorClosed = false;
+    let rightDoorClosed = false;
+    let leftLightOn = false;
+    let rightLightOn = false;
+    let monitorOpen = false;
+    let currentCam = '1A';
+    let sigristPosition = '1A'; // Node positions: '1A', '1B', '3A', '2A', '2B', or 'OFFICE'
+    let gameInterval = null;
+    const SECONDS_PER_HOUR = 80;
+
+    // Panning office camera follow
+    const officePan = document.getElementById('office-panoramic');
+    document.addEventListener('mousemove', (e) => {
+        const officeScreen = document.getElementById('office-screen');
+        if (!officeScreen || !officeScreen.classList.contains('active')) return;
+        const mousePercent = e.clientX / window.innerWidth;
+        const panOffset = -1 * (mousePercent * 80);
+        if (officePan) officePan.style.transform = `translateX(${panOffset}vw)`;
+    });
+
+    // Night Shift Loop
+    function startShift() {
+        if (gameInterval) clearInterval(gameInterval);
+        gameInterval = setInterval(() => {
+            let drainRate = 0.08; 
+            if (leftDoorClosed) drainRate += 0.12;
+            if (rightDoorClosed) drainRate += 0.12;
+            if (leftLightOn) drainRate += 0.08;
+            if (rightLightOn) drainRate += 0.08;
+            if (monitorOpen) drainRate += 0.10;
+
+            power -= drainRate;
+            if (power <= 0) {
+                power = 0;
+                triggerGameOver();
+            }
+            const powerDisplay = document.getElementById('power-display');
+            if (powerDisplay) powerDisplay.innerText = Math.floor(power);
+
+            hour += (1 / SECONDS_PER_HOUR);
+            const clockDisplay = document.getElementById('clock-display');
+            if (hour >= 6) {
+                triggerWin();
+            } else if (clockDisplay) {
+                let displayHour = Math.floor(hour) === 0 ? 12 : Math.floor(hour);
+                clockDisplay.innerText = displayHour + " AM";
+            }
+
+            // AI Threat Movement Tick
+            if (hour >= 1.0 && Math.random() < 0.05) {
+                moveSigristRandomly();
+            }
+        }, 1000);
+    }
+
+    // Door and Hallway Light Controls
+    function toggleLeftDoor() {
+        leftDoorClosed = !leftDoorClosed;
+        const btn = document.getElementById('left-door-btn');
+        if (btn) {
+            btn.innerText = leftDoorClosed ? "DOOR: CLOSED" : "DOOR: OPEN";
+            btn.classList.toggle('active-door', leftDoorClosed);
+        }
+        const door = document.getElementById('left-blast-door');
+        if (door) door.classList.toggle('closed', leftDoorClosed);
+    }
+
+    function toggleRightDoor() {
+        rightDoorClosed = !rightDoorClosed;
+        const btn = document.getElementById('right-door-btn');
+        if (btn) {
+            btn.innerText = rightDoorClosed ? "DOOR: CLOSED" : "DOOR: OPEN";
+            btn.classList.toggle('active-door', rightDoorClosed);
+        }
+        const door = document.getElementById('right-blast-door');
+        if (door) door.classList.toggle('closed', rightDoorClosed);
+    }
+
+    function toggleLeftLight() {
+        leftLightOn = !leftLightOn;
+        const btn = document.getElementById('left-light-btn');
+        if (btn) {
+            btn.innerText = leftLightOn ? "LIGHT: ON" : "LIGHT: OFF";
+            btn.classList.toggle('active-light', leftLightOn);
+        }
+        const hall = document.getElementById('hall-left');
+        if (hall) {
+            hall.style.background = leftLightOn ? (sigristPosition === '2A' ? '#4a0d0d' : '#33322f') : '#020202';
+        }
+    }
+
+    function toggleRightLight() {
+        rightLightOn = !rightLightOn;
+        const btn = document.getElementById('right-light-btn');
+        if (btn) {
+            btn.innerText = rightLightOn ? "LIGHT: ON" : "LIGHT: OFF";
+            btn.classList.toggle('active-light', rightLightOn);
+        }
+        const hall = document.getElementById('hall-right');
+        if (hall) {
+            hall.style.background = rightLightOn ? (sigristPosition === '2B' ? '#4a0d0d' : '#33322f') : '#020202';
+        }
+    }
+
+    // Camera Monitor System
+    function toggleCameraMonitor() {
+        monitorOpen = !monitorOpen;
+        const monitor = document.getElementById('camera-monitor');
+        if (monitor) {
+            if (monitorOpen) {
+                monitor.classList.add('active-cam');
+                updateCameraPhoto();
+            } else {
+                monitor.classList.remove('active-cam');
+            }
+        }
+    }
+
+    function switchCamera(cam) {
+        currentCam = cam;
+        document.querySelectorAll('.cam-node').forEach(b => b.classList.remove('selected'));
+        
+        const selBtn = document.getElementById('btn-cam' + cam.toLowerCase());
+        if (selBtn) selBtn.classList.add('selected');
+
+        const camNames = {
+            '1A': 'CAM 1A (Classroom)',
+            '1B': 'CAM 1B (Hallway)',
+            '3A': 'CAM 3A (Main Office)',
+            '2A': 'CAM 2A (Left Door)',
+            '2B': 'CAM 2B (Right Door)'
+        };
+
+        const labelEl = document.getElementById('cam-label');
+        if (labelEl) labelEl.innerText = camNames[cam] || ('CAM ' + cam);
+
+        updateCameraPhoto();
+    }
+
+    function updateCameraPhoto() {
+        const imgTag = document.getElementById('cam-feed-img');
+        const camKey = currentCam.toLowerCase();
+        if (imgTag) {
+            imgTag.src = (sigristPosition === currentCam) ? `cam${camKey}_sigrist.png` : `cam${camKey}_empty.png`;
+        }
+    }
+
+    // ==========================================
+    // 4. RANDOMIZED AI MOVEMENT PATHING
+    // ==========================================
+    function moveSigristRandomly() {
+        const roll = Math.random();
+
+        if (sigristPosition === '1A') {
+            sigristPosition = '1B';
+        } else if (sigristPosition === '1B') {
+            sigristPosition = (roll < 0.70) ? '3A' : '1A';
+        } else if (sigristPosition === '3A') {
+            if (roll < 0.30) sigristPosition = '2A';
+            else if (roll < 0.60) sigristPosition = '2B';
+            else if (roll < 0.80) sigristPosition = '1B';
+            else sigristPosition = '1A';
+        } else if (sigristPosition === '2A') {
+            if (roll < 0.50) {
+                if (leftDoorClosed) {
+                    sigristPosition = (roll < 0.25) ? '3A' : '1B';
+                } else {
+                    sigristPosition = 'OFFICE';
+                    triggerGameOver();
+                }
+            } else {
+                sigristPosition = '3A';
+            }
+        } else if (sigristPosition === '2B') {
+            if (roll < 0.50) {
+                if (rightDoorClosed) {
+                    sigristPosition = (roll < 0.25) ? '3A' : '1B';
+                } else {
+                    sigristPosition = 'OFFICE';
+                    triggerGameOver();
+                }
+            } else {
+                sigristPosition = '3A';
+            }
+        }
+
+        if (monitorOpen) {
+            updateCameraPhoto();
+        }
+    }
+
+    // ==========================================
+    // 5. GAME OVER & WIN CONDITIONS
+    // ==========================================
+    function triggerGameOver() {
+        console.log("Game Over triggered!");
+
+        if (gameInterval) clearInterval(gameInterval);
+
+        const monitor = document.getElementById('camera-monitor');
+        if (monitor) monitor.classList.remove('active-cam');
+
+        showScreen('gameover-screen');
+
+        const jumpscareBox = document.getElementById('jumpscare-container');
+        const gameoverUI = document.getElementById('gameover-ui');
+        const video = document.getElementById('jumpscare-video');
+
+        if (jumpscareBox) jumpscareBox.style.display = 'flex';
+        if (gameoverUI) gameoverUI.style.display = 'none';
+
+        if (video && video.querySelector('source') && video.querySelector('source').src) {
+            video.currentTime = 0;
+            video.play().catch(err => {
+                console.log("Video playback waiting for click:", err);
+                setTimeout(() => {
+                    if (jumpscareBox) jumpscareBox.style.display = 'none';
+                    if (gameoverUI) gameoverUI.style.display = 'flex';
+                }, 2500);
+            });
+
+            video.onended = () => {
+                if (jumpscareBox) jumpscareBox.style.display = 'none';
+                if (gameoverUI) gameoverUI.style.display = 'flex';
+            };
+        } else {
+            setTimeout(() => {
+                if (jumpscareBox) jumpscareBox.style.display = 'none';
+                if (gameoverUI) gameoverUI.style.display = 'flex';
+            }, 2500);
+        }
+    }
+
+    function triggerWin() {
+        if (gameInterval) clearInterval(gameInterval);
+        const monitor = document.getElementById('camera-monitor');
+        if (monitor) monitor.classList.remove('active-cam');
+        showScreen('win-screen');
+    }
+
+    // ==========================================
+    // 6. CRT STATIC OVERLAY RENDERER
+    // ==========================================
+    const canvas = document.getElementById('static-canvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        function resizeCanvas() {
+            canvas.width = window.innerWidth / 2;
+            canvas.height = window.innerHeight / 2;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function drawStatic() {
+            const imageData = ctx.createImageData(canvas.width, canvas.height);
+            const buffer = new Uint32Array(imageData.data.buffer);
+            for (let i = 0; i < buffer.length; i++) {
+                if (Math.random() < 0.1) buffer[i] = 0xffffffff;
+            }
+            ctx.putImageData(imageData, 0, 0);
+            requestAnimationFrame(drawStatic);
+        }
+        drawStatic();
+    }
+</script>
+</body>
+</html>
