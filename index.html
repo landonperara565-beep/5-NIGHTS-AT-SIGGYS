@@ -1034,11 +1034,10 @@
         </div>
     </div>
 
-  <!-- 2. DETAILED SECURITY OFFICE (MATCHING MENU BACKGROUND ARTWORK) -->
-    <div id="office-screen" class="screen">
-        <div class="hud-lay">POWER: <span id="power-display">100</span>%</div>
-        <div class="hud-clock"><span id="clock-display">12 AM</span><br><span style="font-size:1rem; color:#aaa;">Night 1</span></div>
-
+ <div class="hud-clock">
+    <span id="clock-display">12 AM</span><br>
+    <span id="night-display" style="font-size:1rem; color:#aaa;">Night 1</span>
+</div>
         <div id="office-panoramic">
             <div class="office-wall">
                 <!-- Checkered Wall Border Trim [1] -->
@@ -1132,14 +1131,14 @@
     </div>
 </div>
 
-    <!-- 5. WIN SCREEN (6 AM) -->
-    <div id="win-screen" class="screen modal-screen">
-        <div class="modal-box">
-            <h1 style="font-size: 5rem; color: #1ed760; margin-bottom: 10px;">6:00 AM</h1>
-            <p style="font-size: 1.5rem; color: #ccc; margin-bottom: 20px;">You survived Night 1!</p>
-            <button class="continue-btn" onclick="location.reload()">MAIN MENU</button>
-        </div>
+  <!-- 5. WIN SCREEN (6 AM) -->
+<div id="win-screen" class="screen modal-screen">
+    <div class="modal-box">
+        <h1 style="font-size: 5rem; color: #1ed760; margin-bottom: 10px;">6:00 AM</h1>
+        <p id="win-night-text" style="font-size: 1.5rem; color: #ccc; margin-bottom: 20px;">You survived Night 1!</p>
+        <button id="win-next-btn" class="continue-btn" onclick="continueToNextNight()">NEXT NIGHT</button>
     </div>
+</div>
 
     <!-- 3. WORKING SUB-SCREENS (EXTRAS, SETTINGS, CUSTOM NIGHT) -->
     <div id="customnight-screen" class="screen modal-screen">
@@ -1594,6 +1593,114 @@
             requestAnimationFrame(drawStatic);
         }
         drawStatic();
+    }
+     // ==========================================
+    // MULTI-NIGHT PROGRESSION ENGINE
+    // ==========================================
+    let currentNight = 1; // Tracks current shift (Nights 1 to 5)
+
+    // Reset progression for a fresh run
+    function clickNewGame() {
+        currentNight = 1;
+        showScreen('newspaper-screen');
+    }
+
+    // Continue from current night
+    function clickContinue() {
+        alert("Continuing shift: Night " + currentNight);
+        showScreen('newspaper-screen');
+    }
+
+    // GAME LOOP WITH PROGRESSIVE AI DIFFICULTY SCALER
+    function startShift() {
+        // Reset power and time for the new shift
+        power = 100;
+        hour = 0;
+        sigristPosition = '1A';
+
+        // Update office HUD counters
+        const nightDisplay = document.getElementById('night-display');
+        if (nightDisplay) nightDisplay.innerText = "Night " + currentNight;
+
+        const powerDisplay = document.getElementById('power-display');
+        if (powerDisplay) powerDisplay.innerText = "100";
+
+        const clockDisplay = document.getElementById('clock-display');
+        if (clockDisplay) clockDisplay.innerText = "12 AM";
+
+        if (typeof gameInterval !== 'undefined' && gameInterval) {
+            clearInterval(gameInterval);
+        }
+
+        gameInterval = setInterval(() => {
+            // Drain power based on active doors, lights, and monitor
+            let drainRate = 0.08; 
+            if (leftDoorClosed) drainRate += 0.12;
+            if (rightDoorClosed) drainRate += 0.12;
+            if (leftLightOn) drainRate += 0.08;
+            if (rightLightOn) drainRate += 0.08;
+            if (monitorOpen) drainRate += 0.10;
+
+            power -= drainRate;
+            if (power <= 0) {
+                power = 0;
+                triggerGameOver();
+            }
+            if (powerDisplay) powerDisplay.innerText = Math.floor(power);
+
+            hour += (1 / SECONDS_PER_HOUR);
+            if (hour >= 6) {
+                triggerWin();
+            } else if (clockDisplay) {
+                let displayHour = Math.floor(hour) === 0 ? 12 : Math.floor(hour);
+                clockDisplay.innerText = displayHour + " AM";
+            }
+
+            // PROGRESSIVE AI DIFFICULTY SCALING:
+            // Night 1 = 3% movement chance per tick
+            // Night 2 = 6% movement chance per tick
+            // Night 3 = 10% movement chance per tick
+            // Night 4 = 15% movement chance per tick
+            // Night 5 = 22% movement chance per tick
+            let moveChance = 0.03 + ((currentNight - 1) * 0.045);
+
+            if (hour >= 1.0 && Math.random() < moveChance) {
+                moveSigristRandomly();
+            }
+        }, 1000);
+    }
+
+    // WIN CONDITION & NIGHT ADVANCEMENT
+    function triggerWin() {
+        if (typeof gameInterval !== 'undefined' && gameInterval) {
+            clearInterval(gameInterval);
+        }
+
+        const monitor = document.getElementById('camera-monitor');
+        if (monitor) monitor.classList.remove('active-cam');
+
+        const winText = document.getElementById('win-night-text');
+        const nextBtn = document.getElementById('win-next-btn');
+
+        if (currentNight < 5) {
+            if (winText) winText.innerText = `You survived Night ${currentNight}!`;
+            if (nextBtn) nextBtn.innerText = "NEXT NIGHT";
+        } else {
+            if (winText) winText.innerText = "CONGRATULATIONS! You survived all 5 Nights at Sigrist!";
+            if (nextBtn) nextBtn.innerText = "MAIN MENU";
+        }
+
+        showScreen('win-screen');
+    }
+
+    function continueToNextNight() {
+        if (currentNight < 5) {
+            currentNight++;
+            showScreen('newspaper-screen');
+        } else {
+            currentNight = 1;
+            showScreen('menu-screen');
+        }
     }
 </script>
 </body>
