@@ -1089,6 +1089,11 @@
                 </button>
             </div>
         </div>
+         <!-- EXCLUSIVE ADMIN PANEL BUTTON -->
+    <button class="menu-btn" onclick="openAdminLogin()" style="color:#1ed760;">
+        <span class="selector">&gt;</span>Admin Panel
+    </button>
+</div>
 
         <!-- COPYRIGHT NOTICE (BOTTOM LEFT) -->
         <div class="copyright">
@@ -1135,6 +1140,40 @@
         </div>
 
     </div>
+    <!-- ADMIN PASSCODE INPUT MODAL -->
+<div id="admin-login-screen" class="screen modal-screen">
+    <div class="modal-box" style="max-width: 480px;">
+        <h1 style="color:#d32f2f; font-size:2.2rem; margin-bottom:12px;">DEVELOPER LOGIN</h1>
+        <p style="font-size:0.9rem; color:#aaa; margin-bottom:15px;">Enter developer passcode to access Admin Panel:</p>
+        
+        <input type="password" id="admin-pass-input" placeholder="Enter Passcode..." style="width: 80%; padding: 12px; font-size: 1.1rem; background: #000; border: 2px solid #d32f2f; color: #fff; text-align: center; font-family: inherit; margin-bottom: 15px; border-radius: 4px; outline: none;">
+        
+        <button class="continue-btn" onclick="checkAdminPasscode()">SUBMIT</button>
+        <button class="continue-btn" style="background:#444;" onclick="showScreen('menu-screen')">CANCEL</button>
+    </div>
+</div>
+
+<!-- DEVELOPER ADMIN PANEL MODAL -->
+<div id="admin-panel-screen" class="screen modal-screen">
+    <div class="modal-box" style="max-width: 680px; width: 90%;">
+        <h1 style="color:#1ed760; font-size:2.5rem; margin-bottom:5px;">DEVELOPER ADMIN PANEL</h1>
+        <p style="color:#aaa; font-size:0.85rem; margin-bottom:20px;">Welcome Landon! Developer Overrides Active.</p>
+        
+        <!-- DEV CONTROLS GRID -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-height: 320px; overflow-y: auto; padding-right: 5px;">
+            <button class="continue-btn" id="btn-godmode" style="margin:0; background:#222; border:1px solid #1ed760; font-size:0.95rem;" onclick="toggleGodMode()">⚡ GOD MODE: OFF</button>
+            <button class="continue-btn" style="margin:0; background:#222; border:1px solid #1ed760; font-size:0.95rem;" onclick="adminSkipTo6AM()">⏩ WIN NIGHT (FORCE 6 AM)</button>
+            <button class="continue-btn" style="margin:0; background:#222; border:1px solid #d32f2f; font-size:0.95rem;" onclick="triggerGameOver()">💀 FORCE JUMPSCARE</button>
+            <button class="continue-btn" style="margin:0; background:#222; border:1px solid #1ed760; font-size:0.95rem;" onclick="adminUnlockAllAchievements()">🏆 UNLOCK ALL ACHIEVEMENTS</button>
+            <button class="continue-btn" style="margin:0; background:#222; border:1px solid #333; font-size:0.95rem;" onclick="adminSetNight(1)">🌙 SET PROGRESSION: NIGHT 1</button>
+            <button class="continue-btn" style="margin:0; background:#222; border:1px solid #333; font-size:0.95rem;" onclick="adminSetNight(5)">🌙 SET PROGRESSION: NIGHT 5</button>
+            <button class="continue-btn" style="margin:0; background:#222; border:1px solid #333; font-size:0.95rem;" onclick="adminForceSigristPos('2A')">🚪 FORCE SIGRIST: LEFT DOOR</button>
+            <button class="continue-btn" style="margin:0; background:#222; border:1px solid #333; font-size:0.95rem;" onclick="adminForceSigristPos('2B')">🚪 FORCE SIGRIST: RIGHT DOOR</button>
+        </div>
+
+        <button class="continue-btn" onclick="showScreen('menu-screen')" style="margin-top:20px;">EXIT ADMIN PANEL</button>
+    </div>
+</div>
 
      <!-- 1. NEWSPAPER INTRO SCREEN -->
     <div id="newspaper-screen" class="screen modal-screen">
@@ -1508,6 +1547,12 @@
 
     // Night Shift Loop
     function startShift() {
+         // Inside startShift() interval:
+    if (isGodMode) {
+        power = 100; // Locks power at 100% infinitely
+    } else {
+        power -= drainRate;
+    }
         if (gameInterval) clearInterval(gameInterval);
         gameInterval = setInterval(() => {
             let drainRate = 0.08; 
@@ -1888,6 +1933,75 @@
     window.addEventListener('DOMContentLoaded', () => {
         loadSavedAchievements();
     });
+     // ==========================================
+    // DEVELOPER ADMIN PANEL CONTROLLER
+    // ==========================================
+    const ADMIN_PASSCODE = "sigrist2026"; // Set your custom developer password here!
+    let isGodMode = false;
+
+    function openAdminLogin() {
+        const input = document.getElementById("admin-pass-input");
+        if (input) input.value = "";
+        showScreen('admin-login-screen');
+    }
+
+    function checkAdminPasscode() {
+        const input = document.getElementById("admin-pass-input");
+        if (input && input.value === ADMIN_PASSCODE) {
+            showScreen('admin-panel-screen');
+        } else {
+            alert("ACCESS DENIED: Incorrect Developer Passcode.");
+        }
+    }
+
+    // ADMIN CHEAT OVERRIDES
+    function toggleGodMode() {
+        isGodMode = !isGodMode;
+        const btn = document.getElementById("btn-godmode");
+        if (btn) {
+            btn.innerText = isGodMode ? "⚡ GOD MODE: ON (INFINITE POWER)" : "⚡ GOD MODE: OFF";
+            btn.style.background = isGodMode ? "#1ed760" : "#222";
+            btn.style.color = isGodMode ? "#000" : "#fff";
+        }
+        if (isGodMode) {
+            power = 100;
+            const powerDisplay = document.getElementById('power-display');
+            if (powerDisplay) powerDisplay.innerText = "100";
+        }
+    }
+
+    function adminSkipTo6AM() {
+        triggerWin();
+    }
+
+    function adminSetNight(nightNum) {
+        if (typeof playerData !== 'undefined') {
+            playerData.currentNight = nightNum;
+            localStorage.setItem("sigrist_game_save", JSON.stringify(playerData));
+            if (typeof updateUIWithSaveData === 'function') updateUIWithSaveData();
+        }
+        alert(`Admin Override: Game set to Night ${nightNum}`);
+    }
+
+    function adminUnlockAllAchievements() {
+        if (typeof achievementsDB !== 'undefined') {
+            achievementsDB.forEach(ach => {
+                if (typeof unlockAchievement === 'function') unlockAchievement(ach.id);
+            });
+            alert("Admin Override: All achievements unlocked!");
+        }
+    }
+
+    function adminForceSigristPos(pos) {
+        if (typeof sigristPosition !== 'undefined') {
+            sigristPosition = pos;
+            if (typeof monitorOpen !== 'undefined' && monitorOpen && typeof updateCameraPhoto === 'function') {
+                updateCameraPhoto();
+            }
+            alert(`Admin Override: Sigrist forced to ${pos}`);
+        }
+    }
+
 </script>
 </body>
 </html>
