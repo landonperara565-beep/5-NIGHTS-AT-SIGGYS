@@ -1035,10 +1035,10 @@
     </div>
 
   <!-- 2. DETAILED SECURITY OFFICE (MATCHING MENU BACKGROUND ARTWORK) -->
-  <div class="hud-clock">
-    <span id="clock-display">12 AM</span><br>
-    <span id="night-display" style="font-size:1rem; color:#aaa;">Night 1</span>
-</div>
+    <div id="office-screen" class="screen">
+        <div class="hud-lay">POWER: <span id="power-display">100</span>%</div>
+        <div class="hud-clock"><span id="clock-display">12 AM</span><br><span style="font-size:1rem; color:#aaa;">Night 1</span></div>
+
         <div id="office-panoramic">
             <div class="office-wall">
                 <!-- Checkered Wall Border Trim [1] -->
@@ -1134,12 +1134,12 @@
 
     <!-- 5. WIN SCREEN (6 AM) -->
     <div id="win-screen" class="screen modal-screen">
-    <div class="modal-box">
-        <h1 style="font-size: 5rem; color: #1ed760; margin-bottom: 10px;">6:00 AM</h1>
-        <p id="win-night-text" style="font-size: 1.5rem; color: #ccc; margin-bottom: 20px;">You survived Night 1!</p>
-        <button id="win-next-btn" class="continue-btn" onclick="continueToNextNight()">NEXT NIGHT</button>
+        <div class="modal-box">
+            <h1 style="font-size: 5rem; color: #1ed760; margin-bottom: 10px;">6:00 AM</h1>
+            <p style="font-size: 1.5rem; color: #ccc; margin-bottom: 20px;">You survived Night 1!</p>
+            <button class="continue-btn" onclick="location.reload()">MAIN MENU</button>
+        </div>
     </div>
-</div>
 
     <!-- 3. WORKING SUB-SCREENS (EXTRAS, SETTINGS, CUSTOM NIGHT) -->
     <div id="customnight-screen" class="screen modal-screen">
@@ -1181,15 +1181,17 @@
  <!-- JAVASCRIPT GAME LOGIC -->
 <script>
     // ==========================================
-    // 1. SCREEN SWITCHING ENGINE & MENU HANDLERS
+    // 1. SCREEN SWITCHING & MENU HANDLERS
     // ==========================================
     function showScreen(screenId) {
+        // Hide all screens
         const screens = document.querySelectorAll('.screen');
         screens.forEach(s => {
             s.classList.remove('active');
             s.style.display = 'none';
         });
 
+        // Activate requested screen
         const target = document.getElementById(screenId);
         if (target) {
             target.style.display = 'flex';
@@ -1199,20 +1201,14 @@
         }
     }
 
-    function clickNewGame() {
-        currentNight = 1;
-        showScreen('newspaper-screen');
-    }
-
-    function clickContinue() {
-        alert("Continuing shift: Night " + currentNight);
-        showScreen('newspaper-screen');
-    }
-
+    // Main menu buttons
+    function clickNewGame() { showScreen('newspaper-screen'); }
+    function clickContinue() { alert("Loading saved progress: Night 1"); showScreen('newspaper-screen'); }
     function openCustomNight() { showScreen('customnight-screen'); }
     function openSettings() { showScreen('settings-screen'); }
     function openExtras() { showScreen('extras-screen'); }
 
+    // Start night shift from newspaper clipping
     function enterOffice() {
         console.log("Entering Security Office...");
         showScreen('office-screen');
@@ -1220,7 +1216,7 @@
     }
 
     // ==========================================
-    // 2. SPOTIFY MUSIC PLAYER CONTROLLER [1, 2]
+    // 2. SPOTIFY-STYLE MUSIC PLAYER CONTROLLER
     // ==========================================
     const soundtrackPlaylist = [
         { 
@@ -1259,10 +1255,13 @@
         }
     });
 
-    audioPlayer.addEventListener('ended', () => { nextTrack(); });
+    audioPlayer.addEventListener('ended', () => {
+        nextTrack();
+    });
 
     function togglePlayPause() {
         const playBtn = document.getElementById('btn-play-pause');
+
         if (!isPlaying) {
             isPlaying = true;
             if (playBtn) playBtn.innerText = '⏸';
@@ -1283,6 +1282,7 @@
     function loadTrack(index) {
         currentTrackIndex = index;
         const track = soundtrackPlaylist[currentTrackIndex];
+
         audioPlayer.src = track.file;
         audioPlayer.currentTime = 0;
 
@@ -1320,15 +1320,15 @@
         const clickX = event.offsetX;
         const totalWidth = bar.clientWidth;
         const pct = clickX / totalWidth;
+
         if (audioPlayer.duration) {
             audioPlayer.currentTime = pct * audioPlayer.duration;
         }
     }
 
     // ==========================================
-    // 3. MULTI-NIGHT ENGINE & OFFICE SHIFT LOOP
+    // 3. SECURITY OFFICE ENGINE & CONTROLS
     // ==========================================
-    let currentNight = 1;
     let power = 100;
     let hour = 0;
     let leftDoorClosed = false;
@@ -1337,10 +1337,11 @@
     let rightLightOn = false;
     let monitorOpen = false;
     let currentCam = '1A';
-    let sigristPosition = '1A';
+    let sigristPosition = '1A'; // Node positions: '1A', '1B', '3A', '2A', '2B', or 'OFFICE'
     let gameInterval = null;
     const SECONDS_PER_HOUR = 80;
 
+    // Panning office camera follow
     const officePan = document.getElementById('office-panoramic');
     document.addEventListener('mousemove', (e) => {
         const officeScreen = document.getElementById('office-screen');
@@ -1350,24 +1351,9 @@
         if (officePan) officePan.style.transform = `translateX(${panOffset}vw)`;
     });
 
+    // Night Shift Loop
     function startShift() {
-        power = 100;
-        hour = 0;
-        sigristPosition = '1A';
-
-        const nightDisplay = document.getElementById('night-display');
-        if (nightDisplay) nightDisplay.innerText = "Night " + currentNight;
-
-        const powerDisplay = document.getElementById('power-display');
-        if (powerDisplay) powerDisplay.innerText = "100";
-
-        const clockDisplay = document.getElementById('clock-display');
-        if (clockDisplay) clockDisplay.innerText = "12 AM";
-
-        if (typeof gameInterval !== 'undefined' && gameInterval) {
-            clearInterval(gameInterval);
-        }
-
+        if (gameInterval) clearInterval(gameInterval);
         gameInterval = setInterval(() => {
             let drainRate = 0.08; 
             if (leftDoorClosed) drainRate += 0.12;
@@ -1381,9 +1367,11 @@
                 power = 0;
                 triggerGameOver();
             }
+            const powerDisplay = document.getElementById('power-display');
             if (powerDisplay) powerDisplay.innerText = Math.floor(power);
 
             hour += (1 / SECONDS_PER_HOUR);
+            const clockDisplay = document.getElementById('clock-display');
             if (hour >= 6) {
                 triggerWin();
             } else if (clockDisplay) {
@@ -1391,49 +1379,14 @@
                 clockDisplay.innerText = displayHour + " AM";
             }
 
-            // Progressive AI difficulty scaling: 3% (Night 1) to 21% (Night 5)
-            let moveChance = 0.03 + ((currentNight - 1) * 0.045);
-
-            if (hour >= 1.0 && Math.random() < moveChance) {
+            // AI Threat Movement Tick
+            if (hour >= 1.0 && Math.random() < 0.05) {
                 moveSigristRandomly();
             }
         }, 1000);
     }
 
-    function triggerWin() {
-        if (typeof gameInterval !== 'undefined' && gameInterval) {
-            clearInterval(gameInterval);
-        }
-
-        const monitor = document.getElementById('camera-monitor');
-        if (monitor) monitor.classList.remove('active-cam');
-
-        const winText = document.getElementById('win-night-text');
-        const nextBtn = document.getElementById('win-next-btn');
-
-        if (currentNight < 5) {
-            if (winText) winText.innerText = `You survived Night ${currentNight}!`;
-            if (nextBtn) nextBtn.innerText = "NEXT NIGHT";
-        } else {
-            if (winText) winText.innerText = "CONGRATULATIONS! You survived all 5 Nights at Sigrist!";
-            if (nextBtn) nextBtn.innerText = "MAIN MENU";
-        }
-
-        showScreen('win-screen');
-    }
-
-    function continueToNextNight() {
-        if (currentNight < 5) {
-            currentNight++;
-            showScreen('newspaper-screen');
-        } else {
-            currentNight = 1;
-            showScreen('menu-screen');
-        }
-    }
-     // ==========================================
-    // 4. DOOR & LIGHT CONTROLS
-    // ==========================================
+    // Door and Hallway Light Controls
     function toggleLeftDoor() {
         leftDoorClosed = !leftDoorClosed;
         const btn = document.getElementById('left-door-btn');
@@ -1482,9 +1435,7 @@
         }
     }
 
-    // ==========================================
-    // 5. CAMERA MONITOR SYSTEM
-    // ==========================================
+    // Camera Monitor System
     function toggleCameraMonitor() {
         monitorOpen = !monitorOpen;
         const monitor = document.getElementById('camera-monitor');
@@ -1528,7 +1479,7 @@
     }
 
     // ==========================================
-    // 6. RANDOMIZED AI MOVEMENT PATHING
+    // 4. RANDOMIZED AI MOVEMENT PATHING
     // ==========================================
     function moveSigristRandomly() {
         const roll = Math.random();
@@ -1566,20 +1517,18 @@
             }
         }
 
-        if (typeof monitorOpen !== 'undefined' && monitorOpen) {
+        if (monitorOpen) {
             updateCameraPhoto();
         }
     }
 
     // ==========================================
-    // 7. GAME OVER & JUMPSCARE EXECUTION [1]
+    // 5. GAME OVER & WIN CONDITIONS
     // ==========================================
     function triggerGameOver() {
         console.log("Game Over triggered!");
 
-        if (typeof gameInterval !== 'undefined' && gameInterval) {
-            clearInterval(gameInterval);
-        }
+        if (gameInterval) clearInterval(gameInterval);
 
         const monitor = document.getElementById('camera-monitor');
         if (monitor) monitor.classList.remove('active-cam');
@@ -1593,9 +1542,15 @@
         if (jumpscareBox) jumpscareBox.style.display = 'flex';
         if (gameoverUI) gameoverUI.style.display = 'none';
 
-        if (video && video.src && video.src !== "") {
+        if (video && video.querySelector('source') && video.querySelector('source').src) {
             video.currentTime = 0;
-            video.play().catch(err => console.log("Video waiting for user interaction:", err));
+            video.play().catch(err => {
+                console.log("Video playback waiting for click:", err);
+                setTimeout(() => {
+                    if (jumpscareBox) jumpscareBox.style.display = 'none';
+                    if (gameoverUI) gameoverUI.style.display = 'flex';
+                }, 2500);
+            });
 
             video.onended = () => {
                 if (jumpscareBox) jumpscareBox.style.display = 'none';
@@ -1609,8 +1564,15 @@
         }
     }
 
+    function triggerWin() {
+        if (gameInterval) clearInterval(gameInterval);
+        const monitor = document.getElementById('camera-monitor');
+        if (monitor) monitor.classList.remove('active-cam');
+        showScreen('win-screen');
+    }
+
     // ==========================================
-    // 8. CRT STATIC OVERLAY RENDERER [1]
+    // 6. CRT STATIC OVERLAY RENDERER
     // ==========================================
     const canvas = document.getElementById('static-canvas');
     if (canvas) {
@@ -1625,7 +1587,7 @@
         function drawStatic() {
             const imageData = ctx.createImageData(canvas.width, canvas.height);
             const buffer = new Uint32Array(imageData.data.buffer);
-            for (i = 0; i < buffer.length; i++) {
+            for (let i = 0; i < buffer.length; i++) {
                 if (Math.random() < 0.1) buffer[i] = 0xffffffff;
             }
             ctx.putImageData(imageData, 0, 0);
