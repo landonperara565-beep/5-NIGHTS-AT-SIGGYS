@@ -1180,9 +1180,8 @@
     </div>
  <!-- JAVASCRIPT GAME LOGIC -->
 <script>
-    <script>
     // ==========================================
-    // 1. SCREEN SWITCHING & MENU HANDLERS
+    // 1. SCREEN SWITCHING ENGINE & MENU HANDLERS
     // ==========================================
     function showScreen(screenId) {
         const screens = document.querySelectorAll('.screen');
@@ -1200,29 +1199,19 @@
         }
     }
 
-    let currentNight = 1; // Tracks current shift progression (Nights 1 to 5)
-
-    function clickNewGame() { 
+    function clickNewGame() {
         currentNight = 1;
-        showScreen('newspaper-screen'); 
+        showScreen('newspaper-screen');
     }
-    
-    function clickContinue() { 
-        alert("Continuing shift: Night " + currentNight); 
-        showScreen('newspaper-screen'); 
+
+    function clickContinue() {
+        alert("Continuing shift: Night " + currentNight);
+        showScreen('newspaper-screen');
     }
-    
-    function openCustomNight() { 
-        showScreen('customnight-screen'); 
-    }
-    
-    function openSettings() { 
-        showScreen('settings-screen'); 
-    }
-    
-    function openExtras() { 
-        showScreen('extras-screen'); 
-    }
+
+    function openCustomNight() { showScreen('customnight-screen'); }
+    function openSettings() { showScreen('settings-screen'); }
+    function openExtras() { showScreen('extras-screen'); }
 
     function enterOffice() {
         console.log("Entering Security Office...");
@@ -1231,7 +1220,7 @@
     }
 
     // ==========================================
-    // 2. MUSIC PLAYER CONTROLLER
+    // 2. SPOTIFY MUSIC PLAYER CONTROLLER [1, 2]
     // ==========================================
     const soundtrackPlaylist = [
         { 
@@ -1270,13 +1259,10 @@
         }
     });
 
-    audioPlayer.addEventListener('ended', () => {
-        nextTrack();
-    });
+    audioPlayer.addEventListener('ended', () => { nextTrack(); });
 
     function togglePlayPause() {
         const playBtn = document.getElementById('btn-play-pause');
-
         if (!isPlaying) {
             isPlaying = true;
             if (playBtn) playBtn.innerText = '⏸';
@@ -1297,7 +1283,6 @@
     function loadTrack(index) {
         currentTrackIndex = index;
         const track = soundtrackPlaylist[currentTrackIndex];
-
         audioPlayer.src = track.file;
         audioPlayer.currentTime = 0;
 
@@ -1335,15 +1320,15 @@
         const clickX = event.offsetX;
         const totalWidth = bar.clientWidth;
         const pct = clickX / totalWidth;
-
         if (audioPlayer.duration) {
             audioPlayer.currentTime = pct * audioPlayer.duration;
         }
     }
 
     // ==========================================
-    // 3. SECURITY OFFICE ENGINE & AI (5-NIGHTS)
+    // 3. MULTI-NIGHT ENGINE & OFFICE SHIFT LOOP
     // ==========================================
+    let currentNight = 1;
     let power = 100;
     let hour = 0;
     let leftDoorClosed = false;
@@ -1356,7 +1341,6 @@
     let gameInterval = null;
     const SECONDS_PER_HOUR = 80;
 
-    // PANNING OFFICE
     const officePan = document.getElementById('office-panoramic');
     document.addEventListener('mousemove', (e) => {
         const officeScreen = document.getElementById('office-screen');
@@ -1366,7 +1350,6 @@
         if (officePan) officePan.style.transform = `translateX(${panOffset}vw)`;
     });
 
-    // GAME LOOP
     function startShift() {
         power = 100;
         hour = 0;
@@ -1381,7 +1364,9 @@
         const clockDisplay = document.getElementById('clock-display');
         if (clockDisplay) clockDisplay.innerText = "12 AM";
 
-        if (gameInterval) clearInterval(gameInterval);
+        if (typeof gameInterval !== 'undefined' && gameInterval) {
+            clearInterval(gameInterval);
+        }
 
         gameInterval = setInterval(() => {
             let drainRate = 0.08; 
@@ -1406,8 +1391,7 @@
                 clockDisplay.innerText = displayHour + " AM";
             }
 
-            // NIGHT DIFFICULTY SCALING:
-            // Night 1 = 3%, Night 2 = 7.5%, Night 3 = 12%, Night 4 = 16.5%, Night 5 = 21%
+            // Progressive AI difficulty scaling: 3% (Night 1) to 21% (Night 5)
             let moveChance = 0.03 + ((currentNight - 1) * 0.045);
 
             if (hour >= 1.0 && Math.random() < moveChance) {
@@ -1415,14 +1399,39 @@
             }
         }, 1000);
     }
-     function triggerWin() {
-        clearInterval(gameInterval);
+
+    function triggerWin() {
+        if (typeof gameInterval !== 'undefined' && gameInterval) {
+            clearInterval(gameInterval);
+        }
+
         const monitor = document.getElementById('camera-monitor');
         if (monitor) monitor.classList.remove('active-cam');
+
+        const winText = document.getElementById('win-night-text');
+        const nextBtn = document.getElementById('win-next-btn');
+
+        if (currentNight < 5) {
+            if (winText) winText.innerText = `You survived Night ${currentNight}!`;
+            if (nextBtn) nextBtn.innerText = "NEXT NIGHT";
+        } else {
+            if (winText) winText.innerText = "CONGRATULATIONS! You survived all 5 Nights at Sigrist!";
+            if (nextBtn) nextBtn.innerText = "MAIN MENU";
+        }
+
         showScreen('win-screen');
     }
-``` [1]
-  // ==========================================
+
+    function continueToNextNight() {
+        if (currentNight < 5) {
+            currentNight++;
+            showScreen('newspaper-screen');
+        } else {
+            currentNight = 1;
+            showScreen('menu-screen');
+        }
+    }
+     // ==========================================
     // 4. DOOR & LIGHT CONTROLS
     // ==========================================
     function toggleLeftDoor() {
@@ -1563,7 +1572,7 @@
     }
 
     // ==========================================
-    // 7. GAME OVER & JUMPSCARE EXECUTION
+    // 7. GAME OVER & JUMPSCARE EXECUTION [1]
     // ==========================================
     function triggerGameOver() {
         console.log("Game Over triggered!");
@@ -1601,7 +1610,7 @@
     }
 
     // ==========================================
-    // 8. CRT STATIC OVERLAY RENDERER
+    // 8. CRT STATIC OVERLAY RENDERER [1]
     // ==========================================
     const canvas = document.getElementById('static-canvas');
     if (canvas) {
@@ -1616,7 +1625,7 @@
         function drawStatic() {
             const imageData = ctx.createImageData(canvas.width, canvas.height);
             const buffer = new Uint32Array(imageData.data.buffer);
-            for (let i = 0; i < buffer.length; i++) {
+            for (i = 0; i < buffer.length; i++) {
                 if (Math.random() < 0.1) buffer[i] = 0xffffffff;
             }
             ctx.putImageData(imageData, 0, 0);
