@@ -926,132 +926,6 @@
             color: #000;
             font-weight: bold;
         }
-        /* --- ACHIEVEMENTS LIST CARDS & SECRET MASKING --- */
-.achievement-card {
-    background: #121212;
-    border: 1px solid #282828;
-    border-radius: 12px;
-    padding: 14px 18px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    text-align: left;
-    transition: all 0.25s ease;
-}
-
-.achievement-card.unlocked {
-    border-color: #1ed760; /* Iconic green highlight */
-    box-shadow: 0 4px 20px rgba(30, 215, 96, 0.25);
-}
-
-.achievement-card.secret-locked {
-    opacity: 0.6;
-    border-style: dashed;
-}
-
-.achievement-card-icon {
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    background: #222;
-    color: #888;
-    font-size: 1.6rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.achievement-card.unlocked .achievement-card-icon {
-    background: #1ed760;
-    color: #121212;
-    box-shadow: 0 0 12px rgba(30, 215, 96, 0.5);
-}
-
-.achievement-card-info h4 {
-    margin: 0;
-    font-size: 1.1rem;
-    color: #ffffff;
-    font-weight: bold;
-}
-
-.achievement-card-info p {
-    margin: 4px 0 0 0;
-    font-size: 0.85rem;
-    color: #b3b3b3;
-    line-height: 1.3;
-}
-
-/* --- PROFESSIONAL SLIDE-IN BOTTOM-RIGHT TOAST POPUP --- */
-#achievement-toast {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 350px;
-    background: #121212;
-    border: 2px solid #1ed760;
-    border-radius: 16px;
-    padding: 14px 18px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.95), 0 0 20px rgba(30, 215, 96, 0.3);
-    z-index: 1000;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
-    pointer-events: none;
-}
-
-#achievement-toast.achievement-toast-hidden {
-    transform: translateX(130%); /* Hidden off right edge of screen */
-    opacity: 0;
-}
-
-#achievement-toast.achievement-toast-visible {
-    transform: translateX(0%); /* Slides in cleanly from bottom right */
-    opacity: 1;
-}
-
-.toast-badge-icon {
-    width: 48px;
-    height: 48px;
-    background: #1ed760;
-    color: #121212;
-    border-radius: 50%;
-    font-size: 1.6rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    box-shadow: 0 2px 10px rgba(30, 215, 96, 0.4);
-}
-
-.toast-text-box {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-}
-
-.toast-header {
-    font-size: 0.72rem;
-    font-weight: bold;
-    color: #1ed760;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-}
-
-.toast-title {
-    font-size: 1.05rem;
-    font-weight: 800;
-    color: #ffffff;
-    margin-top: 1px;
-}
-
-.toast-desc {
-    font-size: 0.8rem;
-    color: #b3b3b3;
-    margin-top: 2px;
-}
     </style>
 </head>
 <body>
@@ -1089,11 +963,6 @@
                 </button>
             </div>
         </div>
-         <!-- EXCLUSIVE ADMIN PANEL BUTTON -->
-    <button class="menu-btn" onclick="openAdminLogin()" style="color:#1ed760;">
-        <span class="selector">&gt;</span>Admin Panel
-    </button>
-</div>
 
         <!-- COPYRIGHT NOTICE (BOTTOM LEFT) -->
         <div class="copyright">
@@ -1140,40 +1009,6 @@
         </div>
 
     </div>
-    <!-- ADMIN PASSCODE INPUT MODAL -->
-<div id="admin-login-screen" class="screen modal-screen">
-    <div class="modal-box" style="max-width: 480px;">
-        <h1 style="color:#d32f2f; font-size:2.2rem; margin-bottom:12px;">DEVELOPER LOGIN</h1>
-        <p style="font-size:0.9rem; color:#aaa; margin-bottom:15px;">Enter developer passcode to access Admin Panel:</p>
-        
-        <input type="password" id="admin-pass-input" placeholder="Enter Passcode..." style="width: 80%; padding: 12px; font-size: 1.1rem; background: #000; border: 2px solid #d32f2f; color: #fff; text-align: center; font-family: inherit; margin-bottom: 15px; border-radius: 4px; outline: none;">
-        
-        <button class="continue-btn" onclick="checkAdminPasscode()">SUBMIT</button>
-        <button class="continue-btn" style="background:#444;" onclick="showScreen('menu-screen')">CANCEL</button>
-    </div>
-</div>
-
-<!-- DEVELOPER ADMIN PANEL MODAL -->
-<div id="admin-panel-screen" class="screen modal-screen">
-    <div class="modal-box" style="max-width: 680px; width: 90%;">
-        <h1 style="color:#1ed760; font-size:2.5rem; margin-bottom:5px;">DEVELOPER ADMIN PANEL</h1>
-        <p style="color:#aaa; font-size:0.85rem; margin-bottom:20px;">Welcome Landon! Developer Overrides Active.</p>
-        
-        <!-- DEV CONTROLS GRID -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-height: 320px; overflow-y: auto; padding-right: 5px;">
-            <button class="continue-btn" id="btn-godmode" style="margin:0; background:#222; border:1px solid #1ed760; font-size:0.95rem;" onclick="toggleGodMode()">⚡ GOD MODE: OFF</button>
-            <button class="continue-btn" style="margin:0; background:#222; border:1px solid #1ed760; font-size:0.95rem;" onclick="adminSkipTo6AM()">⏩ WIN NIGHT (FORCE 6 AM)</button>
-            <button class="continue-btn" style="margin:0; background:#222; border:1px solid #d32f2f; font-size:0.95rem;" onclick="triggerGameOver()">💀 FORCE JUMPSCARE</button>
-            <button class="continue-btn" style="margin:0; background:#222; border:1px solid #1ed760; font-size:0.95rem;" onclick="adminUnlockAllAchievements()">🏆 UNLOCK ALL ACHIEVEMENTS</button>
-            <button class="continue-btn" style="margin:0; background:#222; border:1px solid #333; font-size:0.95rem;" onclick="adminSetNight(1)">🌙 SET PROGRESSION: NIGHT 1</button>
-            <button class="continue-btn" style="margin:0; background:#222; border:1px solid #333; font-size:0.95rem;" onclick="adminSetNight(5)">🌙 SET PROGRESSION: NIGHT 5</button>
-            <button class="continue-btn" style="margin:0; background:#222; border:1px solid #333; font-size:0.95rem;" onclick="adminForceSigristPos('2A')">🚪 FORCE SIGRIST: LEFT DOOR</button>
-            <button class="continue-btn" style="margin:0; background:#222; border:1px solid #333; font-size:0.95rem;" onclick="adminForceSigristPos('2B')">🚪 FORCE SIGRIST: RIGHT DOOR</button>
-        </div>
-
-        <button class="continue-btn" onclick="showScreen('menu-screen')" style="margin-top:20px;">EXIT ADMIN PANEL</button>
-    </div>
-</div>
 
      <!-- 1. NEWSPAPER INTRO SCREEN -->
     <div id="newspaper-screen" class="screen modal-screen">
@@ -1199,10 +1034,11 @@
         </div>
     </div>
 
-<div class="hud-clock">
-    <span id="clock-display">12 AM</span><br>
-    <span id="night-display" style="font-size:1rem; color:#aaa;">Night 1</span>
-</div>
+  <!-- 2. DETAILED SECURITY OFFICE (MATCHING MENU BACKGROUND ARTWORK) -->
+    <div id="office-screen" class="screen">
+        <div class="hud-lay">POWER: <span id="power-display">100</span>%</div>
+        <div class="hud-clock"><span id="clock-display">12 AM</span><br><span style="font-size:1rem; color:#aaa;">Night 1</span></div>
+
         <div id="office-panoramic">
             <div class="office-wall">
                 <!-- Checkered Wall Border Trim [1] -->
@@ -1296,14 +1132,14 @@
     </div>
 </div>
 
-   <!-- 5. WIN SCREEN (6 AM) -->
-<div id="win-screen" class="screen modal-screen">
-    <div class="modal-box">
-        <h1 style="font-size: 5rem; color: #1ed760; margin-bottom: 10px;">6:00 AM</h1>
-        <p id="win-night-text" style="font-size: 1.5rem; color: #ccc; margin-bottom: 20px;">You survived Night 1!</p>
-        <button id="win-next-btn" class="continue-btn" onclick="continueToNextNight()">NEXT NIGHT</button>
+    <!-- 5. WIN SCREEN (6 AM) -->
+    <div id="win-screen" class="screen modal-screen">
+        <div class="modal-box">
+            <h1 style="font-size: 5rem; color: #1ed760; margin-bottom: 10px;">6:00 AM</h1>
+            <p style="font-size: 1.5rem; color: #ccc; margin-bottom: 20px;">You survived Night 1!</p>
+            <button class="continue-btn" onclick="location.reload()">MAIN MENU</button>
+        </div>
     </div>
-</div>
 
     <!-- 3. WORKING SUB-SCREENS (EXTRAS, SETTINGS, CUSTOM NIGHT) -->
     <div id="customnight-screen" class="screen modal-screen">
@@ -1322,55 +1158,26 @@
         </div>
     </div>
 
-    <!-- EXTRAS MODAL (UPDATED WITH ACHIEVEMENTS BUTTON) -->
-<div id="extras-screen" class="screen modal-screen">
-    <div class="modal-box" style="max-width: 650px;">
-        <h1 style="color:#d32f2f; font-size:2.8rem; margin-bottom:20px;">CREDITS & EXTRAS</h1>
-        <div style="width:100%; max-height:220px; overflow-y:auto; text-align:center; margin-bottom:20px;">
-            <div style="margin-bottom: 15px;">
-                <h3 style="color:#1ed760; font-size:1.1rem; margin-bottom:2px;">GAME CREATOR & DEVELOPER</h3>
-                <p style="color:#ffffff; font-size:1.0rem; font-weight:bold;">Landon</p>
+    <div id="extras-screen" class="screen modal-screen">
+        <div class="modal-box" style="max-width: 650px;">
+            <h1 style="color:#d32f2f; font-size:2.8rem; margin-bottom:20px;">CREDITS & EXTRAS</h1>
+            <div style="width:100%; max-height:280px; overflow-y:auto; text-align:center; margin-bottom:25px;">
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px;">GAME CREATOR & DEVELOPER</h3>
+                    <p style="color:#ffffff; font-size:1.1rem; font-weight:bold;">Landon</p>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px;">MUSIC & SOUND DESIGN</h3>
+                    <p style="color:#ffffff; font-size:1.1rem; font-weight:bold;">Landon & Joshua</p>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color:#1ed760; font-size:1.2rem; margin-bottom:4px;">INFO</h3>
+                    <p style="color:#ffffff; font-size:1.1rem; font-weight:bold;">Pre-Release is out more updates coming dw</p>
+                </div>
             </div>
-            <div style="margin-bottom: 15px;">
-                <h3 style="color:#1ed760; font-size:1.1rem; margin-bottom:2px;">MUSIC & SOUND DESIGN</h3>
-                <p style="color:#ffffff; font-size:1.0rem; font-weight:bold;">Landon & Joshua</p>
-            </div>
-            <div style="margin-bottom: 15px;">
-                <h3 style="color:#1ed760; font-size:1.1rem; margin-bottom:2px;">ART & GRAPHICS</h3>
-                <p style="color:#ffffff; font-size:1.0rem; font-weight:bold;">Landon</p>
-            </div>
-        </div>
-
-        <!-- BUTTONS TO VIEW ACHIEVEMENTS OR GO BACK -->
-        <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
-            <button class="continue-btn" style="background:#1ed760; color:#000;" onclick="openAchievements()">🏆 ACHIEVEMENTS</button>
             <button class="continue-btn" onclick="showScreen('menu-screen')">BACK TO MENU</button>
         </div>
     </div>
-</div>
-
-<!-- DYNAMIC ACHIEVEMENTS SCREEN -->
-<div id="achievements-screen" class="screen modal-screen">
-    <div class="modal-box" style="max-width: 680px; width: 90%;">
-        <h1 style="color:#d32f2f; font-size:2.5rem; margin-bottom:15px;">HALL OF ACHIEVEMENTS</h1>
-        
-        <div id="achievements-list" style="width: 100%; max-height: 340px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 5px;">
-            <!-- POPULATED DYNAMICALLY BY JAVASCRIPT -->
-        </div>
-
-        <button class="continue-btn" onclick="showScreen('extras-screen')" style="margin-top:20px;">BACK TO EXTRAS</button>
-    </div>
-</div>
-
-<!-- SLIDE-IN BOTTOM-RIGHT TOAST NOTIFICATION CONTAINER -->
-<div id="achievement-toast" class="achievement-toast-hidden">
-    <div class="toast-badge-icon" id="toast-icon">🏆</div>
-    <div class="toast-text-box">
-        <span class="toast-header">ACHIEVEMENT UNLOCKED!</span>
-        <span class="toast-title" id="toast-title">Achievement Name</span>
-        <span class="toast-desc" id="toast-desc">Achievement Description</span>
-    </div>
-</div>
  <!-- JAVASCRIPT GAME LOGIC -->
 <script>
     // ==========================================
@@ -1544,46 +1351,10 @@
         if (officePan) officePan.style.transform = `translateX(${panOffset}vw)`;
     });
 
-    // ==========================================
-    // MULTI-NIGHT PROGRESSION ENGINE
-    // ==========================================
-    let currentNight = 1; // Tracks current shift (Nights 1 to 5)
-
-    // Reset progression for a fresh run
-    function clickNewGame() {
-        currentNight = 1;
-        showScreen('newspaper-screen');
-    }
-
-    // Continue from current night
-    function clickContinue() {
-        alert("Continuing shift: Night " + currentNight);
-        showScreen('newspaper-screen');
-    }
-
-    // GAME LOOP WITH PROGRESSIVE AI DIFFICULTY SCALER
+    // Night Shift Loop
     function startShift() {
-        // Reset power and time for the new shift
-        power = 100;
-        hour = 0;
-        sigristPosition = '1A';
-
-        // Update office HUD counters
-        const nightDisplay = document.getElementById('night-display');
-        if (nightDisplay) nightDisplay.innerText = "Night " + currentNight;
-
-        const powerDisplay = document.getElementById('power-display');
-        if (powerDisplay) powerDisplay.innerText = "100";
-
-        const clockDisplay = document.getElementById('clock-display');
-        if (clockDisplay) clockDisplay.innerText = "12 AM";
-
-        if (typeof gameInterval !== 'undefined' && gameInterval) {
-            clearInterval(gameInterval);
-        }
-
+        if (gameInterval) clearInterval(gameInterval);
         gameInterval = setInterval(() => {
-            // Drain power based on active doors, lights, and monitor
             let drainRate = 0.08; 
             if (leftDoorClosed) drainRate += 0.12;
             if (rightDoorClosed) drainRate += 0.12;
@@ -1596,9 +1367,11 @@
                 power = 0;
                 triggerGameOver();
             }
+            const powerDisplay = document.getElementById('power-display');
             if (powerDisplay) powerDisplay.innerText = Math.floor(power);
 
             hour += (1 / SECONDS_PER_HOUR);
+            const clockDisplay = document.getElementById('clock-display');
             if (hour >= 6) {
                 triggerWin();
             } else if (clockDisplay) {
@@ -1606,51 +1379,11 @@
                 clockDisplay.innerText = displayHour + " AM";
             }
 
-            // PROGRESSIVE AI DIFFICULTY SCALING:
-            // Night 1 = 3% movement chance per tick
-            // Night 2 = 6% movement chance per tick
-            // Night 3 = 10% movement chance per tick
-            // Night 4 = 15% movement chance per tick
-            // Night 5 = 22% movement chance per tick
-            let moveChance = 0.03 + ((currentNight - 1) * 0.045);
-
-            if (hour >= 1.0 && Math.random() < moveChance) {
+            // AI Threat Movement Tick
+            if (hour >= 1.0 && Math.random() < 0.05) {
                 moveSigristRandomly();
             }
         }, 1000);
-    }
-
-    // WIN CONDITION & NIGHT ADVANCEMENT
-    function triggerWin() {
-        if (typeof gameInterval !== 'undefined' && gameInterval) {
-            clearInterval(gameInterval);
-        }
-
-        const monitor = document.getElementById('camera-monitor');
-        if (monitor) monitor.classList.remove('active-cam');
-
-        const winText = document.getElementById('win-night-text');
-        const nextBtn = document.getElementById('win-next-btn');
-
-        if (currentNight < 5) {
-            if (winText) winText.innerText = `You survived Night ${currentNight}!`;
-            if (nextBtn) nextBtn.innerText = "NEXT NIGHT";
-        } else {
-            if (winText) winText.innerText = "CONGRATULATIONS! You survived all 5 Nights at Sigrist!";
-            if (nextBtn) nextBtn.innerText = "MAIN MENU";
-        }
-
-        showScreen('win-screen');
-    }
-
-    function continueToNextNight() {
-        if (currentNight < 5) {
-            currentNight++;
-            showScreen('newspaper-screen');
-        } else {
-            currentNight = 1;
-            showScreen('menu-screen');
-        }
     }
 
     // Door and Hallway Light Controls
@@ -1862,213 +1595,6 @@
         }
         drawStatic();
     }
-      // ==========================================
-    // ACHIEVEMENTS DATABASE & SECRET SYSTEM
-    // ==========================================
-    const achievementsDB = [
-        { 
-            id: "first_shift", 
-            title: "First Shift", 
-            desc: "Complete Night 1 successfully.", 
-            icon: "🔦", 
-            secret: false 
-        },
-        { 
-            id: "survivor_3", 
-            title: "Mid-Week Crisis", 
-            desc: "Survive up to Night 3.", 
-            icon: "☕", 
-            secret: false 
-        },
-        { 
-            id: "power_saver", 
-            title: "Power Saver", 
-            desc: "Finish any shift with over 25% battery remaining.", 
-            icon: "⚡", 
-            secret: false 
-        },
-        // SECRET ACHIEVEMENTS (Masked as ??? until unlocked)
-        { 
-            id: "mug_clicker", 
-            title: "Stay Focused!", 
-            desc: "Discovered the squeaky security desk mug.", 
-            icon: "☕", 
-            secret: true 
-        },
-        { 
-            id: "night_5_master", 
-            title: "Master Security Guard", 
-            desc: "Beat Night 5 and conquer all standard shifts.", 
-            icon: "🏆", 
-            secret: true 
-        }
-    ];
-
-    let unlockedAchievements = [];
-
-    // Load saved achievements on startup
-    function loadSavedAchievements() {
-        const saved = localStorage.getItem("sigrist_unlocked_achievements");
-        if (saved) {
-            try {
-                unlockedAchievements = JSON.parse(saved);
-            } catch(e) {
-                unlockedAchievements = [];
-            }
-        }
-    }
-
-    // Unlock function with Popup Slide-in trigger
-    function unlockAchievement(id) {
-        if (unlockedAchievements.includes(id)) return; // Already unlocked
-
-        const ach = achievementsDB.find(a => a.id === id);
-        if (!ach) return;
-
-        unlockedAchievements.push(id);
-        localStorage.setItem("sigrist_unlocked_achievements", JSON.stringify(unlockedAchievements));
-
-        // Trigger Slide-in Toast Notification
-        showAchievementToast(ach);
-    }
-
-    // SLIDE-IN BOTTOM-RIGHT TOAST NOTIFICATION ENGINE
-    let toastTimeout = null;
-    function showAchievementToast(ach) {
-        const toast = document.getElementById("achievement-toast");
-        const icon = document.getElementById("toast-icon");
-        const title = document.getElementById("toast-title");
-        const desc = document.getElementById("toast-desc");
-
-        if (!toast) return;
-
-        icon.innerText = ach.icon;
-        title.innerText = ach.title;
-        desc.innerText = ach.desc;
-
-        // Slide in
-        toast.classList.remove("achievement-toast-hidden");
-        toast.classList.add("achievement-toast-visible");
-
-        // Clear existing timer if multiple unlock rapidly
-        if (toastTimeout) clearTimeout(toastTimeout);
-
-        // Slide out after 4.5 seconds
-        toastTimeout = setTimeout(() => {
-            toast.classList.remove("achievement-toast-visible");
-            toast.classList.add("achievement-toast-hidden");
-        }, 4500);
-    }
-
-    // EXTRAS / ACHIEVEMENTS SCREEN RENDERER
-    function openAchievements() {
-        renderAchievementsList();
-        showScreen('achievements-screen');
-    }
-
-    function renderAchievementsList() {
-        const container = document.getElementById("achievements-list");
-        if (!container) return;
-
-        container.innerHTML = "";
-
-        achievementsDB.forEach(ach => {
-            const isUnlocked = unlockedAchievements.includes(ach.id);
-            const isSecret = ach.secret && !isUnlocked;
-
-            const card = document.createElement("div");
-            card.className = `achievement-card ${isUnlocked ? 'unlocked' : (isSecret ? 'secret-locked' : '')}`;
-
-            // Mask Secret Achievements if locked
-            const displayIcon = isSecret ? "❓" : ach.icon;
-            const displayTitle = isSecret ? "??? (Secret Achievement)" : ach.title;
-            const displayDesc = isSecret ? "Keep playing the game to discover this secret." : ach.desc;
-
-            card.innerHTML = `
-                <div class="achievement-card-icon">${displayIcon}</div>
-                <div class="achievement-card-info">
-                    <h4>${displayTitle} ${isUnlocked ? '✓' : ''}</h4>
-                    <p>${displayDesc}</p>
-                </div>
-            `;
-
-            container.appendChild(card);
-        });
-    }
-
-    // Initialize on page load
-    window.addEventListener('DOMContentLoaded', () => {
-        loadSavedAchievements();
-    });
-     // ==========================================
-    // DEVELOPER ADMIN PANEL CONTROLLER
-    // ==========================================
-    const ADMIN_PASSCODE = "sigrist2026"; // Set your custom developer password here!
-    let isGodMode = false;
-
-    function openAdminLogin() {
-        const input = document.getElementById("admin-pass-input");
-        if (input) input.value = "";
-        showScreen('admin-login-screen');
-    }
-
-    function checkAdminPasscode() {
-        const input = document.getElementById("admin-pass-input");
-        if (input && input.value === ADMIN_PASSCODE) {
-            showScreen('admin-panel-screen');
-        } else {
-            alert("ACCESS DENIED: Incorrect Developer Passcode.");
-        }
-    }
-
-    // ADMIN CHEAT OVERRIDES
-    function toggleGodMode() {
-        isGodMode = !isGodMode;
-        const btn = document.getElementById("btn-godmode");
-        if (btn) {
-            btn.innerText = isGodMode ? "⚡ GOD MODE: ON (INFINITE POWER)" : "⚡ GOD MODE: OFF";
-            btn.style.background = isGodMode ? "#1ed760" : "#222";
-            btn.style.color = isGodMode ? "#000" : "#fff";
-        }
-        if (isGodMode) {
-            power = 100;
-            const powerDisplay = document.getElementById('power-display');
-            if (powerDisplay) powerDisplay.innerText = "100";
-        }
-    }
-
-    function adminSkipTo6AM() {
-        triggerWin();
-    }
-
-    function adminSetNight(nightNum) {
-        if (typeof playerData !== 'undefined') {
-            playerData.currentNight = nightNum;
-            localStorage.setItem("sigrist_game_save", JSON.stringify(playerData));
-            if (typeof updateUIWithSaveData === 'function') updateUIWithSaveData();
-        }
-        alert(`Admin Override: Game set to Night ${nightNum}`);
-    }
-
-    function adminUnlockAllAchievements() {
-        if (typeof achievementsDB !== 'undefined') {
-            achievementsDB.forEach(ach => {
-                if (typeof unlockAchievement === 'function') unlockAchievement(ach.id);
-            });
-            alert("Admin Override: All achievements unlocked!");
-        }
-    }
-
-    function adminForceSigristPos(pos) {
-        if (typeof sigristPosition !== 'undefined') {
-            sigristPosition = pos;
-            if (typeof monitorOpen !== 'undefined' && monitorOpen && typeof updateCameraPhoto === 'function') {
-                updateCameraPhoto();
-            }
-            alert(`Admin Override: Sigrist forced to ${pos}`);
-        }
-    }
-
 </script>
 </body>
 </html>
