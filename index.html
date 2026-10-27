@@ -1179,20 +1179,17 @@
             <button class="continue-btn" onclick="showScreen('menu-screen')">BACK TO MENU</button>
         </div>
     </div>
- <!-- JAVASCRIPT GAME LOGIC -->
 <script>
     // ==========================================
-    // 1. SCREEN SWITCHING & MENU HANDLERS
+    // 1. SCREEN SWITCHING & MENU NAVIGATION
     // ==========================================
     function showScreen(screenId) {
-        // Hide all screens
         const screens = document.querySelectorAll('.screen');
         screens.forEach(s => {
             s.classList.remove('active');
             s.style.display = 'none';
         });
 
-        // Activate requested screen
         const target = document.getElementById(screenId);
         if (target) {
             target.style.display = 'flex';
@@ -1202,21 +1199,21 @@
         }
     }
 
-    // 1. REPLACE existing clickNewGame function
+    // MAIN MENU BUTTON HANDLERS
     function clickNewGame() {
         currentNight = 1;
         showScreen('newspaper-screen');
     }
-       // 2. REPLACE existing clickContinue function
+
     function clickContinue() {
         alert("Continuing shift: Night " + currentNight);
         showScreen('newspaper-screen');
     }
+
     function openCustomNight() { showScreen('customnight-screen'); }
     function openSettings() { showScreen('settings-screen'); }
     function openExtras() { showScreen('extras-screen'); }
 
-    // Start night shift from newspaper clipping
     function enterOffice() {
         console.log("Entering Security Office...");
         showScreen('office-screen');
@@ -1224,7 +1221,7 @@
     }
 
     // ==========================================
-    // 2. SPOTIFY-STYLE MUSIC PLAYER CONTROLLER
+    // 2. SPOTIFY MUSIC PLAYER CONTROLLER
     // ==========================================
     const soundtrackPlaylist = [
         { 
@@ -1232,13 +1229,6 @@
             artist: "LandonBeats", 
             file: "Sigrist main theme.mp3", 
             duration: 126 
-        }
-    ];
-     { 
-            title: "SIGRIST IS COMING", 
-            artist: "LandonBeats", 
-            file: "sigrist is coming.mp3", 
-            duration: 196 
         }
     ];
 
@@ -1270,13 +1260,10 @@
         }
     });
 
-    audioPlayer.addEventListener('ended', () => {
-        nextTrack();
-    });
+    audioPlayer.addEventListener('ended', () => { nextTrack(); });
 
     function togglePlayPause() {
         const playBtn = document.getElementById('btn-play-pause');
-
         if (!isPlaying) {
             isPlaying = true;
             if (playBtn) playBtn.innerText = '⏸';
@@ -1335,14 +1322,13 @@
         const clickX = event.offsetX;
         const totalWidth = bar.clientWidth;
         const pct = clickX / totalWidth;
-
         if (audioPlayer.duration) {
             audioPlayer.currentTime = pct * audioPlayer.duration;
         }
     }
 
     // ==========================================
-    // 3. SECURITY OFFICE ENGINE & CONTROLS
+    // 3. SECURITY OFFICE & MULTI-NIGHT ENGINE
     // ==========================================
     let currentNight = 1;
     let power = 100;
@@ -1353,11 +1339,11 @@
     let rightLightOn = false;
     let monitorOpen = false;
     let currentCam = '1A';
-    let sigristPosition = '1A'; // Node positions: '1A', '1B', '3A', '2A', '2B', or 'OFFICE'
+    let sigristPosition = '1A';
     let gameInterval = null;
     const SECONDS_PER_HOUR = 80;
 
-    // Panning office camera follow
+    // OFFICE MOUSE PANNING
     const officePan = document.getElementById('office-panoramic');
     document.addEventListener('mousemove', (e) => {
         const officeScreen = document.getElementById('office-screen');
@@ -1367,14 +1353,11 @@
         if (officePan) officePan.style.transform = `translateX(${panOffset}vw)`;
     });
 
-    // 3. REPLACE existing startShift function
     function startShift() {
-        // Reset shift stats
         power = 100;
         hour = 0;
         sigristPosition = '1A';
 
-        // Dynamically update HUD clock and night counters
         const nightDisplay = document.getElementById('night-display');
         if (nightDisplay) nightDisplay.innerText = "Night " + currentNight;
 
@@ -1384,13 +1367,11 @@
         const clockDisplay = document.getElementById('clock-display');
         if (clockDisplay) clockDisplay.innerText = "12 AM";
 
-        // Stop any running shift interval before starting a new one
         if (typeof gameInterval !== 'undefined' && gameInterval) {
             clearInterval(gameInterval);
         }
 
         gameInterval = setInterval(() => {
-            // Power drain calculation
             let drainRate = 0.08; 
             if (leftDoorClosed) drainRate += 0.12;
             if (rightDoorClosed) drainRate += 0.12;
@@ -1413,12 +1394,7 @@
                 clockDisplay.innerText = displayHour + " AM";
             }
 
-            // PROGRESSIVE AI DIFFICULTY SCALING:
-            // Night 1 = 3% movement probability per tick
-            // Night 2 = 7.5% movement probability
-            // Night 3 = 12% movement probability
-            // Night 4 = 16.5% movement probability
-            // Night 5 = 21% movement probability
+            // AI Scaling: Night 1 (3%) to Night 5 (21%)
             let moveChance = 0.03 + ((currentNight - 1) * 0.045);
 
             if (hour >= 1.0 && Math.random() < moveChance) {
@@ -1427,7 +1403,41 @@
         }, 1000);
     }
 
-    // Door and Hallway Light Controls
+    function triggerWin() {
+        if (typeof gameInterval !== 'undefined' && gameInterval) {
+            clearInterval(gameInterval);
+        }
+
+        const monitor = document.getElementById('camera-monitor');
+        if (monitor) monitor.classList.remove('active-cam');
+
+        const winText = document.getElementById('win-night-text');
+        const nextBtn = document.getElementById('win-next-btn');
+
+        if (currentNight < 5) {
+            if (winText) winText.innerText = `You survived Night ${currentNight}!`;
+            if (nextBtn) nextBtn.innerText = "NEXT NIGHT";
+        } else {
+            if (winText) winText.innerText = "CONGRATULATIONS! You survived all 5 Nights at Sigrist!";
+            if (nextBtn) nextBtn.innerText = "MAIN MENU";
+        }
+
+        showScreen('win-screen');
+    }
+
+    function continueToNextNight() {
+        if (currentNight < 5) {
+            currentNight++;
+            showScreen('newspaper-screen');
+        } else {
+            currentNight = 1;
+            showScreen('menu-screen');
+        }
+    }
+
+    // ==========================================
+    // 4. DOOR & LIGHT CONTROLS
+    // ==========================================
     function toggleLeftDoor() {
         leftDoorClosed = !leftDoorClosed;
         const btn = document.getElementById('left-door-btn');
@@ -1476,7 +1486,9 @@
         }
     }
 
-    // Camera Monitor System
+    // ==========================================
+    // 5. CAMERA MONITOR SYSTEM
+    // ==========================================
     function toggleCameraMonitor() {
         monitorOpen = !monitorOpen;
         const monitor = document.getElementById('camera-monitor');
@@ -1520,7 +1532,7 @@
     }
 
     // ==========================================
-    // 4. RANDOMIZED AI MOVEMENT PATHING
+    // 6. AI MOVEMENT PATHING & GAME OVER
     // ==========================================
     function moveSigristRandomly() {
         const roll = Math.random();
@@ -1558,18 +1570,17 @@
             }
         }
 
-        if (monitorOpen) {
+        if (typeof monitorOpen !== 'undefined' && monitorOpen) {
             updateCameraPhoto();
         }
     }
 
-    // ==========================================
-    // 5. GAME OVER & WIN CONDITIONS
-    // ==========================================
     function triggerGameOver() {
         console.log("Game Over triggered!");
 
-        if (gameInterval) clearInterval(gameInterval);
+        if (typeof gameInterval !== 'undefined' && gameInterval) {
+            clearInterval(gameInterval);
+        }
 
         const monitor = document.getElementById('camera-monitor');
         if (monitor) monitor.classList.remove('active-cam');
@@ -1583,15 +1594,9 @@
         if (jumpscareBox) jumpscareBox.style.display = 'flex';
         if (gameoverUI) gameoverUI.style.display = 'none';
 
-        if (video && video.querySelector('source') && video.querySelector('source').src) {
+        if (video && video.src && video.src !== "") {
             video.currentTime = 0;
-            video.play().catch(err => {
-                console.log("Video playback waiting for click:", err);
-                setTimeout(() => {
-                    if (jumpscareBox) jumpscareBox.style.display = 'none';
-                    if (gameoverUI) gameoverUI.style.display = 'flex';
-                }, 2500);
-            });
+            video.play().catch(err => console.log("Video waiting for user interaction:", err));
 
             video.onended = () => {
                 if (jumpscareBox) jumpscareBox.style.display = 'none';
@@ -1605,41 +1610,8 @@
         }
     }
 
-    // 4. REPLACE existing triggerWin function
-    function triggerWin() {
-        if (typeof gameInterval !== 'undefined' && gameInterval) {
-            clearInterval(gameInterval);
-        }
-
-        const monitor = document.getElementById('camera-monitor');
-        if (monitor) monitor.classList.remove('active-cam');
-
-        const winText = document.getElementById('win-night-text');
-        const nextBtn = document.getElementById('win-next-btn');
-
-        if (currentNight < 5) {
-            if (winText) winText.innerText = `You survived Night ${currentNight}!`;
-            if (nextBtn) nextBtn.innerText = "NEXT NIGHT";
-        } else {
-            if (winText) winText.innerText = "CONGRATULATIONS! You survived all 5 Nights at Sigrist!";
-            if (nextBtn) nextBtn.innerText = "MAIN MENU";
-        }
-
-        showScreen('win-screen');
-    }
- // 5. ADD NEW continueToNextNight function
-    function continueToNextNight() {
-        if (currentNight < 5) {
-            currentNight++;
-            showScreen('newspaper-screen');
-        } else {
-            currentNight = 1;
-            showScreen('menu-screen');
-        }
-    }
-
     // ==========================================
-    // 6. CRT STATIC OVERLAY RENDERER
+    // 7. CRT STATIC OVERLAY RENDERER
     // ==========================================
     const canvas = document.getElementById('static-canvas');
     if (canvas) {
